@@ -1,0 +1,275 @@
+/* ZeroBase Online Briefing — Slide Base CSS
+ * 토큰은 design_system/tokens.json 기준. 변경 시 함께 동기화.
+ */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  --ink:        #0E1430;
+  --ink-2:      #1C2885;
+  --ink-3:      #3A4499;
+  --paper:      #FFFFFF;
+  --paper-2:    #F2F3F8;
+  --paper-3:    #E6E8F2;
+  --line:       rgba(28,40,133,0.14);
+  --line-2:     rgba(28,40,133,0.28);
+  --muted:      rgba(14,20,48,0.55);
+  --muted-2:    rgba(14,20,48,0.72);
+  --accent:     #1C2885;
+  --accent-soft:#E6E8F5;
+  --pastel:     #EAF1FB;
+  --alert:      #D0342C;
+  --pass:       #0E8A4F;
+  --fail:       #B53232;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0d1a;
+  height: 100%; overflow: hidden;
+}
+body {
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ----- Slideshow viewer ----- */
+.viewer {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+  /* width/height set inline by JS to maintain 16:9 fit */
+}
+/* Each slide is absolutely positioned inside .stage; only the active one is visible */
+.slide-wrap {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+}
+.slide-wrap.is-active { opacity: 1; visibility: visible; }
+
+/* ----- Slide canvas: 1920 × 1080 (fixed; scaled by JS) ----- */
+.slide {
+  width: 1920px; height: 1080px;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0;
+  transform-origin: top left;
+  display: flex; flex-direction: column;
+  padding: 100px;
+  overflow: hidden;
+}
+
+/* ----- Navigation hit areas ----- */
+.nav-zone {
+  position: fixed; top: 0; bottom: 0;
+  width: 22%; cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center;
+  opacity: 0; transition: opacity 0.18s ease;
+}
+.nav-zone:hover { opacity: 1; }
+.nav-zone.prev { left: 0; justify-content: flex-start; padding-left: 24px; }
+.nav-zone.next { right: 0; justify-content: flex-end; padding-right: 24px; }
+.nav-zone .arrow {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #0e1430;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ----- HUD: bottom progress + counter ----- */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+.hud .bar {
+  height: 3px; background: rgba(255,255,255,0.12);
+  position: relative;
+}
+.hud .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #1c2885;
+  transition: width 0.2s ease;
+}
+.hud .bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em;
+}
+.hud .bottom .title { font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: -0.005em; }
+.hud .bottom .pager { font-variant-numeric: tabular-nums; font-weight: 600; color: rgba(255,255,255,0.95); }
+
+/* ----- Help overlay (shown briefly on load) ----- */
+.help {
+  position: fixed; top: 18px; right: 24px; z-index: 13;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 14px; font-size: 12px; color: #0e1430;
+  border-radius: 4px;
+  font-weight: 500; letter-spacing: 0.02em;
+  opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.help.show { opacity: 1; }
+.help kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: #f2f3f8; border: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+}
+.slide.chapter-divider { padding: 120px; background: var(--paper-2); }
+.slide.cover           { padding: 120px; }
+
+/* ----- Head block ----- */
+.chapter-tag {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+.chapter-tag .ch { margin-right: 10px; }
+.chapter-tag.small { font-size: 22px; }
+
+.slide-title {
+  font-size: 88px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.08;
+  margin: 24px 0 0;
+}
+.slide-title em { font-style: normal; color: var(--accent); }
+
+.slide-lede {
+  font-size: 34px; font-weight: 500; line-height: 1.45;
+  color: var(--muted-2); margin-top: 28px; max-width: 1500px;
+}
+
+.head-gap { height: 44px; flex-shrink: 0; }
+
+/* ----- Body region ----- */
+.body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+
+/* ----- Footer bar ----- */
+.footer {
+  position: absolute; left: 100px; right: 100px; bottom: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 18px; color: var(--muted);
+}
+.footer .left { display: flex; gap: 16px; }
+.footer .brand { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+
+/* ----- Cover slide ----- */
+.cover .cover-kicker {
+  font-size: 22px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--accent); text-transform: uppercase;
+}
+.cover .cover-title {
+  font-size: 120px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin: 32px 0 0;
+}
+.cover .cover-title em { color: var(--accent); font-style: normal; }
+.cover .cover-sub {
+  font-size: 36px; font-weight: 500; color: var(--muted-2);
+  margin-top: 36px; line-height: 1.4; max-width: 1400px;
+}
+.cover .cover-meta {
+  position: absolute; left: 120px; right: 120px; bottom: 120px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: 22px; color: var(--muted-2);
+}
+.cover .cover-meta .speaker b { color: var(--ink); font-weight: 700; font-size: 26px; display: block; margin-bottom: 6px; }
+
+/* ----- Chapter Divider ----- */
+.chapter-divider .divider-num {
+  font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
+}
+.chapter-divider .divider-title {
+  font-size: 132px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+  margin-top: 40px;
+}
+.chapter-divider .divider-sub {
+  font-size: 28px; color: var(--muted-2); margin-top: 32px; max-width: 1400px;
+}
+
+/* ----- Pastel Card Grid (4-up) ----- */
+.card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.card-pastel {
+  background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
+}
+.card-pastel .num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em; color: var(--accent);
+  margin-bottom: 18px;
+}
+.card-pastel .card-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.card-pastel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.card-pastel ul li {
+  font-size: 22px; color: var(--muted-2); line-height: 1.45;
+  padding-left: 20px; position: relative;
+}
+.card-pastel ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+
+/* ----- Stage Flow ----- */
+.stage-row { display: flex; gap: 16px; align-items: stretch; }
+.stage-step {
+  flex: 1; padding: 32px 28px;
+  border: 1px solid var(--line); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.stage-step .step-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+  margin-bottom: 16px;
+}
+.stage-step .step-name { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.stage-step .step-desc { font-size: 20px; color: var(--muted-2); line-height: 1.45; }
+.stage-step.highlight {
+  background: var(--ink-2); color: var(--paper); border-color: var(--ink-2);
+}
+.stage-step.highlight .step-num { color: var(--paper); }
+.stage-step.highlight .step-desc { color: rgba(255,255,255,0.78); }
+.stage-arrow {
+  display: flex; align-items: center; font-size: 32px; color: var(--line-2);
+}
+
+/* ----- Alert / Closing ----- */
+.alert-note {
+  font-size: 34px; line-height: 1.45; color: var(--alert);
+  font-weight: 500; margin-top: 28px;
+}
+.alert-note b { font-weight: 700; }
+
+/* ----- Bullets (text-heavy slide) ----- */
+.bullets {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 22px;
+}
+.bullets li {
+  font-size: 28px; line-height: 1.5; color: var(--ink);
+  padding-left: 28px; position: relative;
+}
+.bullets li::before {
+  content: ""; position: absolute; left: 0; top: 18px;
+  width: 16px; height: 2px; background: var(--accent);
+}
+
+/* ----- Two-column ----- */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.two-col h3 { font-size: 30px; font-weight: 700; margin: 0 0 18px; }
+.two-col p  { font-size: 22px; color: var(--muted-2); line-height: 1.5; margin: 0; }

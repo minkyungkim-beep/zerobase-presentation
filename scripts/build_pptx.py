@@ -33,6 +33,26 @@ FONT_FALLBACK = "Pretendard Variable"
 FONT_SAFE = "Apple SD Gothic Neo"  # macOS fallback
 
 
+def _resolve_speaker_photo(sp: dict) -> str:
+    """speaker.photo 없으면 이름으로 assets/<name>*.{jpg,png} 자동 매칭 (HTML과 동일 로직)."""
+    if sp.get("photo"):
+        return sp["photo"]
+    name = (sp.get("name") or "").strip()
+    if not name:
+        return ""
+    asset_dir = ROOT / "assets"
+    if not asset_dir.exists():
+        return ""
+    variants = [f"{name} 프로필", name, f"{name}_profile", f"{name}_프로필"]
+    exts = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG"]
+    for variant in variants:
+        for ext in exts:
+            cand = asset_dir / f"{variant}.{ext}"
+            if cand.exists():
+                return f"assets/{cand.name}"
+    return ""
+
+
 def _set_font_typeface(run, name: str = FONT_FAMILY) -> None:
     """Run의 latin + ea(한글) + cs 폰트를 모두 설정.
     python-pptx의 run.font.name 은 latin만 설정하기 때문에
@@ -210,16 +230,18 @@ def slide_chapter_divider(prs, meta, s_data, page_no, total):
     s = prs.slides.add_slide(blank)
     bg = add_rect(s, 0, 0, SLIDE_W_IN, SLIDE_H_IN, fill="paper_2")
     bg.shadow.inherit = False
-    add_text(s, EDGE_IN + 0.4, 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.5,
+    add_text(s, EDGE_IN + 0.4, 2.1, SLIDE_W_IN - 2 * EDGE_IN, 0.5,
              s_data.get("ch", ""), size_pt=18, weight=700,
              color="accent", tracking_em=0.2, allow_inline=False)
-    add_text(s, EDGE_IN + 0.4, 2.3, SLIDE_W_IN - 2 * EDGE_IN, 3.0,
-             s_data.get("title", ""), size_pt=72, weight=800,
-             color="ink", tracking_em=-0.02, leading=1.05,
+    # 타이틀 축소 (72 → 60pt) + max-width로 한 줄 유도
+    add_text(s, EDGE_IN + 0.4, 2.8, SLIDE_W_IN - 2 * EDGE_IN, 2.5,
+             s_data.get("title", ""), size_pt=60, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.1,
              allow_inline=False)
+    # sub: 타이틀에 더 가깝게 (4.5 → 4.15)
     if s_data.get("sub"):
-        add_text(s, EDGE_IN + 0.4, 5.4, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
-                 s_data["sub"], size_pt=18, weight=500, color="muted_2",
+        add_text(s, EDGE_IN + 0.4, 4.15, SLIDE_W_IN - 2 * EDGE_IN, 1.4,
+                 s_data["sub"], size_pt=24, weight=500, color="muted_2",
                  leading=1.45, allow_inline=False)
     add_footer(s, meta, page_no, total)
 
@@ -231,7 +253,7 @@ def slide_content(prs, meta, s_data, page_no, total):
     add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.6,
              s_data.get("title", ""), size_pt=40, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
-    add_text(s, EDGE_IN, TOP_IN + 1.95, SLIDE_W_IN - 2 * EDGE_IN, 0.9,
+    add_text(s, EDGE_IN, TOP_IN + 1.7, SLIDE_W_IN - 2 * EDGE_IN, 0.9,
              s_data.get("lede", ""), size_pt=18, weight=500,
              color="muted_2", leading=1.45, allow_inline=False)
     # bullets
@@ -401,7 +423,7 @@ def slide_speaker(prs, meta, s_data, page_no, total):
     # 사진 영역: 3:4 portrait 비율 (1.95 x 2.6 inch)
     photo_w = 1.95
     photo_h = 2.6
-    photo_path = sp.get("photo", "")
+    photo_path = sp.get("photo") or _resolve_speaker_photo(sp)
     if photo_path:
         # 박스/프레임 제거 — 사진만 깔끔하게 (cover 방식: 비율 유지하며 영역 가득 채움, 가운데 위쪽 정렬)
         img_p = _resolve_image(photo_path)
@@ -500,7 +522,13 @@ def slide_compare_table(prs, meta, s_data, page_no, total):
     headers = s_data.get("headers") or ["구분", "A", "B"]
     rows    = s_data.get("rows") or []
     accent_col = s_data.get("accent_col", -1)
-    cy = TOP_IN + 2.2
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.7,
+                 s_data["lede"], size_pt=16, weight=500, color="muted_2",
+                 leading=1.4, allow_inline=False)
+        cy = TOP_IN + 2.55
+    else:
+        cy = TOP_IN + 2.2
     avail_w = SLIDE_W_IN - 2 * EDGE_IN
     label_w = 1.95
     cell_w  = (avail_w - label_w) / 2
@@ -576,6 +604,10 @@ def slide_stage_flow(prs, meta, s_data, page_no, total):
     add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.6,
              s_data.get("title", ""), size_pt=40, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.85, SLIDE_W_IN - 2 * EDGE_IN, 0.7,
+                 s_data["lede"], size_pt=16, weight=500, color="muted_2",
+                 leading=1.4, allow_inline=False)
     steps = s_data.get("steps") or []
     hi = s_data.get("highlight_index", -1)
     n = max(1, len(steps))
@@ -584,7 +616,7 @@ def slide_stage_flow(prs, meta, s_data, page_no, total):
     available = SLIDE_W_IN - 2 * EDGE_IN
     box_w = (available - arrow_w * (n - 1)) / n
     box_h = 2.2
-    by = TOP_IN + 3.3
+    by = TOP_IN + (3.3 if not s_data.get("lede") else 3.6)
     for i, st in enumerate(steps):
         x = EDGE_IN + i * (box_w + arrow_w)
         is_hi = (i == hi)
@@ -806,13 +838,16 @@ def slide_alert_close(prs, meta, s_data, page_no, total):
     add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.6,
              s_data.get("title", ""), size_pt=40, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
-    add_text(s, EDGE_IN, TOP_IN + 1.95, SLIDE_W_IN - 2 * EDGE_IN, 0.9,
+    add_text(s, EDGE_IN, TOP_IN + 1.7, SLIDE_W_IN - 2 * EDGE_IN, 0.9,
              s_data.get("lede", ""), size_pt=18, weight=500,
              color="muted_2", leading=1.45, allow_inline=False)
-    # Big alert note
-    add_text(s, EDGE_IN, TOP_IN + 3.3, SLIDE_W_IN - 2 * EDGE_IN, 2.0,
-             s_data.get("alert", ""), size_pt=24, weight=500,
-             color="alert_red", leading=1.45)
+    # 슬라이드 가운데보다 살짝 위에 큰 알림 메시지 (2줄 줄바꿈 자동 처리)
+    body_y = TOP_IN + 2.7
+    body_h = SLIDE_H_IN - body_y - 1.85  # 아래 padding 늘려 위쪽으로 정렬되게
+    add_text(s, EDGE_IN, body_y, SLIDE_W_IN - 2 * EDGE_IN, body_h,
+             s_data.get("alert", ""), size_pt=42, weight=700,
+             color="alert_red", leading=1.4, tracking_em=-0.02,
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
     add_footer(s, meta, page_no, total)
 
 
@@ -828,10 +863,10 @@ def slide_color_palette(prs, meta, s_data, page_no, total):
              s_data.get("title", ""), size_pt=36, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
     if s_data.get("lede"):
-        add_text(s, EDGE_IN, TOP_IN + 1.85, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
                  s_data["lede"], size_pt=15, weight=500, color="muted_2",
                  leading=1.4, allow_inline=False)
-        cy = TOP_IN + 2.6
+        cy = TOP_IN + 2.555
     else:
         cy = TOP_IN + 2.2
     avail_w = SLIDE_W_IN - 2 * EDGE_IN
@@ -895,7 +930,7 @@ def slide_type_scale(prs, meta, s_data, page_no, total):
              s_data.get("title", ""), size_pt=36, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
     if s_data.get("lede"):
-        add_text(s, EDGE_IN, TOP_IN + 1.85, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
                  s_data["lede"], size_pt=15, weight=500, color="muted_2",
                  leading=1.4, allow_inline=False)
         cy = TOP_IN + 2.55
@@ -996,17 +1031,19 @@ def slide_checklist(prs, meta, s_data, page_no, total):
 def slide_summary_takeaway(prs, meta, s_data, page_no, total):
     blank = prs.slide_layouts[6]
     s = prs.slides.add_slide(blank)
-    # Top header area: section_label (left) + lead (center)
-    top_y = TOP_IN
-    if s_data.get("section_label"):
-        add_text(s, EDGE_IN, top_y, 4.5, 0.55,
-                 s_data["section_label"], size_pt=18, weight=700, color="accent",
-                 tracking_em=-0.01, allow_inline=False)
-    if s_data.get("title"):
-        add_text(s, EDGE_IN + 4.5, top_y, SLIDE_W_IN - 2 * EDGE_IN - 4.5, 0.65,
-                 s_data["title"], size_pt=24, weight=700, color="ink",
-                 align=PP_ALIGN.CENTER, tracking_em=-0.01)
-    cy = top_y + 1.0
+    # 표준 head 포맷: chapter-tag (small) + slide-title + 옵션 lede
+    chapter_text = s_data.get("chapter") or s_data.get("section_label", "")
+    add_chapter_tag(s, EDGE_IN, TOP_IN, chapter_text, small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.4,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+                 s_data["lede"], size_pt=15, weight=500, color="muted_2",
+                 leading=1.4, allow_inline=False)
+        cy = TOP_IN + 2.55
+    else:
+        cy = TOP_IN + 2.1
     cards = s_data.get("cards", [])[:4]
     n = max(2, min(4, len(cards)))
     avail_w = SLIDE_W_IN - 2 * EDGE_IN
@@ -1049,16 +1086,19 @@ def slide_summary_takeaway(prs, meta, s_data, page_no, total):
 def slide_dual_panel(prs, meta, s_data, page_no, total):
     blank = prs.slide_layouts[6]
     s = prs.slides.add_slide(blank)
-    top_y = TOP_IN
-    if s_data.get("section_label"):
-        add_text(s, EDGE_IN, top_y, 4.5, 0.55,
-                 s_data["section_label"], size_pt=18, weight=700, color="accent",
-                 tracking_em=-0.01, allow_inline=False)
-    if s_data.get("title"):
-        add_text(s, EDGE_IN + 4.5, top_y, SLIDE_W_IN - 2 * EDGE_IN - 4.5, 0.65,
-                 s_data["title"], size_pt=22, weight=700, color="ink",
-                 align=PP_ALIGN.CENTER, tracking_em=-0.01)
-    cy = top_y + 1.0
+    # 표준 head 포맷: chapter-tag + slide-title + 옵션 lede
+    chapter_text = s_data.get("chapter") or s_data.get("section_label", "")
+    add_chapter_tag(s, EDGE_IN, TOP_IN, chapter_text, small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.4,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+                 s_data["lede"], size_pt=15, weight=500, color="muted_2",
+                 leading=1.4, allow_inline=False)
+        cy = TOP_IN + 2.55
+    else:
+        cy = TOP_IN + 2.1
     pane_h = SLIDE_H_IN - cy - 0.85
     pane_w = (SLIDE_W_IN - 2 * EDGE_IN) / 2
 
@@ -1112,15 +1152,18 @@ def slide_dual_panel(prs, meta, s_data, page_no, total):
 def slide_case_grid_4(prs, meta, s_data, page_no, total):
     blank = prs.slide_layouts[6]
     s = prs.slides.add_slide(blank)
-    if s_data.get("section_label"):
-        add_chapter_tag(s, EDGE_IN, TOP_IN, s_data["section_label"], small=True)
-    title_y = TOP_IN + (0.4 if s_data.get("section_label") else 0)
-    if s_data.get("title"):
-        add_text(s, EDGE_IN, title_y, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
-                 s_data["title"], size_pt=30, weight=800, color="ink",
-                 tracking_em=-0.02, leading=1.1)
-        title_y += 1.0
-    cy = title_y + 0.4
+    chapter_text = s_data.get("chapter") or s_data.get("section_label", "")
+    add_chapter_tag(s, EDGE_IN, TOP_IN, chapter_text, small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.4,
+             s_data.get("title", ""), size_pt=36, weight=800, color="ink",
+             tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+                 s_data["lede"], size_pt=15, weight=500, color="muted_2",
+                 leading=1.4, allow_inline=False)
+        cy = TOP_IN + 2.555
+    else:
+        cy = TOP_IN + 2.2
     avail_w = SLIDE_W_IN - 2 * EDGE_IN
     avail_h = SLIDE_H_IN - cy - 0.85
     cw = avail_w / 2
@@ -1221,14 +1264,17 @@ def slide_case_analysis(prs, meta, s_data, page_no, total):
                  f.get("text", ""), size_pt=15, weight=500, color="ink",
                  leading=1.5)
         iy += f_h
-    # Conclusion (yellow box)
+    # Conclusion: 노란 배경 제거 → 네이비 텍스트 + 위 라인 + 글씨 키움
     if s_data.get("conclusion"):
         cb_y = cy + avail_h - concl_h
-        bg_c = add_rect(s, pts_x, cb_y, pts_w, concl_h, fill="highlight_yellow")
-        bg_c.line.fill.background()
-        add_text(s, pts_x + 0.18, cb_y, pts_w - 0.36, concl_h,
-                 s_data["conclusion"], size_pt=14, weight=600, color="ink",
-                 anchor=MSO_ANCHOR.MIDDLE, leading=1.4)
+        # 위쪽 강조 라인
+        ln = s.shapes.add_connector(1, Inches(pts_x), Inches(cb_y),
+                                    Inches(pts_x + pts_w), Inches(cb_y))
+        ln.line.color.rgb = C("accent")
+        ln.line.width = Pt(2.0)
+        add_text(s, pts_x, cb_y + 0.15, pts_w, concl_h - 0.15,
+                 s_data["conclusion"], size_pt=20, weight=700, color="accent",
+                 anchor=MSO_ANCHOR.TOP, leading=1.45, tracking_em=-0.01)
     add_footer(s, meta, page_no, total)
 
 
@@ -1240,10 +1286,10 @@ def slide_pipeline_matrix(prs, meta, s_data, page_no, total):
              s_data.get("title", ""), size_pt=32, weight=800,
              color="ink", tracking_em=-0.02, leading=1.08)
     if s_data.get("lede"):
-        add_text(s, EDGE_IN, TOP_IN + 1.85, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
+        add_text(s, EDGE_IN, TOP_IN + 1.6, SLIDE_W_IN - 2 * EDGE_IN, 0.6,
                  s_data["lede"], size_pt=15, weight=500, color="muted_2",
                  leading=1.4, allow_inline=False)
-        cy = TOP_IN + 2.6
+        cy = TOP_IN + 2.555
     else:
         cy = TOP_IN + 2.1
     stages = s_data.get("stages", [])[:3]

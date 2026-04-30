@@ -43,6 +43,7 @@
       "type": "card_grid",
       "chapter": "PART 01 PRINCIPLES",
       "title": "디자인 원칙 4가지",
+      "lede": "매주 연사·주제는 바뀌어도 이 4가지는 변하지 않습니다.",
       "cards": [
         {
           "num": "01", "title": "컨설팅 톤, 교육 무게감",
@@ -167,7 +168,7 @@
       "chapter": "Template 01 — alert_close",
       "title": "마무리 슬라이드 — <em>알림형 강조</em>",
       "lede": "본문 + 빨간색 강조 멘트로 행동을 촉구하는 마무리.",
-      "alert": "<b>오늘 이후, 내가 지금 준비하는 단계</b>가 어디인지부터 점검하세요."
+      "alert": "<b>오늘 이후, 내가 지금 준비하는 단계가</b>\n어디인지부터 점검하세요."
     },
 
     {
@@ -198,6 +199,7 @@
       "type": "two_col",
       "chapter": "Template 04 — two_col",
       "title": "좌·우 비교 — <em>2-column</em>",
+      "lede": "Before/After·Old/New·옵션 A/B 등 두 항목을 나란히 비교할 때.",
       "cols": [
         { "num": "PRESENT", "title": "핵심 변화: 업무의 본질", "lede": "AI를 ‘일하는 방식 자체’로 재정의.",
           "items": ["신입·주니어 채용 급감", "AI 활용 생산성 차이가 본질적 경쟁력"] },
@@ -210,6 +212,7 @@
       "type": "stage_flow",
       "chapter": "Template 05 — stage_flow",
       "title": "흐름 — <em>4~5단계</em> 스테이지",
+      "lede": "프로세스나 단계가 있는 콘텐츠. 마지막 단계는 강조 색으로 구분.",
       "steps": [
         { "num": "STEP 01", "name": "서류 전형", "desc": "이력서 · 자소서 · 포트폴리오" },
         { "num": "STEP 02", "name": "1차 면접", "desc": "실무 · 직무 역량" },
@@ -223,6 +226,7 @@
       "type": "compare_table",
       "chapter": "Template 06 — compare_table",
       "title": "비교 표 — <em>3컬럼 with row labels</em>",
+      "lede": "여러 항목을 일정한 기준으로 비교할 때. 한쪽 컬럼은 강조 색으로.",
       "headers": ["구분", "신입 (Entry)", "경력직 (Experienced)"],
       "rows": [
         ["평가 기준", "성장 잠재력과 가능성", "검증된 성과"],
@@ -235,8 +239,9 @@
 
     {
       "type": "summary_takeaway",
-      "section_label": "Template 07 — summary_takeaway",
-      "title": "카드 + 하단 takeaway 바",
+      "chapter": "Template 07 — summary_takeaway",
+      "title": "카드 + 하단 <em>takeaway 바</em>",
+      "lede": "여러 변화·요인을 카드로 보여주고 하단 강조 바에 한 줄 결론.",
       "cards": [
         { "title": "경쟁 심화 구조",        "items": ["병목 현상", "단 5명 채용에 수백명"] },
         { "title": "채용 방식 변화",        "items": ["공채 축소", "인턴 → 전환형"] },
@@ -247,8 +252,9 @@
 
     {
       "type": "dual_panel",
-      "section_label": "Template 08 — dual_panel",
-      "title": "Navy ↔ Red 분할 패널",
+      "chapter": "Template 08 — dual_panel",
+      "title": "<em>Navy ↔ Red</em> 분할 패널",
+      "lede": "현실/이상, 문제/해결 등 강한 대비가 필요한 두 관점을 나란히.",
       "left": {
         "header": "임원의 현실",
         "sections": [
@@ -268,7 +274,9 @@
 
     {
       "type": "case_grid_4",
-      "section_label": "Template 09 — case_grid_4",
+      "chapter": "Template 09 — case_grid_4",
+      "title": "사례 — <em>2×2 케이스 카드</em>",
+      "lede": "유형이 다른 4가지 사례를 한눈에. blue↔red 교차로 시각적 변별.",
       "cards": [
         { "title": "신입 A — 경험으로 합격",     "items": ["학벌 스펙 최하", "스타트업 5개월"], "arrow": "경험으로부터 배운다는 전형" },
         { "title": "대학원 B — 전문 경험 > 학위", "items": ["프로젝트 즉시 적용 가능", "4명 모두 탁월"], "arrow": "최고학력 스펙 탈락" },

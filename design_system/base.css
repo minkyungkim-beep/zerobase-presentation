@@ -151,13 +151,19 @@ body {
 
 .slide-lede {
   font-size: 34px; font-weight: 500; line-height: 1.45;
-  color: var(--muted-2); margin-top: 28px; max-width: 1500px;
+  color: var(--muted-2); margin-top: 8px; max-width: 1500px;
 }
 
-.head-gap { height: 44px; flex-shrink: 0; }
+.head-gap { height: 64px; flex-shrink: 0; }
 
 /* ----- Body region ----- */
+/* 기본: 컨텐츠는 head 바로 아래에 (위 정렬) */
 .body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+.body.body-top    { justify-content: flex-start; }
+/* 명시적으로 아래 정렬이 필요한 슬라이드용 (현재는 사용 안 함) */
+.body.body-bottom { justify-content: flex-end; }
+/* alert/qa 슬라이드: 컨텐츠 가운데 정렬 (살짝 위로 보이도록 padding-bottom) */
+.body.body-center { justify-content: center; align-items: center; text-align: center; padding-bottom: 140px; }
 
 /* ----- Footer bar ----- */
 .footer {
@@ -198,11 +204,12 @@ body {
   font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
 }
 .chapter-divider .divider-title {
-  font-size: 132px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
-  margin-top: 40px;
+  font-size: 104px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+  margin-top: 28px; max-width: 1700px;
 }
 .chapter-divider .divider-sub {
-  font-size: 28px; color: var(--muted-2); margin-top: 32px; max-width: 1400px;
+  font-size: 36px; color: var(--muted-2); margin-top: 4px; max-width: 1500px;
+  font-weight: 500; line-height: 1.45;
 }
 
 /* ----- Pastel Card Grid (N-up) ----- */
@@ -257,10 +264,12 @@ body {
 
 /* ----- Alert / Closing ----- */
 .alert-note {
-  font-size: 34px; line-height: 1.45; color: var(--alert);
-  font-weight: 500; margin-top: 28px;
+  font-size: 64px; line-height: 1.35; color: var(--alert);
+  font-weight: 700; letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 1500px;
 }
-.alert-note b { font-weight: 700; }
+.alert-note b { font-weight: 800; }
 
 /* ----- Bullets (text-heavy slide) ----- */
 .bullets {
@@ -316,8 +325,13 @@ body {
 }
 
 /* ----- Table of Contents ----- */
+/* column-major: 왼쪽 열을 먼저 채우고 오른쪽 열로 (1,2,3,4 / 5,6,7,8) */
 .toc-grid {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 18px 48px;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, auto);
+  gap: 18px 48px;
 }
 .toc-item {
   display: flex; align-items: baseline; gap: 22px;
@@ -676,13 +690,15 @@ body {
   font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;
 }
 .ca-conclusion {
-  background: var(--highlight);
-  padding: 18px 22px;
-  font-size: 22px; font-weight: 600; line-height: 1.5;
-  color: var(--ink);
-  margin-top: 14px;
+  background: transparent;
+  padding: 22px 0 8px;
+  font-size: 30px; font-weight: 700; line-height: 1.45;
+  color: var(--accent);
+  margin-top: auto;
+  border-top: 2px solid var(--accent);
+  letter-spacing: -0.01em;
 }
-.ca-conclusion b { font-weight: 800; }
+.ca-conclusion b { font-weight: 800; color: var(--ink); }
 
 /* ----- 6. pipeline_matrix — 3-stage horizontal 파이프라인 ----- */
 .pm-row {

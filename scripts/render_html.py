@@ -34,6 +34,28 @@ def _e(path: str, allow_html: bool = False) -> str:
     return f' data-edit="{path}"{h}'
 
 
+def _resolve_speaker_photo(sp: dict) -> str:
+    """speaker.photo가 없으면 이름으로 assets/<name>*.{jpg,png} 자동 매칭.
+    예: name="김준근" → assets/김준근 프로필.jpg, assets/김준근.png 등 자동 검색."""
+    if sp.get("photo"):
+        return sp["photo"]
+    name = (sp.get("name") or "").strip()
+    if not name:
+        return ""
+    asset_dir = ROOT / "assets"
+    if not asset_dir.exists():
+        return ""
+    # 이름 변형 + 흔한 확장자 조합
+    variants = [f"{name} 프로필", name, f"{name}_profile", f"{name}_프로필"]
+    exts = ["jpg", "JPG", "jpeg", "JPEG", "png", "PNG"]
+    for variant in variants:
+        for ext in exts:
+            cand = asset_dir / f"{variant}.{ext}"
+            if cand.exists():
+                return f"assets/{cand.name}"
+    return ""
+
+
 def _footer(meta: dict, page_no: int, total: int) -> str:
     talk = _esc(meta.get("talk_title_in_footer", ""))
     return f'''
@@ -89,7 +111,7 @@ def render_content(s: dict, meta: dict, page_no: int, total: int) -> str:
       <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
       <p class="slide-lede"{_e(f'slides[{i}].lede')}>{_esc(s.get("lede",""))}</p>
       <div class="head-gap"></div>
-      <div class="body">{bullets}</div>
+      <div class="body body-top">{bullets}</div>
       {_footer(meta, page_no, total)}
     </section>'''
 
@@ -203,7 +225,7 @@ def render_speaker(s: dict, meta: dict, page_no: int, total: int) -> str:
         for k, b in enumerate(sp.get("bio", []))
     )
     photo_initial = (sp.get("name", "?")[:1])
-    photo = sp.get("photo", "")
+    photo = sp.get("photo") or _resolve_speaker_photo(sp)
     if photo:
         photo_html = f'<div class="speaker-photo has-image"><img src="{html.escape(_img_src(photo))}" alt=""></div>'
     else:
@@ -275,10 +297,15 @@ def render_compare_table(s: dict, meta: dict, page_no: int, total: int) -> str:
     concl = ""
     if s.get("conclusion"):
         concl = f'<div class="compare-conclusion"{_e(f"slides[{i}].conclusion", True)}>{s["conclusion"]}</div>'
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede")}>{_esc(s.get("lede",""))}</p>'
+        if s.get("lede") else ""
+    )
     return f'''
     <section class="slide">
       <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
       <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
       <div class="head-gap"></div>
       <div class="body">
         <div class="compare-table">{head_html}{rows_html}</div>
@@ -303,10 +330,15 @@ def render_stage_flow(s: dict, meta: dict, page_no: int, total: int) -> str:
           </div>''')
         if j < len(steps) - 1:
             parts.append('<div class="stage-arrow">→</div>')
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede")}>{_esc(s.get("lede",""))}</p>'
+        if s.get("lede") else ""
+    )
     return f'''
     <section class="slide">
       <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
       <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
       <div class="head-gap"></div>
       <div class="body"><div class="stage-row">{''.join(parts)}</div></div>
       {_footer(meta, page_no, total)}
@@ -417,7 +449,7 @@ def render_checklist(s: dict, meta: dict, page_no: int, total: int) -> str:
 
 
 def render_summary_takeaway(s: dict, meta: dict, page_no: int, total: int) -> str:
-    """3~4 카드 + 하단 takeaway 바."""
+    """3~4 카드 + 하단 takeaway 바. 표준 head 포맷(chapter + title + lede)."""
     i = page_no - 1
     cards = s.get("cards", [])[:4]
     n = max(2, min(4, len(cards)))
@@ -432,19 +464,19 @@ def render_summary_takeaway(s: dict, meta: dict, page_no: int, total: int) -> st
           <div class="head"{_e(f'slides[{i}].cards[{j}].title', True)}>{c.get("title","")}</div>
           <ul>{items}</ul>
         </div>'''
-    section_label = (
-        f'<div class="num"{_e(f"slides[{i}].section_label")}>{_esc(s.get("section_label",""))}</div>'
-        if s.get("section_label") else ""
-    )
-    lead = (
-        f'<div class="lead"{_e(f"slides[{i}].title", True)}>{s.get("title","")}</div>'
-        if s.get("title") else ""
+    # 호환: section_label이 있으면 chapter로, 없으면 chapter 사용
+    chapter_text = s.get("chapter") or s.get("section_label", "")
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede")}>{_esc(s.get("lede",""))}</p>'
+        if s.get("lede") else ""
     )
     return f'''
     <section class="slide">
-      <div class="head-gap" style="height:0"></div>
-      <div class="body" style="gap: 0;">
-        <div class="summary-head">{section_label}{lead}</div>
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(chapter_text)}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body" style="gap: 18px;">
         <div class="summary-cards cols-{n}">{cards_html}</div>
         <div class="summary-takeaway"{_e(f'slides[{i}].takeaway', True)}>{s.get("takeaway","")}</div>
       </div>
@@ -480,19 +512,18 @@ def render_dual_panel(s: dict, meta: dict, page_no: int, total: int) -> str:
         </div>'''
     left  = _pane("left",  "navy", s.get("left", {}))
     right = _pane("right", "red",  s.get("right", {}))
-    section_label = (
-        f'<div class="num"{_e(f"slides[{i}].section_label")}>{_esc(s.get("section_label",""))}</div>'
-        if s.get("section_label") else ""
-    )
-    lead = (
-        f'<div class="lead"{_e(f"slides[{i}].title", True)}>{s.get("title","")}</div>'
-        if s.get("title") else ""
+    chapter_text = s.get("chapter") or s.get("section_label", "")
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede")}>{_esc(s.get("lede",""))}</p>'
+        if s.get("lede") else ""
     )
     return f'''
     <section class="slide">
-      <div class="head-gap" style="height:0"></div>
-      <div class="body" style="gap: 0;">
-        <div class="dp-head">{section_label}{lead}</div>
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(chapter_text)}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
         <div class="dp-grid">{left}{right}</div>
       </div>
       {_footer(meta, page_no, total)}
@@ -519,17 +550,20 @@ def render_case_grid_4(s: dict, meta: dict, page_no: int, total: int) -> str:
           <ul>{items}</ul>
           {arrow}
         </div>''')
-    section_label = (
-        f'<div class="chapter-tag small"{_e(f"slides[{i}].section_label")}>{_esc(s.get("section_label",""))}</div>'
-        if s.get("section_label") else ""
-    )
+    chapter_text = s.get("chapter") or s.get("section_label", "")
     title_html = (
         f'<h2 class="slide-title"{_e(f"slides[{i}].title", True)}>{s.get("title","")}</h2>'
         if s.get("title") else ""
     )
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede")}>{_esc(s.get("lede",""))}</p>'
+        if s.get("lede") else ""
+    )
     return f'''
     <section class="slide">
-      {section_label}{title_html}
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(chapter_text)}</div>
+      {title_html}
+      {lede}
       <div class="head-gap"></div>
       <div class="body"><div class="cg4">{"".join(parts)}</div></div>
       {_footer(meta, page_no, total)}
@@ -726,7 +760,7 @@ def render_alert_close(s: dict, meta: dict, page_no: int, total: int) -> str:
       <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
       <p class="slide-lede"{_e(f'slides[{i}].lede')}>{_esc(s.get("lede",""))}</p>
       <div class="head-gap"></div>
-      <div class="body"><div class="alert-note"{_e(f'slides[{i}].alert', True)}>{s.get("alert","")}</div></div>
+      <div class="body body-center"><div class="alert-note"{_e(f'slides[{i}].alert', True)}>{s.get("alert","")}</div></div>
       {_footer(meta, page_no, total)}
     </section>'''
 

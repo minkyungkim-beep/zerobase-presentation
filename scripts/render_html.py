@@ -118,8 +118,8 @@ def render_content(s: dict, meta: dict, page_no: int, total: int) -> str:
 
 def render_card_grid(s: dict, meta: dict, page_no: int, total: int) -> str:
     i = page_no - 1
-    cards = s.get("cards", [])[:5]
-    n = max(2, min(5, len(cards)))
+    cards = s.get("cards", [])[:7]
+    n = max(2, min(7, len(cards)))
     cards_html = ""
     for j, c in enumerate(cards):
         items = "".join(

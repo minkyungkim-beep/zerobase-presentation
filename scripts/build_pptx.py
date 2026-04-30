@@ -288,16 +288,16 @@ def slide_card_grid(prs, meta, s_data, page_no, total):
         cy = lede_y + 0.95
     else:
         cy = lede_y + 0.45
-    cards = (s_data.get("cards") or [])[:5]
-    n = max(1, min(5, len(cards)))
-    inner_gap = 0.18
+    cards = (s_data.get("cards") or [])[:7]
+    n = max(1, min(7, len(cards)))
+    inner_gap = 0.12 if n >= 6 else 0.18
     available = SLIDE_W_IN - 2 * EDGE_IN
     card_w = (available - inner_gap * (n - 1)) / n
     card_h = SLIDE_H_IN - cy - 0.85
     # Adjust font sizes for narrow cards
-    title_pt = 18 if n >= 4 else 22 if n == 3 else 24
-    item_pt  = 12 if n >= 4 else 13 if n == 3 else 14
-    item_gap = 0.38 if n >= 4 else 0.42
+    title_pt = 13 if n >= 6 else 18 if n >= 4 else 22 if n == 3 else 24
+    item_pt  = 10 if n >= 6 else 12 if n >= 4 else 13 if n == 3 else 14
+    item_gap = 0.32 if n >= 6 else 0.38 if n >= 4 else 0.42
     for i, c in enumerate(cards):
         cx = EDGE_IN + i * (card_w + inner_gap)
         bg = add_rect(s, cx, cy, card_w, card_h, fill="pastel_blue")

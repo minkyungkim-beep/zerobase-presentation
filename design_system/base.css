@@ -219,6 +219,15 @@ body {
 .card-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
 .card-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
 .card-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.card-grid.cols-6 { grid-template-columns: repeat(6,1fr); gap: 14px; }
+.card-grid.cols-7 { grid-template-columns: repeat(7,1fr); gap: 12px; }
+/* 6/7-up은 카드 안 글자도 작게 */
+.card-grid.cols-6 .card-pastel,
+.card-grid.cols-7 .card-pastel { padding: 22px 18px; }
+.card-grid.cols-6 .card-pastel .card-title,
+.card-grid.cols-7 .card-pastel .card-title { font-size: 22px; }
+.card-grid.cols-6 .card-pastel ul li,
+.card-grid.cols-7 .card-pastel ul li { font-size: 16px; }
 .card-pastel {
   background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
 }

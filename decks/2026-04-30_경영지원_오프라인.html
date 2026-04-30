@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<title>경영지원 전 직무</title>
+<style>/* ZeroBase Online Briefing — Slide Base CSS
+ * 토큰은 design_system/tokens.json 기준. 변경 시 함께 동기화.
+ */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  --ink:        #0E1430;
+  --ink-2:      #1C2885;
+  --ink-3:      #3A4499;
+  --paper:      #FFFFFF;
+  --paper-2:    #F2F3F8;
+  --paper-3:    #E6E8F2;
+  --line:       rgba(28,40,133,0.14);
+  --line-2:     rgba(28,40,133,0.28);
+  --muted:      rgba(14,20,48,0.55);
+  --muted-2:    rgba(14,20,48,0.72);
+  --accent:     #1C2885;
+  --accent-soft:#E6E8F5;
+  --pastel:     #EAF1FB;
+  --pastel-red: #FBEAE9;
+  --alert:      #D0342C;
+  --pass:       #0E8A4F;
+  --fail:       #B53232;
+  --highlight:  #FFF4B8;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0d1a;
+  height: 100%; overflow: hidden;
+}
+body {
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ----- Slideshow viewer ----- */
+.viewer {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+  /* width/height set inline by JS to maintain 16:9 fit */
+}
+/* Each slide is absolutely positioned inside .stage; only the active one is visible */
+.slide-wrap {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+}
+.slide-wrap.is-active { opacity: 1; visibility: visible; }
+
+/* ----- Slide canvas: 1920 × 1080 (fixed; scaled by JS) ----- */
+.slide {
+  width: 1920px; height: 1080px;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0;
+  transform-origin: top left;
+  display: flex; flex-direction: column;
+  padding: 100px;
+  overflow: hidden;
+}
+
+/* ----- Navigation hit areas ----- */
+.nav-zone {
+  position: fixed; top: 0; bottom: 0;
+  width: 22%; cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center;
+  opacity: 0; transition: opacity 0.18s ease;
+}
+.nav-zone:hover { opacity: 1; }
+.nav-zone.prev { left: 0; justify-content: flex-start; padding-left: 24px; }
+.nav-zone.next { right: 0; justify-content: flex-end; padding-right: 24px; }
+.nav-zone .arrow {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #0e1430;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ----- HUD: bottom progress + counter ----- */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+.hud .bar {
+  height: 3px; background: rgba(255,255,255,0.12);
+  position: relative;
+}
+.hud .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #1c2885;
+  transition: width 0.2s ease;
+}
+.hud .bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em;
+}
+.hud .bottom .title { font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: -0.005em; }
+.hud .bottom .pager { font-variant-numeric: tabular-nums; font-weight: 600; color: rgba(255,255,255,0.95); }
+
+/* ----- Help overlay (shown briefly on load) ----- */
+.help {
+  position: fixed; top: 18px; right: 24px; z-index: 13;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 14px; font-size: 12px; color: #0e1430;
+  border-radius: 4px;
+  font-weight: 500; letter-spacing: 0.02em;
+  opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.help.show { opacity: 1; }
+.help kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: #f2f3f8; border: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+}
+.slide.chapter-divider { padding: 120px; background: var(--paper-2); }
+.slide.cover           { padding: 120px; }
+
+/* ----- Head block ----- */
+.chapter-tag {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+.chapter-tag .ch { margin-right: 10px; }
+.chapter-tag.small { font-size: 22px; }
+
+.slide-title {
+  font-size: 88px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.08;
+  margin: 24px 0 0;
+}
+.slide-title em { font-style: normal; color: var(--accent); }
+
+.slide-lede {
+  font-size: 34px; font-weight: 500; line-height: 1.45;
+  color: var(--muted-2); margin-top: 8px; max-width: 1500px;
+}
+
+.head-gap { height: 64px; flex-shrink: 0; }
+
+/* ----- Body region ----- */
+/* 기본: 컨텐츠는 head 바로 아래에 (위 정렬) */
+.body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+.body.body-top    { justify-content: flex-start; }
+/* 명시적으로 아래 정렬이 필요한 슬라이드용 (현재는 사용 안 함) */
+.body.body-bottom { justify-content: flex-end; }
+/* alert/qa 슬라이드: 컨텐츠 가운데 정렬 (살짝 위로 보이도록 padding-bottom) */
+.body.body-center { justify-content: center; align-items: center; text-align: center; padding-bottom: 140px; }
+
+/* ----- Footer bar ----- */
+.footer {
+  position: absolute; left: 100px; right: 100px; bottom: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 18px; color: var(--muted);
+}
+.footer .left { display: flex; gap: 16px; }
+.footer .brand { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+
+/* ----- Cover slide ----- */
+.cover .cover-kicker {
+  font-size: 22px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--accent); text-transform: uppercase;
+}
+.cover .cover-title {
+  font-size: 120px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin: 32px 0 0;
+}
+.cover .cover-title em { color: var(--accent); font-style: normal; }
+.cover .cover-sub {
+  font-size: 36px; font-weight: 500; color: var(--muted-2);
+  margin-top: 36px; line-height: 1.4; max-width: 1400px;
+}
+.cover .cover-meta {
+  position: absolute; left: 120px; right: 120px; bottom: 120px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: 22px; color: var(--muted-2);
+}
+.cover .cover-meta .speaker b { color: var(--ink); font-weight: 700; font-size: 26px; display: block; margin-bottom: 6px; }
+
+/* ----- Chapter Divider ----- */
+.chapter-divider .divider-num {
+  font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
+}
+.chapter-divider .divider-title {
+  font-size: 104px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+  margin-top: 28px; max-width: 1700px;
+}
+.chapter-divider .divider-sub {
+  font-size: 36px; color: var(--muted-2); margin-top: 4px; max-width: 1500px;
+  font-weight: 500; line-height: 1.45;
+}
+
+/* ----- Pastel Card Grid (N-up) ----- */
+.card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.card-grid    { display: grid; gap: 20px; }
+.card-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.card-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.card-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.card-grid.cols-6 { grid-template-columns: repeat(6,1fr); gap: 14px; }
+.card-grid.cols-7 { grid-template-columns: repeat(7,1fr); gap: 12px; }
+/* 6/7-up은 카드 안 글자도 작게 */
+.card-grid.cols-6 .card-pastel,
+.card-grid.cols-7 .card-pastel { padding: 22px 18px; }
+.card-grid.cols-6 .card-pastel .card-title,
+.card-grid.cols-7 .card-pastel .card-title { font-size: 22px; }
+.card-grid.cols-6 .card-pastel ul li,
+.card-grid.cols-7 .card-pastel ul li { font-size: 16px; }
+.card-pastel {
+  background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
+}
+.card-pastel .num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em; color: var(--accent);
+  margin-bottom: 18px;
+}
+.card-pastel .card-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.card-pastel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.card-pastel ul li {
+  font-size: 22px; color: var(--muted-2); line-height: 1.45;
+  padding-left: 20px; position: relative;
+}
+.card-pastel ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+
+/* ----- Stage Flow ----- */
+.stage-row { display: flex; gap: 16px; align-items: stretch; }
+.stage-step {
+  flex: 1; padding: 32px 28px;
+  border: 1px solid var(--line); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.stage-step .step-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+  margin-bottom: 16px;
+}
+.stage-step .step-name { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.stage-step .step-desc { font-size: 20px; color: var(--muted-2); line-height: 1.45; }
+.stage-step.highlight {
+  background: var(--ink-2); color: var(--paper); border-color: var(--ink-2);
+}
+.stage-step.highlight .step-num { color: var(--paper); }
+.stage-step.highlight .step-desc { color: rgba(255,255,255,0.78); }
+.stage-arrow {
+  display: flex; align-items: center; font-size: 32px; color: var(--line-2);
+}
+
+/* ----- Alert / Closing ----- */
+.alert-note {
+  font-size: 64px; line-height: 1.35; color: var(--alert);
+  font-weight: 700; letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 1500px;
+}
+.alert-note b { font-weight: 800; }
+
+/* ----- Bullets (text-heavy slide) ----- */
+.bullets {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 22px;
+}
+.bullets li {
+  font-size: 28px; line-height: 1.5; color: var(--ink);
+  padding-left: 28px; position: relative;
+}
+.bullets li::before {
+  content: ""; position: absolute; left: 0; top: 18px;
+  width: 16px; height: 2px; background: var(--accent);
+}
+
+/* ----- Two-column comparison ----- */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
+  height: 100%;
+}
+.two-col .col {
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 36px 32px;
+  display: flex; flex-direction: column;
+}
+.two-col .col.accent {
+  background: var(--pastel); border-color: transparent;
+}
+.two-col .col-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.two-col .col-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin-bottom: 18px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.two-col .col-lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 22px;
+}
+.two-col .col ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.two-col .col ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.two-col .col ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* ----- Table of Contents ----- */
+/* column-major: 왼쪽 열을 먼저 채우고 오른쪽 열로 (1,2,3,4 / 5,6,7,8) */
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, auto);
+  gap: 18px 48px;
+}
+.toc-item {
+  display: flex; align-items: baseline; gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.toc-num {
+  font-size: 22px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+  min-width: 56px;
+}
+.toc-text {
+  font-size: 28px; font-weight: 500; color: var(--ink);
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+
+/* ----- Speaker profile ----- */
+.speaker-card {
+  display: grid; grid-template-columns: 280px 1fr; gap: 48px;
+  height: 100%;
+}
+.speaker-photo {
+  /* fallback 모드 (사진 없을 때): 이름 첫 글자 표시 */
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 24px; font-weight: 600;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-info .speaker-name {
+  font-size: 56px; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.05; margin-bottom: 12px;
+}
+.speaker-info .speaker-title {
+  font-size: 26px; color: var(--accent); font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 28px;
+}
+.speaker-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+}
+.speaker-tag {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 6px 14px; font-size: 18px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.speaker-bio {
+  list-style: none; padding: 0; margin: 0; display: grid; gap: 16px;
+}
+.speaker-bio li {
+  font-size: 20px; color: var(--ink); line-height: 1.5;
+  padding-left: 20px; position: relative;
+}
+.speaker-bio li::before {
+  content: ""; position: absolute; left: 0; top: 14px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+.speaker-bio li b { font-weight: 700; color: var(--ink); }
+
+/* ----- Closing / Q&A ----- */
+.qa-big {
+  font-size: 240px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--accent); line-height: 1;
+}
+.qa-sub {
+  font-size: 32px; color: var(--muted-2); margin-top: 32px;
+  font-weight: 500; line-height: 1.4;
+}
+.qa-contact {
+  font-size: 26px; color: var(--ink); margin-top: 36px;
+  font-weight: 700; letter-spacing: -0.01em;
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--line);
+  background: var(--paper);
+}
+.qa-thanks {
+  font-size: 24px; color: var(--muted-2); margin-top: 28px;
+  font-weight: 500;
+}
+
+/* ============================================================
+ *  Design system meta — color_palette / type_scale
+ * ============================================================ */
+
+/* ----- color_palette — 컬러 스와치 그리드 ----- */
+.cp-grid { display: grid; gap: 18px; flex: 1; }
+.cp-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.cp-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.cp-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.cp-swatch {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.cp-chip {
+  height: 180px;
+  display: flex; align-items: flex-end; padding: 18px;
+  font-size: 18px; font-weight: 700; letter-spacing: 0.05em;
+}
+.cp-body {
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 14px;
+}
+.cp-body .role { color: var(--ink); font-weight: 600; }
+.cp-body .hex {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted-2); font-size: 13px;
+}
+.cp-body .token {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted); font-size: 12px;
+}
+
+/* ----- type_scale — 타이포그래피 위계 테이블 ----- */
+.ts-table {
+  display: grid; grid-template-columns: 1fr 2fr;
+  border-top: 1px solid var(--line);
+  flex: 1;
+}
+.ts-row { display: contents; }
+.ts-row > div {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.ts-meta {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px; color: var(--muted-2); line-height: 1.7;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ts-meta b {
+  color: var(--ink);
+  font-family: "Pretendard Variable","Pretendard",sans-serif;
+  display: block; font-size: 16px; margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.ts-sample { display: flex; align-items: center; }
+.ts-sample > span { width: 100%; }
+
+/* ============================================================
+ *  새 추가 6종 템플릿 (디자인 다양화)
+ * ============================================================ */
+
+/* ----- 1. checklist — 번호 리스트 + 박스 테두리 ----- */
+.checklist-frame {
+  border: 1px solid var(--ink);
+  padding: 56px 64px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.checklist-frame .ck-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.01em;
+  line-height: 1.2; margin: 0 0 14px;
+}
+.checklist-frame .ck-title em { font-style: normal; color: var(--accent); }
+.checklist-frame .ck-sub {
+  font-size: 24px; color: var(--ink); font-weight: 400;
+  margin: 0 0 38px;
+}
+.checklist-frame ol {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 18px;
+}
+.checklist-frame ol li {
+  font-size: 26px; line-height: 1.5; color: var(--ink); font-weight: 400;
+}
+.checklist-frame ol li.emphasis {
+  font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+  color: var(--ink);
+}
+
+/* ----- 2. summary_takeaway — 3 카드 + 하단 takeaway 바 ----- */
+.summary-head {
+  display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: baseline;
+  margin-bottom: 36px;
+}
+.summary-head .num {
+  font-size: 24px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.summary-head .lead {
+  font-size: 32px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.summary-cards { display: grid; gap: 28px; grid-template-columns: repeat(3,1fr); flex: 1; }
+.summary-cards.cols-2 { grid-template-columns: repeat(2,1fr); }
+.summary-cards.cols-4 { grid-template-columns: repeat(4,1fr); }
+.summary-card {
+  display: flex; flex-direction: column;
+  border-bottom: 1px solid var(--ink);
+}
+.summary-card .head {
+  background: var(--pastel);
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 700; line-height: 1.25;
+  color: var(--ink); letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+.summary-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; flex: 1; }
+.summary-card ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.summary-card ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--accent);
+}
+.summary-card ul li b { font-weight: 700; color: var(--accent); }
+.summary-takeaway {
+  margin-top: 28px;
+  background: var(--accent); color: var(--paper);
+  padding: 28px 32px;
+  font-size: 28px; font-weight: 700; text-align: center;
+  letter-spacing: -0.01em; line-height: 1.4;
+}
+
+/* ----- 3. dual_panel — 두 색 헤더 + 분할 패널 (navy + red) ----- */
+.dp-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 32px;
+  align-items: baseline;
+}
+.dp-head .num {
+  font-size: 26px; font-weight: 700; color: var(--accent);
+}
+.dp-head .lead {
+  font-size: 30px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.dp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--line);
+  flex: 1;
+}
+.dp-pane { display: flex; flex-direction: column; }
+.dp-pane.left { border-right: 1px solid var(--line); }
+.dp-header {
+  padding: 22px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 800;
+  color: var(--paper); letter-spacing: -0.01em;
+}
+.dp-header.navy { background: var(--accent); }
+.dp-header.red  { background: var(--alert); }
+.dp-body {
+  padding: 32px 36px;
+  flex: 1; display: flex; flex-direction: column; gap: 22px;
+}
+.dp-body.tint-blue { background: rgba(234,241,251,0.45); }
+.dp-body.tint-red  { background: rgba(251,234,233,0.55); }
+.dp-section {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-bottom: 18px;
+}
+.dp-section + .dp-section { border-top: 1px solid var(--line); padding-top: 18px; }
+.dp-section .sec-title {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0;
+}
+.dp-section .sec-title.navy { color: var(--accent); }
+.dp-section .sec-title.red  { color: var(--alert); }
+.dp-section ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.dp-section ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.dp-section ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.dp-section ul li b { font-weight: 700; }
+.dp-foot {
+  margin-top: auto;
+  font-size: 16px; color: var(--muted-2); line-height: 1.5;
+  padding-top: 14px;
+}
+.dp-foot::before { content: "* "; }
+
+/* ----- 4. case_grid_4 — 2x2 카드 격자 (blue/red 교차) ----- */
+.cg4 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--ink);
+  flex: 1;
+}
+.cg4 .cell {
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 14px;
+  border-bottom: 1px solid var(--ink);
+  position: relative;
+}
+.cg4 .cell:nth-child(odd)  { border-right: 1px solid var(--ink); background: var(--pastel); }
+.cg4 .cell:nth-child(even) { background: var(--pastel-red); }
+.cg4 .cell .ct {
+  font-size: 26px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cg4 .cell:nth-child(odd) .ct  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .ct { color: var(--alert); }
+.cg4 .cell ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.cg4 .cell ul li {
+  font-size: 19px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.cg4 .cell ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.cg4 .cell .arrow {
+  font-size: 20px; font-weight: 700; line-height: 1.4;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.cg4 .cell:nth-child(odd) .arrow  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .arrow { color: var(--alert); }
+.cg4 .cell .arrow::before { content: "→ "; font-weight: 700; }
+
+/* ----- 5. case_analysis — 자료 + 합격 포인트 + 결론 박스 ----- */
+.ca-grid {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px;
+  flex: 1; min-height: 0;
+}
+.ca-ref {
+  background: var(--paper-2);
+  padding: 32px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ca-ref .ref-title {
+  font-size: 22px; font-weight: 700; margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.ca-ref .ref-image { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ca-ref .ref-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ca-ref .ref-text {
+  font-size: 14px; color: var(--ink); line-height: 1.6;
+  white-space: pre-wrap; flex: 1; overflow: hidden;
+}
+.ca-ref .ref-text mark {
+  background: var(--highlight); padding: 1px 2px;
+  color: var(--ink);
+}
+.ca-points {
+  display: flex; flex-direction: column; gap: 22px;
+}
+.ca-point {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ca-point .pt-label {
+  display: inline-block;
+  background: var(--accent); color: var(--paper);
+  padding: 4px 14px;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+.ca-point .pt-text {
+  font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;
+}
+.ca-conclusion {
+  background: transparent;
+  padding: 22px 0 8px;
+  font-size: 30px; font-weight: 700; line-height: 1.45;
+  color: var(--accent);
+  margin-top: auto;
+  border-top: 2px solid var(--accent);
+  letter-spacing: -0.01em;
+}
+.ca-conclusion b { font-weight: 800; color: var(--ink); }
+
+/* ----- 6. pipeline_matrix — 3-stage horizontal 파이프라인 ----- */
+.pm-row {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr 50px 1fr;
+  gap: 0;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+.pm-row + .pm-row { margin-top: 4px; }
+.pm-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 700; color: var(--ink);
+}
+.pm-cell {
+  background: var(--ink); color: var(--paper);
+  padding: 20px 18px;
+  text-align: center;
+  font-size: 22px; font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center;
+}
+.pm-cell.empty { background: transparent; }
+.pm-cell-row {
+  display: grid; gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+.pm-multi {
+  display: grid; gap: 6px;
+}
+.pm-sub-group {
+  display: grid; grid-template-columns: 1fr; gap: 4px;
+}
+.pm-sub-group .pm-cell { padding: 14px 12px; font-size: 18px; }
+.pm-sub-cells {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.pm-sub-cells .pm-cell { padding: 10px 8px; font-size: 16px; font-weight: 600; }
+.pm-note {
+  position: absolute; right: 100px; top: 50%; transform: translateY(-65%);
+  font-size: 22px; font-weight: 700; color: var(--ink); font-style: italic;
+  text-align: center; max-width: 240px; line-height: 1.4;
+}
+
+/* ----- Image slides ----- */
+.slide.image-full {
+  padding: 0;
+  background: #0e1430;
+}
+.slide.image-full .img-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 60px;
+}
+.slide.image-full .img-wrap img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.slide.image-full.bg-light { background: var(--paper-2); }
+.slide.image-full.bg-light .img-wrap img { box-shadow: 0 6px 24px rgba(28,40,133,0.18); }
+.slide.image-full .image-caption {
+  background: var(--paper);
+  padding: 24px 100px;
+  border-top: 1px solid var(--line);
+  font-size: 22px; color: var(--muted-2);
+  line-height: 1.45;
+}
+.slide.image-full .image-caption b { color: var(--ink); font-weight: 700; }
+
+/* image with header (chapter + title above image) */
+.slide.image-headed { padding: 80px 100px 100px; }
+.slide.image-headed .img-zone {
+  flex: 1;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 32px;
+  margin-top: 28px;
+}
+.slide.image-headed .img-zone img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.image-split {
+  display: grid; gap: 48px; height: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.image-split.left  { grid-template-areas: 'img text'; }
+.image-split.right { grid-template-areas: 'text img'; }
+.image-split .img-pane {
+  grid-area: img;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 24px;
+}
+.image-split .img-pane img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-split .text-pane {
+  grid-area: text;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.image-split .text-pane h3 {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin: 0 0 18px; letter-spacing: -0.01em;
+}
+.image-split .text-pane .lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 24px;
+}
+.image-split .text-pane ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.image-split .text-pane ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.image-split .text-pane ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* Speaker photo with image: 박스/프레임 없이 사진만 깔끔하게 */
+.speaker-photo.has-image {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-photo.has-image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;  /* 인물 사진은 위쪽 비중 — 얼굴이 잘 보이도록 */
+  display: block;
+}
+
+/* ----- Compare table (3-col with row labels) ----- */
+.compare-table {
+  display: grid; gap: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.compare-row {
+  display: grid; grid-template-columns: 280px 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row > div {
+  padding: 26px 28px;
+  border-right: 1px solid var(--line);
+  font-size: 22px; line-height: 1.45; color: var(--ink);
+}
+.compare-row > div:last-child { border-right: none; }
+.compare-row.head > div {
+  background: var(--paper-2);
+  font-weight: 700; font-size: 22px;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.compare-row.head > div:first-child {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); text-transform: uppercase;
+}
+.compare-row > div.label {
+  background: var(--paper-2);
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.compare-row > div.cell {
+  font-size: 22px; color: var(--ink); font-weight: 500; line-height: 1.45;
+}
+.compare-row > div.cell.accent {
+  background: var(--pastel); color: var(--ink);
+}
+.compare-conclusion {
+  margin-top: 28px;
+  padding: 20px 28px;
+  background: var(--accent); color: var(--paper);
+  font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.compare-conclusion b { font-weight: 800; }
+
+/* ----- Edit mode styling ----- */
+body.edit-mode [data-edit] {
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.12s ease;
+  cursor: text;
+}
+body.edit-mode [data-edit]:hover { outline-color: rgba(28,40,133,0.45); }
+body.edit-mode [data-edit]:focus {
+  outline: 2px solid #1c2885;
+  background: rgba(234,241,251,0.45);
+}
+body.edit-mode .nav-zone { display: none !important; }
+
+#edit-bar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 14;
+  display: none; gap: 8px; padding: 8px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(28,40,133,0.18);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  font-size: 13px;
+}
+#edit-bar.show { display: flex; }
+#edit-bar button {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border: 1px solid rgba(28,40,133,0.2);
+  background: #fff; color: #0e1430; cursor: pointer;
+  letter-spacing: -0.005em;
+}
+#edit-bar button:hover { background: #f2f3f8; }
+#edit-bar button.primary { background: #1c2885; color: #fff; border-color: #1c2885; }
+#edit-bar button.primary:hover { background: #0e1430; }
+#edit-bar .hint { font-size: 11px; color: #737991; padding: 0 8px; align-self: center; }
+
+#edit-toggle {
+  position: fixed; top: 16px; left: 16px; z-index: 13;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.94); color: #0e1430;
+  border: 1px solid rgba(28,40,133,0.18); border-radius: 4px;
+  cursor: pointer; letter-spacing: -0.005em;
+}
+#edit-toggle:hover { background: #fff; }
+
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #0e8a4f; color: #fff;
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 15; letter-spacing: -0.005em;
+}
+#toast.show { opacity: 1; }
+
+/* ===== Print mode (Cmd+P → PDF로 저장) ===== */
+@media print {
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  .viewer { position: static !important; display: block !important; }
+  .stage { box-shadow: none !important; width: 1920px !important; height: auto !important; }
+  .slide-wrap {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important; visibility: visible !important;
+    width: 1920px !important; height: 1080px !important;
+    page-break-after: always; break-after: page;
+    display: block !important;
+  }
+  .slide-wrap:last-child { page-break-after: auto; }
+  .slide {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    transform: none !important;
+  }
+  .nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+  @page { size: 1920px 1080px; margin: 0; }
+}
+</style>
+</head><body>
+<div class="viewer">
+  <div id="stage" class="stage">
+    <div class="slide-wrap" data-idx="1">
+    <section class="slide cover">
+      <div class="cover-kicker" data-edit="meta.event_label">ZEROBASE × 오프라인 설명회</div>
+      <div class="cover-title">
+        <span data-edit="meta.title">경영지원 전 직무</span><br>
+        <em data-edit="meta.title_em">이력서 · 경력기술서 · 자소서 완전 정복</em>
+      </div>
+      <div class="cover-sub" data-edit="meta.subtitle">재무·회계·인사·노무·총무·구매·기획 — 전 직무 심층 커버.</div>
+      <div class="cover-meta">
+        <div class="speaker">
+          <b data-edit="meta.speaker.name">10년차 CJ HR</b>
+          <span data-edit="meta.speaker.title">1부 — 인사담당자 직강 / 2부 — 제로베이스 고객경험팀장 (KT·토스 출신)</span>
+        </div>
+        <div><span data-edit="meta.date">2026.04.30 (목) 20:00</span> · <span data-edit="meta.session">역삼 센터필드 7층</span></div>
+      </div>
+    </section></div><div class="slide-wrap" data-idx="2">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[1].chapter">강의 목표</div>
+      <h2 class="slide-title" data-edit="slides[1].title" data-edit-html="1">오늘 이 자리를 떠날 때 <em>가져가실 것</em></h2>
+      <p class="slide-lede" data-edit="slides[1].lede">강의 목표 4가지.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[1].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[1].cards[0].title">HR 담당자 시선으로 본 이력서</div>
+          <ul><li data-edit="slides[1].cards[0].items[0]">30초 안에 걸러지는 이유</li><li data-edit="slides[1].cards[0].items[1]">통과하는 패턴</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[1].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[1].cards[1].title">직무별 핵심 키워드 완전 정리</div>
+          <ul><li data-edit="slides[1].cards[1].items[0]">재무·회계·인사·노무·총무·구매·기획</li><li data-edit="slides[1].cards[1].items[1]">각 직무 고유 언어</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[1].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[1].cards[2].title">경력기술서 실전 공식</div>
+          <ul><li data-edit="slides[1].cards[2].items[0]">STAR 구조</li><li data-edit="slides[1].cards[2].items[1]">내 경험을 합격 언어로 변환</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[1].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[1].cards[3].title">자소서 차별화 전략</div>
+          <ul><li data-edit="slides[1].cards[3].items[0]">HR이 끝까지 읽는 구조</li><li data-edit="slides[1].cards[3].items[1]">vs 바로 닫는 구조</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">02 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="3">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[2].ch">1부</div>
+      <h1 class="divider-title" data-edit="slides[2].title" data-edit-html="1">HR 담당자가 직접 말하는<br>경영지원 채용의 진실</h1>
+      <p class="divider-sub" data-edit="slides[2].sub">10년차 CJ 인사담당자 직강 — 7개 직무 완전 커버.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">03 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="4">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[3].chapter">1부 인트로</div>
+      <h2 class="slide-title" data-edit="slides[3].title" data-edit-html="1">경영지원 직무, <em>이렇게 구성</em>되어 있습니다</h2>
+      <p class="slide-lede" data-edit="slides[3].lede">오늘 7개 직무를 모두 상세히 다룹니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-7">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[3].cards[0].title">재무</div>
+          <ul><li data-edit="slides[3].cards[0].items[0]">자금·예산·투자</li><li data-edit="slides[3].cards[0].items[1]">결산·현금흐름·ROI·ERP</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[3].cards[1].title">회계</div>
+          <ul><li data-edit="slides[3].cards[1].items[0]">전표·결산·세무</li><li data-edit="slides[3].cards[1].items[1]">분개·세무신고·감사대응</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[3].cards[2].title">인사</div>
+          <ul><li data-edit="slides[3].cards[2].items[0]">채용·평가·급여</li><li data-edit="slides[3].cards[2].items[1]">KPI·TTH·4대보험</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[3].cards[3].title">노무</div>
+          <ul><li data-edit="slides[3].cards[3].items[0]">근태·노사·취업규칙</li><li data-edit="slides[3].cards[3].items[1]">근로기준법·단체협약</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[3].cards[4].title">총무</div>
+          <ul><li data-edit="slides[3].cards[4].items[0]">시설·계약·자산</li><li data-edit="slides[3].cards[4].items[1]">계약관리·자산등록·의전</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[5].num">06</div>
+          <div class="card-title" data-edit="slides[3].cards[5].title">구매</div>
+          <ul><li data-edit="slides[3].cards[5].items[0]">조달·협상·재고</li><li data-edit="slides[3].cards[5].items[1]">RFQ·단가협상·SCM</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[6].num">07</div>
+          <div class="card-title" data-edit="slides[3].cards[6].title">기획</div>
+          <ul><li data-edit="slides[3].cards[6].items[0]">전략·보고·경영분석</li><li data-edit="slides[3].cards[6].items[1]">사업계획·KPI·이사회</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">04 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="5">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[4].chapter">1부 핵심</div>
+      <h2 class="slide-title" data-edit="slides[4].title" data-edit-html="1">HR 담당자는 이력서를 <em>이렇게 봅니다</em></h2>
+      <p class="slide-lede" data-edit="slides[4].lede">평균 열람 시간 30초 — 이 시간 안에 승부가 납니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[4].steps[0].num">0~5초</div>
+            <div class="step-name" data-edit="slides[4].steps[0].name">직무 관련성</div>
+            <div class="step-desc" data-edit="slides[4].steps[0].desc">이 사람이 경영지원 실무를 해봤나? 첫 줄에서 70% 걸러짐</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[4].steps[1].num">5~15초</div>
+            <div class="step-name" data-edit="slides[4].steps[1].name">스펙·경력 스캔</div>
+            <div class="step-desc" data-edit="slides[4].steps[1].desc">학력·회사명·재직기간 — 기본 조건 미충족 시 종료</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[4].steps[2].num">15~30초</div>
+            <div class="step-name" data-edit="slides[4].steps[2].name">성과·키워드</div>
+            <div class="step-desc" data-edit="slides[4].steps[2].desc">직무 고유 언어·수치 성과 — 통과/탈락 결정</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[4].steps[3].num">30초+</div>
+            <div class="step-name" data-edit="slides[4].steps[3].name">전체 정독</div>
+            <div class="step-desc" data-edit="slides[4].steps[3].desc">앞 3단계를 통과한 극소수 — 이게 목표</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">05 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="6">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[5].chapter">1부 — HR이 닫아버리는 패턴</div>
+      <h2 class="slide-title" data-edit="slides[5].title" data-edit-html="1"><em>HR이 바로 닫는 이력서</em> 5가지 패턴</h2>
+      <p class="slide-lede" data-edit="slides[5].lede">실제 검토 현장 사례 — 이 중 하나라도 해당하면 탈락.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[5].cards[0].num">❶</div>
+          <div class="card-title" data-edit="slides[5].cards[0].title">직무 불명확</div>
+          <ul><li data-edit="slides[5].cards[0].items[0]">‘다양한 업무 수행’</li><li data-edit="slides[5].cards[0].items[1]">재무인지 인사인지 모르면 패스</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[5].cards[1].num">❷</div>
+          <div class="card-title" data-edit="slides[5].cards[1].title">성과 없는 나열</div>
+          <ul><li data-edit="slides[5].cards[1].items[0]">‘○○ 업무를 담당했습니다’</li><li data-edit="slides[5].cards[1].items[1]">수치 없으면 차별화 불가</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[5].cards[2].num">❸</div>
+          <div class="card-title" data-edit="slides[5].cards[2].title">직무 키워드 부재</div>
+          <ul><li data-edit="slides[5].cards[2].items[0]">일반 사무직 언어만</li><li data-edit="slides[5].cards[2].items[1]">결산·RFQ·KPI 등 직무 언어 필수</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[5].cards[3].num">❹</div>
+          <div class="card-title" data-edit="slides[5].cards[3].title">지원 동기 공백</div>
+          <ul><li data-edit="slides[5].cards[3].items[0]">‘최선을 다하겠습니다’</li><li data-edit="slides[5].cards[3].items[1]">왜 이 직무·왜 이 회사 없으면 무성의</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[5].cards[4].num">❺</div>
+          <div class="card-title" data-edit="slides[5].cards[4].title">양식 불통일</div>
+          <ul><li data-edit="slides[5].cards[4].items[0]">폰트 혼용·여백 불규칙</li><li data-edit="slides[5].cards[4].items[1]">이력서 자체가 실력의 증명서</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">06 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="7">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[6].ch">직무 1</div>
+      <h1 class="divider-title" data-edit="slides[6].title" data-edit-html="1">재무 직무</h1>
+      <p class="divider-sub" data-edit="slides[6].sub">자금 관리 · 예산 · 투자 분석 · IR · 원가 — 경영 의사결정에 필요한 정보를 생산하는 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">07 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="8">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[7].chapter">재무 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[7].title" data-edit-html="1">재무 — <em>HR이 보는 5가지 기준</em></h2>
+      <p class="slide-lede" data-edit="slides[7].lede">이것을 모르면 재무 직무 지원이 아닙니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[7].cards[0].title">자금 관리</div>
+          <ul><li data-edit="slides[7].cards[0].items[0]">일일 자금 현황</li><li data-edit="slides[7].cards[0].items[1]">여유자금 운용 (RP·MMF)</li><li data-edit="slides[7].cards[0].items[2]">단기 차입·상환</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[7].cards[1].title">예산 수립·관리</div>
+          <ul><li data-edit="slides[7].cards[1].items[0]">연간·중기 예산 편성</li><li data-edit="slides[7].cards[1].items[1]">월별 YTD 분석</li><li data-edit="slides[7].cards[1].items[2]">부서별 배분</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[7].cards[2].title">투자·원가 분석</div>
+          <ul><li data-edit="slides[7].cards[2].items[0]">DCF·NPV·IRR</li><li data-edit="slides[7].cards[2].items[1]">원가 구조 분석</li><li data-edit="slides[7].cards[2].items[2]">절감 기회 발굴</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[7].cards[3].title">재무제표·결산</div>
+          <ul><li data-edit="slides[7].cards[3].items[0]">월·분기·연간 결산</li><li data-edit="slides[7].cards[3].items[1]">연결재무제표</li><li data-edit="slides[7].cards[3].items[2]">회계감사 대응</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[7].cards[4].title">IR·공시</div>
+          <ul><li data-edit="slides[7].cards[4].items[0]">주주·투자자 보고</li><li data-edit="slides[7].cards[4].items[1]">공시 서류 작성</li><li data-edit="slides[7].cards[4].items[2]">애널리스트 대응</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">08 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="9">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[8].chapter">재무 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[8].title" data-edit-html="1">재무 — <em>합격을 가르는 키워드</em></h2>
+      <p class="slide-lede" data-edit="slides[8].lede">키워드 없이는 재무 전문가로 보이지 않습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[8].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[8].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[8].cols[0].items[0]">자금 관리 및 결산 업무를 담당했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[8].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[8].cols[1].title">필수 키워드 + 정량 성과 (합격)</div>
+          <div class="col-lede" data-edit="slides[8].cols[1].lede">월·분기·연결 결산 / NPV·IRR·ROI / ERP(SAP·Oracle) / 현금흐름·BIS</div>
+          <ul><li data-edit="slides[8].cols[1].items[0]">월말 결산 마감 D+2 → D+1 단축</li><li data-edit="slides[8].cols[1].items[1]">연간 자금 운용 320억 관리</li><li data-edit="slides[8].cols[1].items[2]">여유자금 MMF 운용으로 이자수익 연 1.2억</li><li data-edit="slides[8].cols[1].items[3]">ERP(SAP FI) 전표 처리 월 600건</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">09 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="10">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[9].chapter">재무 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[9].title" data-edit-html="1">재무 STAR — <em>신사업 투자 검토</em> 사례</h2>
+      <p class="slide-lede" data-edit="slides[9].lede">이 구조로 경력기술서를 작성하세요.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[9].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[9].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[9].steps[0].desc">신사업 투자 검토 요청 / 분석 기준 부재로 의사결정 지연</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[9].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[9].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[9].steps[1].desc">신규 공장 증설 투자 타당성 분석 + 이사회 보고서 작성</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[9].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[9].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[9].steps[2].desc">DCF NPV·IRR + 시나리오 3개 + 인터뷰 15회 + CFO 사전보고 2회</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[9].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[9].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[9].steps[3].desc">NPV +42억 / IRR 18.3% → 이사회 승인 / 실제 ROI 21%</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">10 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="11">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[10].chapter">재무 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[10].title" data-edit-html="1">재무 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[10].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[10].cards[0].title">재무와 회계의 차이는?</div>
+          <ul><li data-edit="slides[10].cards[0].items[0]">NG: 회계 설명만</li><li data-edit="slides[10].cards[0].items[1]">→ 회계=과거 기록 / 재무=미래 의사결정</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[10].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[10].cards[1].title">NPV 계산·활용 경험은?</div>
+          <ul><li data-edit="slides[10].cards[1].items[0]">NG: 공식만 외우기</li><li data-edit="slides[10].cards[1].items[1]">→ 본인 분석 프로젝트와 결과 연결</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[10].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[10].cards[2].title">영업이익 급감 분석은?</div>
+          <ul><li data-edit="slides[10].cards[2].items[0]">NG: ‘조사해보겠습니다’</li><li data-edit="slides[10].cards[2].items[1]">→ 매출·원가·판관비 분해 → 가설 검증</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[10].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[10].cards[3].title">ERP 사용 경험은?</div>
+          <ul><li data-edit="slides[10].cards[3].items[0]">NG: ‘회사에서 다 썼습니다’</li><li data-edit="slides[10].cards[3].items[1]">→ 시스템·모듈·업무 구체적으로</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">11 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="12">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[11].ch">직무 2</div>
+      <h1 class="divider-title" data-edit="slides[11].title" data-edit-html="1">회계 직무</h1>
+      <p class="divider-sub" data-edit="slides[11].sub">전표 처리 · 결산 · 세무 신고 · 감사 대응 — 기업의 재무 현황을 정확히 기록·해석하는 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">12 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="13">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[12].chapter">회계 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[12].title" data-edit-html="1">회계 — <em>HR이 보는 5가지 기준</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[12].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[12].cards[0].title">전표 처리</div>
+          <ul><li data-edit="slides[12].cards[0].items[0]">일상 거래 분개·입력</li><li data-edit="slides[12].cards[0].items[1]">ERP 반영</li><li data-edit="slides[12].cards[0].items[2]">증빙서류 관리</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[12].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[12].cards[1].title">결산·마감</div>
+          <ul><li data-edit="slides[12].cards[1].items[0]">월·분기·연간 결산</li><li data-edit="slides[12].cards[1].items[1]">P&L·B/S 작성</li><li data-edit="slides[12].cards[1].items[2]">체크리스트 운영</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[12].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[12].cards[2].title">세무 신고</div>
+          <ul><li data-edit="slides[12].cards[2].items[0]">부가가치세·법인세</li><li data-edit="slides[12].cards[2].items[1]">원천세 납부</li><li data-edit="slides[12].cards[2].items[2]">세금계산서</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[12].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[12].cards[3].title">감사 대응</div>
+          <ul><li data-edit="slides[12].cards[3].items[0]">외부감사 자료</li><li data-edit="slides[12].cards[3].items[1]">내부감사 지원</li><li data-edit="slides[12].cards[3].items[2]">지적사항 개선</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[12].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[12].cards[4].title">고정자산 관리</div>
+          <ul><li data-edit="slides[12].cards[4].items[0]">취득·감가상각·처분</li><li data-edit="slides[12].cards[4].items[1]">자산 대장</li><li data-edit="slides[12].cards[4].items[2]">리스 회계</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">13 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="14">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[13].chapter">회계 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[13].title" data-edit-html="1">회계 — <em>정밀함이 핵심</em></h2>
+      <p class="slide-lede" data-edit="slides[13].lede">숫자와 시스템 경험을 구체적으로.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[13].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[13].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[13].cols[0].items[0]">회계 결산 및 세무 업무를 담당했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[13].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[13].cols[1].title">정밀함 표현 (합격)</div>
+          <div class="col-lede" data-edit="slides[13].cols[1].lede">분개·전표 / 결산 D+ / 부가세·법인세 / ERP 모듈 / 감사 대응 / IFRS·K-GAAP</div>
+          <ul><li data-edit="slides[13].cols[1].items[0]">월말 결산 D+3 → D+1.5 단축 (체크리스트 12단계 표준화)</li><li data-edit="slides[13].cols[1].items[1]">부가세 신고 12회 무오류 완료</li><li data-edit="slides[13].cols[1].items[2]">ERP(더존 ICUBE) 전표 800건/월 · 오류율 0% 6개월</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">14 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="15">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[14].chapter">회계 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[14].title" data-edit-html="1">회계 STAR — <em>결산 마감 단축</em> 사례</h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[14].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[14].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[14].steps[0].desc">결산 마감 D+4 / 오류 월 평균 3건으로 재작업 반복</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[14].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[14].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[14].steps[1].desc">결산 프로세스 표준화 + 마감 단축 + 오류율 0% 목표</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[14].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[14].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[14].steps[2].desc">전표 처리 우선순위 재설계 + ERP 자동화 2건 + 체크리스트 12단계 + 팀원 교육</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[14].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[14].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[14].steps[3].desc">마감 D+4→D+1.5 / 오류 3→0건 6개월 / 감사 지적 0건</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">15 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="16">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[15].chapter">회계 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[15].title" data-edit-html="1">회계 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[15].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[15].cards[0].title">발생주의 vs 현금주의</div>
+          <ul><li data-edit="slides[15].cards[0].items[0]">NG: 막연한 ‘회계에서 쓰는 방식’</li><li data-edit="slides[15].cards[0].items[1]">→ 실무는 발생주의 기준</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[15].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[15].cards[1].title">전기오류 발견 시 처리</div>
+          <ul><li data-edit="slides[15].cards[1].items[0]">NG: 그냥 수정</li><li data-edit="slides[15].cards[1].items[1]">→ 중요성 판단 → 당기/전기 분개 → 감사인 협의</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[15].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[15].cards[2].title">부가세 신고·실수 경험</div>
+          <ul><li data-edit="slides[15].cards[2].items[0]">NG: ‘없습니다’ / ‘알아서 처리’</li><li data-edit="slides[15].cards[2].items[1]">→ 구체적 경험 + 수정 신고까지</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[15].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[15].cards[3].title">ERP 결산 마감 어려움</div>
+          <ul><li data-edit="slides[15].cards[3].items[0]">NG: ‘다 어렵습니다’</li><li data-edit="slides[15].cards[3].items[1]">→ 미결 항목·부서 자료 취합 등</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">16 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="17">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[16].ch">직무 3</div>
+      <h1 class="divider-title" data-edit="slides[16].title" data-edit-html="1">인사 직무</h1>
+      <p class="divider-sub" data-edit="slides[16].sub">채용 · 평가 · 급여 · 교육 · 조직 문화 — 조직이 성과를 낼 수 있도록 인적 자원을 설계하는 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">17 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="18">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[17].chapter">인사 — 6가지 영역</div>
+      <h2 class="slide-title" data-edit="slides[17].title" data-edit-html="1">인사 — <em>6가지 핵심 영역</em></h2>
+      <p class="slide-lede" data-edit="slides[17].lede">범위가 넓습니다 — 지원 포지션에 맞춰 집중하세요.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-6">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[17].cards[0].title">채용·온보딩</div>
+          <ul><li data-edit="slides[17].cards[0].items[0]">JD 작성·전형 설계</li><li data-edit="slides[17].cards[0].items[1]">TTH 관리·ATS</li><li data-edit="slides[17].cards[0].items[2]">신입 온보딩</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[17].cards[1].title">평가·보상</div>
+          <ul><li data-edit="slides[17].cards[1].items[0]">KPI·MBO 설계</li><li data-edit="slides[17].cards[1].items[1]">고과·인센티브</li><li data-edit="slides[17].cards[1].items[2]">이의신청 처리</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[17].cards[2].title">급여·복리후생</div>
+          <ul><li data-edit="slides[17].cards[2].items[0]">월급 계산</li><li data-edit="slides[17].cards[2].items[1]">4대보험·퇴직연금</li><li data-edit="slides[17].cards[2].items[2]">복리후생 운영</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[17].cards[3].title">교육·HRD</div>
+          <ul><li data-edit="slides[17].cards[3].items[0]">역량 진단</li><li data-edit="slides[17].cards[3].items[1]">교육 프로그램</li><li data-edit="slides[17].cards[3].items[2]">외부 기관 계약</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[17].cards[4].title">HR 시스템·데이터</div>
+          <ul><li data-edit="slides[17].cards[4].items[0]">HRIS 운영</li><li data-edit="slides[17].cards[4].items[1]">헤드카운트</li><li data-edit="slides[17].cards[4].items[2]">데이터 분석</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[17].cards[5].num">06</div>
+          <div class="card-title" data-edit="slides[17].cards[5].title">조직 문화·진단</div>
+          <ul><li data-edit="slides[17].cards[5].items[0]">eNPS 조사</li><li data-edit="slides[17].cards[5].items[1]">조직 진단</li><li data-edit="slides[17].cards[5].items[2]">핵심가치 내재화</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">18 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="19">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[18].chapter">인사 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[18].title" data-edit-html="1">인사 — <em>숫자 없는 이력서는 통과 안 됨</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[18].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[18].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[18].cols[0].items[0]">채용 업무와 평가 업무를 수행했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[18].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[18].cols[1].title">정량 성과 (합격)</div>
+          <div class="col-lede" data-edit="slides[18].cols[1].lede">채용·TTH / KPI·MBO / 4대보험·급여 / 이직률·eNPS / ATS·HRIS / 교육 ROI</div>
+          <ul><li data-edit="slides[18].cols[1].items[0]">상반기 공채 운영 (서류 840명 → 최종 15명 선발)</li><li data-edit="slides[18].cols[1].items[1]">TTH 평균 52일 → 38일 단축</li><li data-edit="slides[18].cols[1].items[2]">KPI 평가표 재설계로 이의신청율 23% → 7% 감소</li><li data-edit="slides[18].cols[1].items[3]">퇴직연금 DC형 전환 100명 완료</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">19 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="20">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[19].chapter">인사 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[19].title" data-edit-html="1">인사 STAR — <em>채용 프로세스 개선</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[19].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[19].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[19].steps[0].desc">공채 TTH 52일 / 최종합격자 3명 경쟁사 오퍼 수락 이탈</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[19].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[19].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[19].steps[1].desc">TTH 30% 단축 + 최종합격자 이탈률 0% 달성</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[19].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[19].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[19].steps[2].desc">AI 스크리닝 도입(사람인 Enterprise) + 면접 캘린더 통합 + 면접관 사전교육 + 오퍼레터 D+1</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[19].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[19].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[19].steps[3].desc">TTH 52→36일 (-31%) / 이탈률 23%→0% / 만족도 4.2→4.8</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">20 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="21">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[20].chapter">인사 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[20].title" data-edit-html="1">인사 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[20].cards[0].title">채용에서 중요한 역량은?</div>
+          <ul><li data-edit="slides[20].cards[0].items[0]">NG: ‘열심히 하는 사람’</li><li data-edit="slides[20].cards[0].items[1]">→ 직무 역량+문화 적합성 균형</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[20].cards[1].title">좋은 KPI vs 나쁜 KPI</div>
+          <ul><li data-edit="slides[20].cards[1].items[0]">NG: 교과서 내용 나열</li><li data-edit="slides[20].cards[1].items[1]">→ SMART + 행동 변화 유도 KPI</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[20].cards[2].title">임직원 불만 처리 경험</div>
+          <ul><li data-edit="slides[20].cards[2].items[0]">NG: ‘잘 달래줬습니다’</li><li data-edit="slides[20].cards[2].items[1]">→ 경청 → 사실 확인 → 제도 내 해결</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[20].cards[3].title">인사 데이터 의사결정 지원</div>
+          <ul><li data-edit="slides[20].cards[3].items[0]">NG: ‘데이터 관리를 했습니다’</li><li data-edit="slides[20].cards[3].items[1]">→ 분석 → 개선 제안 → 변화</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">21 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="22">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[21].ch">직무 4</div>
+      <h1 class="divider-title" data-edit="slides[21].title" data-edit-html="1">노무 직무</h1>
+      <p class="divider-sub" data-edit="slides[21].sub">근로계약 · 근태 · 노사관계 · 산재 · 취업규칙 — 법률 지식과 실무 판단이 동시에 필요한 고전문 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">22 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="23">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[22].chapter">노무 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[22].title" data-edit-html="1">노무 — <em>HR이 보는 5가지 기준</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[22].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[22].cards[0].title">근로계약·취업규칙</div>
+          <ul><li data-edit="slides[22].cards[0].items[0]">근로계약서 관리</li><li data-edit="slides[22].cards[0].items[1]">취업규칙 개정·신고</li><li data-edit="slides[22].cards[0].items[2]">복무 규정</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[22].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[22].cards[1].title">근태·휴가</div>
+          <ul><li data-edit="slides[22].cards[1].items[0]">출퇴근 기록</li><li data-edit="slides[22].cards[1].items[1]">연차 발생·사용</li><li data-edit="slides[22].cards[1].items[2]">육아휴직·산재</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[22].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[22].cards[2].title">노사 협의</div>
+          <ul><li data-edit="slides[22].cards[2].items[0]">노사협의회 운영</li><li data-edit="slides[22].cards[2].items[1]">단체협약 교섭</li><li data-edit="slides[22].cards[2].items[2]">쟁의 대응</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[22].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[22].cards[3].title">산재·4대보험</div>
+          <ul><li data-edit="slides[22].cards[3].items[0]">산재 신고·처리</li><li data-edit="slides[22].cards[3].items[1]">4대보험 신고</li><li data-edit="slides[22].cards[3].items[2]">고용보험 지원금</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[22].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[22].cards[4].title">임금체계</div>
+          <ul><li data-edit="slides[22].cards[4].items[0]">포괄임금 적법성</li><li data-edit="slides[22].cards[4].items[1]">최저임금 준수</li><li data-edit="slides[22].cards[4].items[2]">시간외 수당</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">23 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="24">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[23].chapter">노무 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[23].title" data-edit-html="1">노무 — <em>법률+실무로 전문성 증명</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[23].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[23].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[23].cols[0].items[0]">노무 업무 전반을 담당했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[23].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[23].cols[1].title">처리 건수·법률 키워드 (합격)</div>
+          <div class="col-lede" data-edit="slides[23].cols[1].lede">근로기준법·노동조합법 / 단체협약 / 산재 / 포괄임금 / 4대보험</div>
+          <ul><li data-edit="slides[23].cols[1].items[0]">4대보험 신고 연간 120건 처리 (취득·상실·정산)</li><li data-edit="slides[23].cols[1].items[1]">산재 처리 8건 무사고 (평균 5일 이내)</li><li data-edit="slides[23].cols[1].items[2]">단체협약 교섭 2회 참여 → 무분규 타결</li><li data-edit="slides[23].cols[1].items[3]">취업규칙 개정 2회 노동부 신고 완료</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">24 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="25">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[24].chapter">노무 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[24].title" data-edit-html="1">노무 STAR — <em>포괄임금 근로감독 대응</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[24].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[24].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[24].steps[0].desc">포괄임금제 운용 중 근로감독 통보 / 시간외 미지급 이슈 가능성</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[24].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[24].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[24].steps[1].desc">포괄임금 적법성 검토 + 임금체계 개선 + 감독 대응</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[24].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[24].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[24].steps[2].desc">대상 50명 근무시간 분석 + 법무·외부 노무사 협업 + 임금대장 재정비</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[24].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[24].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[24].steps[3].desc">시정명령 0건 / 개선안 임원 승인 / 임금 민원 0건</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">25 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="26">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[25].ch">직무 5</div>
+      <h1 class="divider-title" data-edit="slides[25].title" data-edit-html="1">총무 직무</h1>
+      <p class="divider-sub" data-edit="slides[25].sub">시설 · 계약 · 자산 · 의전 · 행사 — ‘잡일’이 아니라 회사 운영의 인프라를 총괄하는 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">26 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="27">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[26].chapter">총무 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[26].title" data-edit-html="1">총무 — <em>HR이 보는 5가지 기준</em></h2>
+      <p class="slide-lede" data-edit="slides[26].lede">‘다양한 업무’가 가장 많이 나오는 직무 — 그래서 더 구체적이어야 합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[26].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[26].cards[0].title">시설·환경</div>
+          <ul><li data-edit="slides[26].cards[0].items[0]">사옥 운영</li><li data-edit="slides[26].cards[0].items[1]">청소·보안·주차</li><li data-edit="slides[26].cards[0].items[2]">임차·공사 발주</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[26].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[26].cards[1].title">계약·법인</div>
+          <ul><li data-edit="slides[26].cards[1].items[0]">계약 검토·갱신</li><li data-edit="slides[26].cards[1].items[1]">법인 등기·인허가</li><li data-edit="slides[26].cards[1].items[2]">표준 계약서</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[26].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[26].cards[2].title">자산 관리</div>
+          <ul><li data-edit="slides[26].cards[2].items[0]">취득·등록·폐기</li><li data-edit="slides[26].cards[2].items[1]">재물조사</li><li data-edit="slides[26].cards[2].items[2]">차량·비품</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[26].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[26].cards[3].title">행사·의전</div>
+          <ul><li data-edit="slides[26].cards[3].items[0]">주총·이사회·창립</li><li data-edit="slides[26].cards[3].items[1]">경영진 의전</li><li data-edit="slides[26].cards[3].items[2]">VIP 응대</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[26].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[26].cards[4].title">비용 관리·절감</div>
+          <ul><li data-edit="slides[26].cards[4].items[0]">시설비·소모품 예산</li><li data-edit="slides[26].cards[4].items[1]">공급업체 단가 협상</li><li data-edit="slides[26].cards[4].items[2]">절감 활동</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">27 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="28">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[27].chapter">총무 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[27].title" data-edit-html="1">총무 — <em>인프라 전문가</em>로 포지셔닝</h2>
+      <p class="slide-lede" data-edit="slides[27].lede">규모·건수·절감률로 증명.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[27].cols[0].num">흔한 실수 3가지</div>
+          <div class="col-title" data-edit="slides[27].cols[0].title">BEFORE (탈락)</div>
+          
+          <ul><li data-edit="slides[27].cols[0].items[0]">‘다양한 업무를 담당했습니다’ — 무엇·얼마나 안 보임</li><li data-edit="slides[27].cols[0].items[1]">‘비용 절감 활동을 진행했습니다’ — 얼마나 절감했는지 없음</li><li data-edit="slides[27].cols[0].items[2]">‘계약 관련 업무를 지원했습니다’ — 지원/주도 모호</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[27].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[27].cols[1].title">구체·정량 (합격)</div>
+          
+          <ul><li data-edit="slides[27].cols[1].items[0]">연면적 3,500㎡ 사옥 운영 / 시설비 8% 절감 (2,200만원)</li><li data-edit="slides[27].cols[1].items[1]">연간 계약 120건 관리 / 임대차 갱신 3건 100% 조건 개선</li><li data-edit="slides[27].cols[1].items[2]">표준 계약서 12종 정비·전산화</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">28 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="29">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[28].chapter">총무 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[28].title" data-edit-html="1">총무 STAR — <em>구매 리드타임 단축</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[28].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[28].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[28].steps[0].desc">사무용품 발주~수령 7일 / 부서별 중복 구매 + 예산 초과 반복</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[28].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[28].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[28].steps[1].desc">리드타임 단축 + 연간 사무용품 비용 15% 절감</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[28].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[28].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[28].steps[2].desc">공급업체 3→1 단일화 + 노션 DB 발주 시스템 + 재고 기준량 + 월 1회 실사</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[28].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[28].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[28].steps[3].desc">리드타임 7→2일 / 비용 18% 절감 (800만원) / 중복 0건</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">29 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="30">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[29].chapter">총무 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[29].title" data-edit-html="1">총무 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[29].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[29].cards[0].title">긴박했던 상황은?</div>
+          <ul><li data-edit="slides[29].cards[0].items[0]">NG: ‘힘든 게 없었습니다’</li><li data-edit="slides[29].cards[0].items[1]">→ 시설 긴급·주총 등 + 해결 방법</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[29].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[29].cards[1].title">계약서 검토 시 중요 항목</div>
+          <ul><li data-edit="slides[29].cards[1].items[0]">NG: ‘법무팀이 합니다’</li><li data-edit="slides[29].cards[1].items[1]">→ 기간·자동갱신·위약·해지·물가연동</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[29].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[29].cards[2].title">비용 절감 직접 시도 경험</div>
+          <ul><li data-edit="slides[29].cards[2].items[0]">NG: ‘절약하려고 노력했습니다’</li><li data-edit="slides[29].cards[2].items[1]">→ 재협상·통합·재고 + 절감 금액</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[29].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[29].cards[3].title">행사 기획 경험</div>
+          <ul><li data-edit="slides[29].cards[3].items[0]">NG: ‘행사 보조’</li><li data-edit="slides[29].cards[3].items[1]">→ 규모·예산·기간·역할 STAR</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">30 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="31">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[30].ch">직무 6</div>
+      <h1 class="divider-title" data-edit="slides[30].title" data-edit-html="1">구매·SCM 직무</h1>
+      <p class="divider-sub" data-edit="slides[30].sub">공급업체 관리 · 견적·협상 · 재고 · 원가 절감 — 원가 경쟁력과 공급 안정성을 동시에 확보하는 전략 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">31 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="32">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[31].chapter">구매 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[31].title" data-edit-html="1">구매·SCM — <em>HR이 보는 5가지 기준</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[31].cards[0].title">공급업체 평가</div>
+          <ul><li data-edit="slides[31].cards[0].items[0]">Vendor 리스트</li><li data-edit="slides[31].cards[0].items[1]">품질·납기·가격·재무 평가</li><li data-edit="slides[31].cards[0].items[2]">리스크 모니터링</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[31].cards[1].title">견적·협상</div>
+          <ul><li data-edit="slides[31].cards[1].items[0]">RFQ 발송</li><li data-edit="slides[31].cards[1].items[1]">단가 협상</li><li data-edit="slides[31].cards[1].items[2]">계약 체결</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[31].cards[2].title">재고 관리</div>
+          <ul><li data-edit="slides[31].cards[2].items[0]">발주점·안전재고</li><li data-edit="slides[31].cards[2].items[1]">재고 회전율</li><li data-edit="slides[31].cards[2].items[2]">재고 실사</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[31].cards[3].title">원가 절감·TCO</div>
+          <ul><li data-edit="slides[31].cards[3].items[0]">총비용 분석</li><li data-edit="slides[31].cards[3].items[1]">대체재 발굴</li><li data-edit="slides[31].cards[3].items[2]">절감률 KPI</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[31].cards[4].title">납기·품질</div>
+          <ul><li data-edit="slides[31].cards[4].items[0]">불이행 관리</li><li data-edit="slides[31].cards[4].items[1]">클레임 처리</li><li data-edit="slides[31].cards[4].items[2]">공급업체 피드백</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">32 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="33">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[32].chapter">구매 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[32].title" data-edit-html="1">구매 — <em>단가 절감률·관리 건수</em>로 증명</h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[32].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[32].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[32].cols[0].items[0]">구매 업무를 담당하며 원가 절감 활동을 진행했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[32].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[32].cols[1].title">정량 성과 (합격)</div>
+          <div class="col-lede" data-edit="slides[32].cols[1].lede">RFQ / 단가 절감률(%) / 공급업체 수 / 재고 회전율 / 납기 불이행률 / TCO·SCM</div>
+          <ul><li data-edit="slides[32].cols[1].items[0]">공급업체 18개사 RFQ → 단가 평균 9.2% 절감 (연 1.8억)</li><li data-edit="slides[32].cols[1].items[1]">재고 회전율 4.1 → 6.3회/년 개선</li><li data-edit="slides[32].cols[1].items[2]">납기 불이행률 8% → 2% 감소</li><li data-edit="slides[32].cols[1].items[3]">공급업체 정기 평가 체계 신규 수립</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">33 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="34">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[33].chapter">구매 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[33].title" data-edit-html="1">구매 STAR — <em>대체 공급업체 발굴</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[33].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[33].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[33].steps[0].desc">원자재 단가 상승 / 기존 공급업체 의존도 95%</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[33].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[33].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[33].steps[1].desc">대체 공급업체 발굴 + 연간 원가 2억원+ 절감</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[33].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[33].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[33].steps[2].desc">국내·해외 25개사 RFQ + 샘플 평가 2라운드 + 종합 평가표 + 상위 3개사 협상</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[33].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[33].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[33].steps[3].desc">단가 11% 절감 (연 2.1억) / 불이행 6%→1.2% / 의존도 95%→60%</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">34 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="35">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[34].chapter">구매 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[34].title" data-edit-html="1">구매·SCM 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[34].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[34].cards[0].title">구매 협상에서 가장 중요한 것</div>
+          <ul><li data-edit="slides[34].cards[0].items[0]">NG: ‘가격을 깎는 것’</li><li data-edit="slides[34].cards[0].items[1]">→ BATNA + 원가 구조 + 장기 파트너십</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[34].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[34].cards[1].title">재고 발주점 설정 방법</div>
+          <ul><li data-edit="slides[34].cards[1].items[0]">NG: 공식만 외우기</li><li data-edit="slides[34].cards[1].items[1]">→ 리드타임×사용량+안전재고 + 본인 사례</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[34].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[34].cards[2].title">공급업체 갈등 해결 경험</div>
+          <ul><li data-edit="slides[34].cards[2].items[0]">NG: ‘잘 해결했습니다’</li><li data-edit="slides[34].cards[2].items[1]">→ 사실 확인 → 계약 기준 → Win-Win</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[34].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[34].cards[3].title">TCO 관점 구매 결정 경험</div>
+          <ul><li data-edit="slides[34].cards[3].items[0]">NG: ‘가장 쌌습니다’</li><li data-edit="slides[34].cards[3].items[1]">→ 물류·품질·재고까지 포함 분석</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">35 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="36">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[35].ch">직무 7</div>
+      <h1 class="divider-title" data-edit="slides[35].title" data-edit-html="1">경영기획 직무</h1>
+      <p class="divider-sub" data-edit="slides[35].sub">전략 · 사업계획 · 경영분석 · KPI · 이사회 — CEO·임원의 의사결정을 지원하는 직무.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">36 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="37">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[36].chapter">경영기획 — 핵심 역할</div>
+      <h2 class="slide-title" data-edit="slides[36].title" data-edit-html="1">경영기획 — <em>HR이 보는 5가지 기준</em></h2>
+      <p class="slide-lede" data-edit="slides[36].lede">‘경영지원’이 아닌 ‘전략 파트너’로 포지셔닝.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[36].cards[0].title">사업계획 수립</div>
+          <ul><li data-edit="slides[36].cards[0].items[0]">연간·중기 계획 총괄</li><li data-edit="slides[36].cards[0].items[1]">부서 목표 조율</li><li data-edit="slides[36].cards[0].items[2]">YTD 분석</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[36].cards[1].title">경영분석·보고</div>
+          <ul><li data-edit="slides[36].cards[1].items[0]">손익 분석</li><li data-edit="slides[36].cards[1].items[1]">월간 경영보고서</li><li data-edit="slides[36].cards[1].items[2]">이사회 자료</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[36].cards[2].title">KPI 설계·관리</div>
+          <ul><li data-edit="slides[36].cards[2].items[0]">성과지표 설계</li><li data-edit="slides[36].cards[2].items[1]">달성률 모니터링</li><li data-edit="slides[36].cards[2].items[2]">시사점 도출</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[36].cards[3].title">M&A·신사업</div>
+          <ul><li data-edit="slides[36].cards[3].items[0]">타당성 분석(DCF)</li><li data-edit="slides[36].cards[3].items[1]">M&A 실사 지원</li><li data-edit="slides[36].cards[3].items[2]">ROI 시뮬레이션</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[36].cards[4].title">의사결정 지원</div>
+          <ul><li data-edit="slides[36].cards[4].items[0]">시나리오 분석</li><li data-edit="slides[36].cards[4].items[1]">벤치마킹·대안</li><li data-edit="slides[36].cards[4].items[2]">실행 계획</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">37 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="38">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[37].chapter">경영기획 — 이력서 전략</div>
+      <h2 class="slide-title" data-edit="slides[37].title" data-edit-html="1">경영기획 — <em>‘분석’ → ‘이 결정이 났다’</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[37].cols[0].num">BEFORE</div>
+          <div class="col-title" data-edit="slides[37].cols[0].title">흔한 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[37].cols[0].items[0]">경영 현황 분석 및 보고서 작성 업무를 수행했습니다.</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[37].cols[1].num">AFTER</div>
+          <div class="col-title" data-edit="slides[37].cols[1].title">결정·임팩트 (합격)</div>
+          <div class="col-lede" data-edit="slides[37].cols[1].lede">사업계획 / 이사회 자료 / KPI / 오차율 / NPV·IRR / 시나리오</div>
+          <ul><li data-edit="slides[37].cols[1].items[0]">월간 경영실적 보고서 12개월 D+2 제출 (기존 D+4)</li><li data-edit="slides[37].cols[1].items[1]">사업계획 vs 실적 오차율 3% 이내 유지</li><li data-edit="slides[37].cols[1].items[2]">신사업 타당성 분석 3건 → 1건 투자 결정 (ROI 28%)</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">38 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="39">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[38].chapter">경영기획 — STAR 실전</div>
+      <h2 class="slide-title" data-edit="slides[38].title" data-edit-html="1">경영기획 STAR — <em>경쟁 대응 사업계획 수정</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[38].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[38].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[38].steps[0].desc">경쟁사 신제품 출시 / 점유율 하락 / 사업계획 달성 불확실</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[38].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[38].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[38].steps[1].desc">시나리오 분석 + 수정 사업계획 → 이사회 보고</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[38].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[38].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[38].steps[2].desc">점유율·가격·이탈 데이터 분석 + 시나리오 3개 + 부서 협의 14회 + 보고자료 작성</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[38].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[38].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[38].steps[3].desc">이사회 D+7 승인 / 오차율 2.1% 달성 / 보고 만족도 4.7/5</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">39 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="40">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[39].chapter">경영기획 — 면접 질문</div>
+      <h2 class="slide-title" data-edit="slides[39].title" data-edit-html="1">경영기획 면접 — <em>자주 나오는 질문</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[39].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[39].cards[0].title">사업계획 수립 시 중요한 것</div>
+          <ul><li data-edit="slides[39].cards[0].items[0]">NG: ‘열심히 분석’</li><li data-edit="slides[39].cards[0].items[1]">→ 시장+내부 역량+실행 가능성 균형</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[39].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[39].cards[1].title">ROI vs IRR 차이·언제 사용</div>
+          <ul><li data-edit="slides[39].cards[1].items[0]">NG: 공식만</li><li data-edit="slides[39].cards[1].items[1]">→ 장기는 IRR / 단기 비교는 ROI</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[39].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[39].cards[2].title">의미없는 KPI 사례</div>
+          <ul><li data-edit="slides[39].cards[2].items[0]">NG: ‘없습니다’</li><li data-edit="slides[39].cards[2].items[1]">→ 측정 불가·행동 변화 없는 KPI 개선 경험</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[39].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[39].cards[3].title">임원에게 나쁜 소식 보고</div>
+          <ul><li data-edit="slides[39].cards[3].items[0]">NG: ‘좋게 보이게’</li><li data-edit="slides[39].cards[3].items[1]">→ 사실 → 원인 → 대안, 감추지 않고</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">40 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="41">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[40].ch">공통 1</div>
+      <h1 class="divider-title" data-edit="slides[40].title" data-edit-html="1">경력기술서<br>STAR 구조의 원칙</h1>
+      <p class="divider-sub" data-edit="slides[40].sub">신입·경력 모두 동일하게 적용됩니다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">41 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="42">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[41].chapter">STAR 원칙</div>
+      <h2 class="slide-title" data-edit="slides[41].title" data-edit-html="1">STAR — <em>경력기술서의 4단계</em></h2>
+      <p class="slide-lede" data-edit="slides[41].lede">R(결과)은 반드시 숫자로 — %·건수·금액·기간·비율. 숫자가 없으면 STAR가 아닙니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[41].steps[0].num">S</div>
+            <div class="step-name" data-edit="slides[41].steps[0].name">Situation</div>
+            <div class="step-desc" data-edit="slides[41].steps[0].desc">어떤 배경·환경에서 이 일이 시작됐나?<br>예: 기존 공급업체 계약 만료로 원자재 조달 리스크 발생</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[41].steps[1].num">T</div>
+            <div class="step-name" data-edit="slides[41].steps[1].name">Task</div>
+            <div class="step-desc" data-edit="slides[41].steps[1].desc">내가 맡은 역할과 해결할 문제는?<br>예: 대체 공급업체 3개사 발굴·단가 협상 완료</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[41].steps[2].num">A</div>
+            <div class="step-name" data-edit="slides[41].steps[2].name">Action</div>
+            <div class="step-desc" data-edit="slides[41].steps[2].desc">구체적으로 내가 한 행동은?<br>예: RFQ → 샘플 평가 → 가격 협상 2라운드</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[41].steps[3].num">R</div>
+            <div class="step-name" data-edit="slides[41].steps[3].name">Result</div>
+            <div class="step-desc" data-edit="slides[41].steps[3].desc">숫자로 표현 가능한 결과는?<br>예: 단가 12% 절감 / 납기 안정성 100%</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">42 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="43">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[42].chapter">신입에게도 경력기술서가 필요한 이유</div>
+      <h2 class="slide-title" data-edit="slides[42].title" data-edit-html="1"><em>없는 경력을 만드는 게 아니라, 있는 경험을 번역</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[42].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[42].cards[0].title">학생회 예산 → 재무·회계</div>
+          <ul><li data-edit="slides[42].cards[0].items[0]">✕ 학생회에서 회계 업무를 맡았습니다</li><li data-edit="slides[42].cards[0].items[1]">○ 연간 2,400만원 예산 수립·집행·결산, 분기 실적 보고서, 지출 투명 공개 시스템</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[42].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[42].cards[1].title">동아리 총무 → 총무</div>
+          <ul><li data-edit="slides[42].cards[1].items[0]">✕ 동아리 총무로 활동했습니다</li><li data-edit="slides[42].cards[1].items[1]">○ 40명 동아리 비품·행사 계약 12건 관리, 총무비 20% 절감, 비품 대장 엑셀 전산화</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[42].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[42].cards[2].title">구매팀 인턴 → 구매</div>
+          <ul><li data-edit="slides[42].cards[2].items[0]">✕ 구매팀 인턴으로 다양한 업무 보조</li><li data-edit="slides[42].cards[2].items[1]">○ 단가 비교표 18개사 작성, RFQ 15건 처리, 구매 대장 DB화로 검색 60% 단축</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">43 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="44">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[43].chapter">직무별 핵심 키워드 총정리</div>
+      <h2 class="slide-title" data-edit="slides[43].title" data-edit-html="1"><em>이 키워드가 없으면</em> 전문가로 보이지 않는다</h2>
+      <p class="slide-lede" data-edit="slides[43].lede">언어가 곧 전문성입니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-7">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[0].num">재무</div>
+          <div class="card-title" data-edit="slides[43].cards[0].title">재무</div>
+          <ul><li data-edit="slides[43].cards[0].items[0]">결산·현금흐름·예산</li><li data-edit="slides[43].cards[0].items[1]">NPV·IRR·ROI</li><li data-edit="slides[43].cards[0].items[2]">ERP(SAP·오라클)</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[1].num">회계</div>
+          <div class="card-title" data-edit="slides[43].cards[1].title">회계</div>
+          <ul><li data-edit="slides[43].cards[1].items[0]">분개·전표·세무신고</li><li data-edit="slides[43].cards[1].items[1]">감사 대응·부가세</li><li data-edit="slides[43].cards[1].items[2]">더존·재무제표·IFRS</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[2].num">인사</div>
+          <div class="card-title" data-edit="slides[43].cards[2].title">인사</div>
+          <ul><li data-edit="slides[43].cards[2].items[0]">채용·KPI·MBO·TTH</li><li data-edit="slides[43].cards[2].items[1]">온보딩·4대보험</li><li data-edit="slides[43].cards[2].items[2]">ATS·이직률·eNPS</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[3].num">노무</div>
+          <div class="card-title" data-edit="slides[43].cards[3].title">노무</div>
+          <ul><li data-edit="slides[43].cards[3].items[0]">근로기준법·노조법</li><li data-edit="slides[43].cards[3].items[1]">단체협약·취업규칙</li><li data-edit="slides[43].cards[3].items[2]">산재·포괄임금</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[4].num">총무</div>
+          <div class="card-title" data-edit="slides[43].cards[4].title">총무</div>
+          <ul><li data-edit="slides[43].cards[4].items[0]">계약관리·자산등록</li><li data-edit="slides[43].cards[4].items[1]">재물조사·시설운영</li><li data-edit="slides[43].cards[4].items[2]">비용절감·의전</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[5].num">구매</div>
+          <div class="card-title" data-edit="slides[43].cards[5].title">구매</div>
+          <ul><li data-edit="slides[43].cards[5].items[0]">RFQ·단가협상</li><li data-edit="slides[43].cards[5].items[1]">재고회전율·TCO</li><li data-edit="slides[43].cards[5].items[2]">SCM·납기관리</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[43].cards[6].num">기획</div>
+          <div class="card-title" data-edit="slides[43].cards[6].title">기획</div>
+          <ul><li data-edit="slides[43].cards[6].items[0]">사업계획·KPI</li><li data-edit="slides[43].cards[6].items[1]">경영분석·이사회</li><li data-edit="slides[43].cards[6].items[2]">투자검토·시나리오</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">44 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="45">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[44].chapter">자소서 — HR이 끝까지 읽는 vs 닫는</div>
+      <h2 class="slide-title" data-edit="slides[44].title" data-edit-html="1">자소서 — <em>‘추상’과 ‘구체’의 차이</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[44].cols[0].num">❌ 닫는 자소서</div>
+          <div class="col-title" data-edit="slides[44].cols[0].title">추상적 표현 (탈락)</div>
+          
+          <ul><li data-edit="slides[44].cols[0].items[0]">어릴 때부터 꼼꼼하고 책임감이 강했습니다</li><li data-edit="slides[44].cols[0].items[1]">귀사에 입사하여 최선을 다하겠습니다</li><li data-edit="slides[44].cols[0].items[2]">다양한 업무 경험을 통해 성장했습니다</li><li data-edit="slides[44].cols[0].items[3]">경영지원 업무에 흥미를 느껴 지원했습니다</li><li data-edit="slides[44].cols[0].items[4]">저는 성실하고 협력을 중시하는 사람입니다</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[44].cols[1].num">⭕ 끝까지 읽는 자소서</div>
+          <div class="col-title" data-edit="slides[44].cols[1].title">구체·경험 (합격)</div>
+          
+          <ul><li data-edit="slides[44].cols[1].items[0]">학생회 예산 2,400만원 관리로 결산 프로세스 직접 설계</li><li data-edit="slides[44].cols[1].items[1]">귀사 사업보고서의 유동비율 개선 배경이 궁금해 지원</li><li data-edit="slides[44].cols[1].items[2]">구매 인턴 6개월, 협상 참여로 단가 8% 절감 경험</li><li data-edit="slides[44].cols[1].items[3]">경영지원은 보이지 않는 곳에서 사업을 지탱함을 경험</li><li data-edit="slides[44].cols[1].items[4]">기획팀 보조 중 임원 보고서 3회 직접 작성한 경험</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">45 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="46">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[45].chapter">합격 자소서 구조</div>
+      <h2 class="slide-title" data-edit="slides[45].title" data-edit-html="1"><em>합격 자소서의 4문단 구조</em></h2>
+      <p class="slide-lede" data-edit="slides[45].lede">1문단에서 결론이 먼저 나와야 합니다 — HR은 결론 보고 나서 근거를 읽습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[45].cards[0].num">1문단</div>
+          <div class="card-title" data-edit="slides[45].cards[0].title">결론 먼저</div>
+          <ul><li data-edit="slides[45].cards[0].items[0]">나는 어떤 사람·어떤 가치 만들 수 있는지</li><li data-edit="slides[45].cards[0].items[1]">‘저는 ○○ 경험이 있는 지원자입니다’</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[45].cards[1].num">2문단</div>
+          <div class="card-title" data-edit="slides[45].cards[1].title">근거 (경험)</div>
+          <ul><li data-edit="slides[45].cards[1].items[0]">가장 강력한 경험 1~2개</li><li data-edit="slides[45].cards[1].items[1]">STAR 구조 + 숫자 필수</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[45].cards[2].num">3문단</div>
+          <div class="card-title" data-edit="slides[45].cards[2].title">회사 연결</div>
+          <ul><li data-edit="slides[45].cards[2].items[0]">내 경험이 이 회사·직무에 어떻게 쓰일지</li><li data-edit="slides[45].cards[2].items[1]">공고·사업보고서 리서치 후 연결</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[45].cards[3].num">4문단</div>
+          <div class="card-title" data-edit="slides[45].cards[3].title">구체적 포부</div>
+          <ul><li data-edit="slides[45].cards[3].items[0]">‘최선을 다하겠다’ ❌</li><li data-edit="slides[45].cards[3].items[1]">‘3년 내 ○○ 전문성 쌓겠다’ ⭕</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">46 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="47">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[46].chapter">직무별 지원동기 합격 예시</div>
+      <h2 class="slide-title" data-edit="slides[46].title" data-edit-html="1"><em>이렇게 쓰면 통과합니다</em> — 실제 합격 사례 기반</h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[46].cards[0].num">재무</div>
+          <div class="card-title" data-edit="slides[46].cards[0].title">재무 지원</div>
+          <ul><li data-edit="slides[46].cards[0].items[0]">✕ 숫자를 좋아하고 꼼꼼한 성격이라 지원</li><li data-edit="slides[46].cards[0].items[1]">○ 투자 분석 수업에서 NPV·IRR로 기업 분석 + 귀사 2024 사업보고서 유동비율 +15% 개선 배경 관심</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[46].cards[1].num">인사</div>
+          <div class="card-title" data-edit="slides[46].cards[1].title">인사 지원</div>
+          <ul><li data-edit="slides[46].cards[1].items[0]">✕ 사람을 좋아하고 소통을 잘해서</li><li data-edit="slides[46].cards[1].items[1]">○ 동아리 회장 40명 운영 중 평가 부재로 이탈 → KPI 평가표 설계 → 이탈률 절반 → 직무 확장</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[46].cards[2].num">구매</div>
+          <div class="card-title" data-edit="slides[46].cards[2].title">구매 지원</div>
+          <ul><li data-edit="slides[46].cards[2].items[0]">✕ 원가 절감에 관심이 많아서</li><li data-edit="slides[46].cards[2].items[1]">○ 구매팀 인턴 6개월 RFQ 15건 처리 + 귀사 제조원가율 업계 +3%p 분석 → 조달 전략 개선 기여</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">47 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="48">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[47].chapter">경영지원 공통 면접</div>
+      <h2 class="slide-title" data-edit="slides[47].title" data-edit-html="1">공통 면접 — <em>자주 나오는 질문 5가지</em></h2>
+      <p class="slide-lede" data-edit="slides[47].lede">이력서를 통과했다면, 면접에서 결판납니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[47].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[47].cards[0].title">왜 경영지원 직무에?</div>
+          <ul><li data-edit="slides[47].cards[0].items[0]">NG: ‘사람을 좋아해서·꼼꼼해서’</li><li data-edit="slides[47].cards[0].items[1]">→ 구체 경험 → 직무 연결</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[47].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[47].cards[1].title">강점·직무 연결</div>
+          <ul><li data-edit="slides[47].cards[1].items[0]">NG: ‘저는 꼼꼼합니다’ 한 마디</li><li data-edit="slides[47].cards[1].items[1]">→ 강점 + 증명 경험 + 직무 활용</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[47].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[47].cards[2].title">가장 힘들었던 업무 경험</div>
+          <ul><li data-edit="slides[47].cards[2].items[0]">NG: ‘힘든 게 없었습니다’</li><li data-edit="slides[47].cards[2].items[1]">→ 문제→행동→결과 + 학습 마무리</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[47].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[47].cards[3].title">5년 후 목표</div>
+          <ul><li data-edit="slides[47].cards[3].items[0]">NG: ‘열심히 하겠습니다’</li><li data-edit="slides[47].cards[3].items[1]">→ 직무 전문가 + 회사 기여 구체</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[47].cards[4].num">Q5</div>
+          <div class="card-title" data-edit="slides[47].cards[4].title">지원 회사에 대해 아는 것</div>
+          <ul><li data-edit="slides[47].cards[4].items[0]">NG: ‘좋은 회사라고 들었습니다’</li><li data-edit="slides[47].cards[4].items[1]">→ IR·사업보고서·뉴스 3 + 숫자</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">48 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="49">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[48].chapter">1부 핵심 요약</div>
+      <h2 class="slide-title" data-edit="slides[48].title" data-edit-html="1">오늘 집에서 <em>바로 적용</em>하세요</h2>
+      <p class="slide-lede" data-edit="slides[48].lede">1부 핵심 7가지.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-7">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[48].cards[0].title">이력서</div>
+          <ul><li data-edit="slides[48].cards[0].items[0]">30초 안에 ‘경영지원 직무 경험자’임이 보여야</li><li data-edit="slides[48].cards[0].items[1]">첫 항목이 승부처</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[48].cards[1].title">직무 키워드</div>
+          <ul><li data-edit="slides[48].cards[1].items[0]">7개 직무 고유 언어를 반드시 포함</li><li data-edit="slides[48].cards[1].items[1]">언어가 곧 전문성</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[48].cards[2].title">숫자 표현</div>
+          <ul><li data-edit="slides[48].cards[2].items[0]">모든 성과는 수치로</li><li data-edit="slides[48].cards[2].items[1]">%·건수·금액·기간·비율</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[48].cards[3].title">STAR 구조</div>
+          <ul><li data-edit="slides[48].cards[3].items[0]">상황→과제→행동→결과</li><li data-edit="slides[48].cards[3].items[1]">R은 반드시 숫자</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[48].cards[4].title">자소서</div>
+          <ul><li data-edit="slides[48].cards[4].items[0]">결론 먼저, 근거 나중</li><li data-edit="slides[48].cards[4].items[1]">1문단에 핵심 강점</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[5].num">06</div>
+          <div class="card-title" data-edit="slides[48].cards[5].title">차별화</div>
+          <ul><li data-edit="slides[48].cards[5].items[0]">‘꼼꼼함·책임감’은 모두가 씀</li><li data-edit="slides[48].cards[5].items[1]">구체 경험·숫자로 대체</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[48].cards[6].num">07</div>
+          <div class="card-title" data-edit="slides[48].cards[6].title">면접</div>
+          <ul><li data-edit="slides[48].cards[6].items[0]">이력서 STAR로 구술</li><li data-edit="slides[48].cards[6].items[1]">숫자를 외워라</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">49 / 50</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="50">
+    <section class="slide" style="justify-content: center; align-items: center; text-align: center;">
+      <div style="margin: auto;">
+        <div class="qa-big">Q&amp;A</div>
+        <div class="qa-sub" data-edit="slides[49].sub">ZEROBASE 경영지원 오프라인 설명회 — 1부 마무리</div>
+        
+        <div class="qa-thanks" data-edit="slides[49].thanks">경청해 주셔서 감사합니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span></div>
+      <div class="right">50 / 50</div>
+    </div>
+    </section></div>
+  </div>
+</div>
+
+<div id="nav-prev" class="nav-zone prev" title="이전"><div class="arrow">‹</div></div>
+<div id="nav-next" class="nav-zone next" title="다음"><div class="arrow">›</div></div>
+
+<button id="edit-toggle" type="button" onclick="document.getElementById('edit-btn').click()">✏️ 편집 (E)</button>
+
+<div id="edit-bar">
+  <button id="edit-btn" type="button">편집 끝내기 (E)</button>
+  <button id="save-btn" type="button" class="primary">💾 JSON 저장</button>
+  <button id="reset-btn" type="button">↺ 되돌리기</button>
+  <span class="hint">텍스트 클릭 → 수정 → JSON 저장</span>
+</div>
+
+<div class="hud">
+  <div class="bar"><div class="fill"></div></div>
+  <div class="bottom">
+    <span class="title">경영지원 전 직무 이력서·경력기술서·자소서 완전 정복</span>
+    <span class="pager">01 / 50</span>
+  </div>
+</div>
+
+<div id="help" class="help">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 · <kbd>F</kbd> 풀스크린 · <kbd>E</kbd> 편집 모드 · <kbd>Esc</kbd> 종료
+</div>
+
+<div id="toast"></div>
+
+<script type="application/json" id="deck-source" data-name="2026-04-30_경영지원_오프라인">{&quot;meta&quot;: {&quot;title&quot;: &quot;경영지원 전 직무&quot;, &quot;title_em&quot;: &quot;이력서 · 경력기술서 · 자소서 완전 정복&quot;, &quot;subtitle&quot;: &quot;재무·회계·인사·노무·총무·구매·기획 — 전 직무 심층 커버.&quot;, &quot;event_label&quot;: &quot;ZEROBASE × 오프라인 설명회&quot;, &quot;date&quot;: &quot;2026.04.30 (목) 20:00&quot;, &quot;session&quot;: &quot;역삼 센터필드 7층&quot;, &quot;talk_title_in_footer&quot;: &quot;경영지원 전 직무 이력서·경력기술서·자소서 완전 정복&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;10년차 CJ HR&quot;, &quot;title&quot;: &quot;1부 — 인사담당자 직강 / 2부 — 제로베이스 고객경험팀장 (KT·토스 출신)&quot;, &quot;tags&quot;: [&quot;#경영지원&quot;, &quot;#HR 시선&quot;, &quot;#STAR 구조&quot;, &quot;#7개 직무&quot;], &quot;bio&quot;: [&quot;CJ 인사담당자 10년 — 채용·평가·급여·교육 전 영역 경험.&quot;, &quot;재무·회계·인사·노무·총무·구매·기획 7개 직무 채용 직접 운영.&quot;]}}, &quot;slides&quot;: [{&quot;type&quot;: &quot;cover&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;강의 목표&quot;, &quot;title&quot;: &quot;오늘 이 자리를 떠날 때 &lt;em&gt;가져가실 것&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;강의 목표 4가지.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;HR 담당자 시선으로 본 이력서&quot;, &quot;items&quot;: [&quot;30초 안에 걸러지는 이유&quot;, &quot;통과하는 패턴&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무별 핵심 키워드 완전 정리&quot;, &quot;items&quot;: [&quot;재무·회계·인사·노무·총무·구매·기획&quot;, &quot;각 직무 고유 언어&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;경력기술서 실전 공식&quot;, &quot;items&quot;: [&quot;STAR 구조&quot;, &quot;내 경험을 합격 언어로 변환&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;자소서 차별화 전략&quot;, &quot;items&quot;: [&quot;HR이 끝까지 읽는 구조&quot;, &quot;vs 바로 닫는 구조&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;1부&quot;, &quot;title&quot;: &quot;HR 담당자가 직접 말하는\n경영지원 채용의 진실&quot;, &quot;sub&quot;: &quot;10년차 CJ 인사담당자 직강 — 7개 직무 완전 커버.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;1부 인트로&quot;, &quot;title&quot;: &quot;경영지원 직무, &lt;em&gt;이렇게 구성&lt;/em&gt;되어 있습니다&quot;, &quot;lede&quot;: &quot;오늘 7개 직무를 모두 상세히 다룹니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;재무&quot;, &quot;items&quot;: [&quot;자금·예산·투자&quot;, &quot;결산·현금흐름·ROI·ERP&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;회계&quot;, &quot;items&quot;: [&quot;전표·결산·세무&quot;, &quot;분개·세무신고·감사대응&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;인사&quot;, &quot;items&quot;: [&quot;채용·평가·급여&quot;, &quot;KPI·TTH·4대보험&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;노무&quot;, &quot;items&quot;: [&quot;근태·노사·취업규칙&quot;, &quot;근로기준법·단체협약&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;총무&quot;, &quot;items&quot;: [&quot;시설·계약·자산&quot;, &quot;계약관리·자산등록·의전&quot;]}, {&quot;num&quot;: &quot;06&quot;, &quot;title&quot;: &quot;구매&quot;, &quot;items&quot;: [&quot;조달·협상·재고&quot;, &quot;RFQ·단가협상·SCM&quot;]}, {&quot;num&quot;: &quot;07&quot;, &quot;title&quot;: &quot;기획&quot;, &quot;items&quot;: [&quot;전략·보고·경영분석&quot;, &quot;사업계획·KPI·이사회&quot;]}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;1부 핵심&quot;, &quot;title&quot;: &quot;HR 담당자는 이력서를 &lt;em&gt;이렇게 봅니다&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;평균 열람 시간 30초 — 이 시간 안에 승부가 납니다.&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;0~5초&quot;, &quot;name&quot;: &quot;직무 관련성&quot;, &quot;desc&quot;: &quot;이 사람이 경영지원 실무를 해봤나? 첫 줄에서 70% 걸러짐&quot;}, {&quot;num&quot;: &quot;5~15초&quot;, &quot;name&quot;: &quot;스펙·경력 스캔&quot;, &quot;desc&quot;: &quot;학력·회사명·재직기간 — 기본 조건 미충족 시 종료&quot;}, {&quot;num&quot;: &quot;15~30초&quot;, &quot;name&quot;: &quot;성과·키워드&quot;, &quot;desc&quot;: &quot;직무 고유 언어·수치 성과 — 통과/탈락 결정&quot;}, {&quot;num&quot;: &quot;30초+&quot;, &quot;name&quot;: &quot;전체 정독&quot;, &quot;desc&quot;: &quot;앞 3단계를 통과한 극소수 — 이게 목표&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;1부 — HR이 닫아버리는 패턴&quot;, &quot;title&quot;: &quot;&lt;em&gt;HR이 바로 닫는 이력서&lt;/em&gt; 5가지 패턴&quot;, &quot;lede&quot;: &quot;실제 검토 현장 사례 — 이 중 하나라도 해당하면 탈락.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;❶&quot;, &quot;title&quot;: &quot;직무 불명확&quot;, &quot;items&quot;: [&quot;‘다양한 업무 수행’&quot;, &quot;재무인지 인사인지 모르면 패스&quot;]}, {&quot;num&quot;: &quot;❷&quot;, &quot;title&quot;: &quot;성과 없는 나열&quot;, &quot;items&quot;: [&quot;‘○○ 업무를 담당했습니다’&quot;, &quot;수치 없으면 차별화 불가&quot;]}, {&quot;num&quot;: &quot;❸&quot;, &quot;title&quot;: &quot;직무 키워드 부재&quot;, &quot;items&quot;: [&quot;일반 사무직 언어만&quot;, &quot;결산·RFQ·KPI 등 직무 언어 필수&quot;]}, {&quot;num&quot;: &quot;❹&quot;, &quot;title&quot;: &quot;지원 동기 공백&quot;, &quot;items&quot;: [&quot;‘최선을 다하겠습니다’&quot;, &quot;왜 이 직무·왜 이 회사 없으면 무성의&quot;]}, {&quot;num&quot;: &quot;❺&quot;, &quot;title&quot;: &quot;양식 불통일&quot;, &quot;items&quot;: [&quot;폰트 혼용·여백 불규칙&quot;, &quot;이력서 자체가 실력의 증명서&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 1&quot;, &quot;title&quot;: &quot;재무 직무&quot;, &quot;sub&quot;: &quot;자금 관리 · 예산 · 투자 분석 · IR · 원가 — 경영 의사결정에 필요한 정보를 생산하는 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;재무 — 핵심 역할&quot;, &quot;title&quot;: &quot;재무 — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;이것을 모르면 재무 직무 지원이 아닙니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;자금 관리&quot;, &quot;items&quot;: [&quot;일일 자금 현황&quot;, &quot;여유자금 운용 (RP·MMF)&quot;, &quot;단기 차입·상환&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;예산 수립·관리&quot;, &quot;items&quot;: [&quot;연간·중기 예산 편성&quot;, &quot;월별 YTD 분석&quot;, &quot;부서별 배분&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;투자·원가 분석&quot;, &quot;items&quot;: [&quot;DCF·NPV·IRR&quot;, &quot;원가 구조 분석&quot;, &quot;절감 기회 발굴&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;재무제표·결산&quot;, &quot;items&quot;: [&quot;월·분기·연간 결산&quot;, &quot;연결재무제표&quot;, &quot;회계감사 대응&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;IR·공시&quot;, &quot;items&quot;: [&quot;주주·투자자 보고&quot;, &quot;공시 서류 작성&quot;, &quot;애널리스트 대응&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;재무 — 이력서 전략&quot;, &quot;title&quot;: &quot;재무 — &lt;em&gt;합격을 가르는 키워드&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;키워드 없이는 재무 전문가로 보이지 않습니다.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;자금 관리 및 결산 업무를 담당했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;필수 키워드 + 정량 성과 (합격)&quot;, &quot;lede&quot;: &quot;월·분기·연결 결산 / NPV·IRR·ROI / ERP(SAP·Oracle) / 현금흐름·BIS&quot;, &quot;items&quot;: [&quot;월말 결산 마감 D+2 → D+1 단축&quot;, &quot;연간 자금 운용 320억 관리&quot;, &quot;여유자금 MMF 운용으로 이자수익 연 1.2억&quot;, &quot;ERP(SAP FI) 전표 처리 월 600건&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;재무 — STAR 실전&quot;, &quot;title&quot;: &quot;재무 STAR — &lt;em&gt;신사업 투자 검토&lt;/em&gt; 사례&quot;, &quot;lede&quot;: &quot;이 구조로 경력기술서를 작성하세요.&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;신사업 투자 검토 요청 / 분석 기준 부재로 의사결정 지연&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;신규 공장 증설 투자 타당성 분석 + 이사회 보고서 작성&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;DCF NPV·IRR + 시나리오 3개 + 인터뷰 15회 + CFO 사전보고 2회&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;NPV +42억 / IRR 18.3% → 이사회 승인 / 실제 ROI 21%&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;재무 — 면접 질문&quot;, &quot;title&quot;: &quot;재무 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;재무와 회계의 차이는?&quot;, &quot;items&quot;: [&quot;NG: 회계 설명만&quot;, &quot;→ 회계=과거 기록 / 재무=미래 의사결정&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;NPV 계산·활용 경험은?&quot;, &quot;items&quot;: [&quot;NG: 공식만 외우기&quot;, &quot;→ 본인 분석 프로젝트와 결과 연결&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;영업이익 급감 분석은?&quot;, &quot;items&quot;: [&quot;NG: ‘조사해보겠습니다’&quot;, &quot;→ 매출·원가·판관비 분해 → 가설 검증&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;ERP 사용 경험은?&quot;, &quot;items&quot;: [&quot;NG: ‘회사에서 다 썼습니다’&quot;, &quot;→ 시스템·모듈·업무 구체적으로&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 2&quot;, &quot;title&quot;: &quot;회계 직무&quot;, &quot;sub&quot;: &quot;전표 처리 · 결산 · 세무 신고 · 감사 대응 — 기업의 재무 현황을 정확히 기록·해석하는 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;회계 — 핵심 역할&quot;, &quot;title&quot;: &quot;회계 — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;전표 처리&quot;, &quot;items&quot;: [&quot;일상 거래 분개·입력&quot;, &quot;ERP 반영&quot;, &quot;증빙서류 관리&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;결산·마감&quot;, &quot;items&quot;: [&quot;월·분기·연간 결산&quot;, &quot;P&amp;L·B/S 작성&quot;, &quot;체크리스트 운영&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;세무 신고&quot;, &quot;items&quot;: [&quot;부가가치세·법인세&quot;, &quot;원천세 납부&quot;, &quot;세금계산서&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;감사 대응&quot;, &quot;items&quot;: [&quot;외부감사 자료&quot;, &quot;내부감사 지원&quot;, &quot;지적사항 개선&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;고정자산 관리&quot;, &quot;items&quot;: [&quot;취득·감가상각·처분&quot;, &quot;자산 대장&quot;, &quot;리스 회계&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;회계 — 이력서 전략&quot;, &quot;title&quot;: &quot;회계 — &lt;em&gt;정밀함이 핵심&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;숫자와 시스템 경험을 구체적으로.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;회계 결산 및 세무 업무를 담당했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;정밀함 표현 (합격)&quot;, &quot;lede&quot;: &quot;분개·전표 / 결산 D+ / 부가세·법인세 / ERP 모듈 / 감사 대응 / IFRS·K-GAAP&quot;, &quot;items&quot;: [&quot;월말 결산 D+3 → D+1.5 단축 (체크리스트 12단계 표준화)&quot;, &quot;부가세 신고 12회 무오류 완료&quot;, &quot;ERP(더존 ICUBE) 전표 800건/월 · 오류율 0% 6개월&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;회계 — STAR 실전&quot;, &quot;title&quot;: &quot;회계 STAR — &lt;em&gt;결산 마감 단축&lt;/em&gt; 사례&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;결산 마감 D+4 / 오류 월 평균 3건으로 재작업 반복&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;결산 프로세스 표준화 + 마감 단축 + 오류율 0% 목표&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;전표 처리 우선순위 재설계 + ERP 자동화 2건 + 체크리스트 12단계 + 팀원 교육&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;마감 D+4→D+1.5 / 오류 3→0건 6개월 / 감사 지적 0건&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;회계 — 면접 질문&quot;, &quot;title&quot;: &quot;회계 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;발생주의 vs 현금주의&quot;, &quot;items&quot;: [&quot;NG: 막연한 ‘회계에서 쓰는 방식’&quot;, &quot;→ 실무는 발생주의 기준&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;전기오류 발견 시 처리&quot;, &quot;items&quot;: [&quot;NG: 그냥 수정&quot;, &quot;→ 중요성 판단 → 당기/전기 분개 → 감사인 협의&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;부가세 신고·실수 경험&quot;, &quot;items&quot;: [&quot;NG: ‘없습니다’ / ‘알아서 처리’&quot;, &quot;→ 구체적 경험 + 수정 신고까지&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;ERP 결산 마감 어려움&quot;, &quot;items&quot;: [&quot;NG: ‘다 어렵습니다’&quot;, &quot;→ 미결 항목·부서 자료 취합 등&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 3&quot;, &quot;title&quot;: &quot;인사 직무&quot;, &quot;sub&quot;: &quot;채용 · 평가 · 급여 · 교육 · 조직 문화 — 조직이 성과를 낼 수 있도록 인적 자원을 설계하는 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;인사 — 6가지 영역&quot;, &quot;title&quot;: &quot;인사 — &lt;em&gt;6가지 핵심 영역&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;범위가 넓습니다 — 지원 포지션에 맞춰 집중하세요.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;채용·온보딩&quot;, &quot;items&quot;: [&quot;JD 작성·전형 설계&quot;, &quot;TTH 관리·ATS&quot;, &quot;신입 온보딩&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;평가·보상&quot;, &quot;items&quot;: [&quot;KPI·MBO 설계&quot;, &quot;고과·인센티브&quot;, &quot;이의신청 처리&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;급여·복리후생&quot;, &quot;items&quot;: [&quot;월급 계산&quot;, &quot;4대보험·퇴직연금&quot;, &quot;복리후생 운영&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;교육·HRD&quot;, &quot;items&quot;: [&quot;역량 진단&quot;, &quot;교육 프로그램&quot;, &quot;외부 기관 계약&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;HR 시스템·데이터&quot;, &quot;items&quot;: [&quot;HRIS 운영&quot;, &quot;헤드카운트&quot;, &quot;데이터 분석&quot;]}, {&quot;num&quot;: &quot;06&quot;, &quot;title&quot;: &quot;조직 문화·진단&quot;, &quot;items&quot;: [&quot;eNPS 조사&quot;, &quot;조직 진단&quot;, &quot;핵심가치 내재화&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;인사 — 이력서 전략&quot;, &quot;title&quot;: &quot;인사 — &lt;em&gt;숫자 없는 이력서는 통과 안 됨&lt;/em&gt;&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;채용 업무와 평가 업무를 수행했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;정량 성과 (합격)&quot;, &quot;lede&quot;: &quot;채용·TTH / KPI·MBO / 4대보험·급여 / 이직률·eNPS / ATS·HRIS / 교육 ROI&quot;, &quot;items&quot;: [&quot;상반기 공채 운영 (서류 840명 → 최종 15명 선발)&quot;, &quot;TTH 평균 52일 → 38일 단축&quot;, &quot;KPI 평가표 재설계로 이의신청율 23% → 7% 감소&quot;, &quot;퇴직연금 DC형 전환 100명 완료&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;인사 — STAR 실전&quot;, &quot;title&quot;: &quot;인사 STAR — &lt;em&gt;채용 프로세스 개선&lt;/em&gt;&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;공채 TTH 52일 / 최종합격자 3명 경쟁사 오퍼 수락 이탈&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;TTH 30% 단축 + 최종합격자 이탈률 0% 달성&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;AI 스크리닝 도입(사람인 Enterprise) + 면접 캘린더 통합 + 면접관 사전교육 + 오퍼레터 D+1&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;TTH 52→36일 (-31%) / 이탈률 23%→0% / 만족도 4.2→4.8&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;인사 — 면접 질문&quot;, &quot;title&quot;: &quot;인사 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;채용에서 중요한 역량은?&quot;, &quot;items&quot;: [&quot;NG: ‘열심히 하는 사람’&quot;, &quot;→ 직무 역량+문화 적합성 균형&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;좋은 KPI vs 나쁜 KPI&quot;, &quot;items&quot;: [&quot;NG: 교과서 내용 나열&quot;, &quot;→ SMART + 행동 변화 유도 KPI&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;임직원 불만 처리 경험&quot;, &quot;items&quot;: [&quot;NG: ‘잘 달래줬습니다’&quot;, &quot;→ 경청 → 사실 확인 → 제도 내 해결&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;인사 데이터 의사결정 지원&quot;, &quot;items&quot;: [&quot;NG: ‘데이터 관리를 했습니다’&quot;, &quot;→ 분석 → 개선 제안 → 변화&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 4&quot;, &quot;title&quot;: &quot;노무 직무&quot;, &quot;sub&quot;: &quot;근로계약 · 근태 · 노사관계 · 산재 · 취업규칙 — 법률 지식과 실무 판단이 동시에 필요한 고전문 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;노무 — 핵심 역할&quot;, &quot;title&quot;: &quot;노무 — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;근로계약·취업규칙&quot;, &quot;items&quot;: [&quot;근로계약서 관리&quot;, &quot;취업규칙 개정·신고&quot;, &quot;복무 규정&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;근태·휴가&quot;, &quot;items&quot;: [&quot;출퇴근 기록&quot;, &quot;연차 발생·사용&quot;, &quot;육아휴직·산재&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;노사 협의&quot;, &quot;items&quot;: [&quot;노사협의회 운영&quot;, &quot;단체협약 교섭&quot;, &quot;쟁의 대응&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;산재·4대보험&quot;, &quot;items&quot;: [&quot;산재 신고·처리&quot;, &quot;4대보험 신고&quot;, &quot;고용보험 지원금&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;임금체계&quot;, &quot;items&quot;: [&quot;포괄임금 적법성&quot;, &quot;최저임금 준수&quot;, &quot;시간외 수당&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;노무 — 이력서 전략&quot;, &quot;title&quot;: &quot;노무 — &lt;em&gt;법률+실무로 전문성 증명&lt;/em&gt;&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;노무 업무 전반을 담당했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;처리 건수·법률 키워드 (합격)&quot;, &quot;lede&quot;: &quot;근로기준법·노동조합법 / 단체협약 / 산재 / 포괄임금 / 4대보험&quot;, &quot;items&quot;: [&quot;4대보험 신고 연간 120건 처리 (취득·상실·정산)&quot;, &quot;산재 처리 8건 무사고 (평균 5일 이내)&quot;, &quot;단체협약 교섭 2회 참여 → 무분규 타결&quot;, &quot;취업규칙 개정 2회 노동부 신고 완료&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;노무 — STAR 실전&quot;, &quot;title&quot;: &quot;노무 STAR — &lt;em&gt;포괄임금 근로감독 대응&lt;/em&gt;&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;포괄임금제 운용 중 근로감독 통보 / 시간외 미지급 이슈 가능성&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;포괄임금 적법성 검토 + 임금체계 개선 + 감독 대응&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;대상 50명 근무시간 분석 + 법무·외부 노무사 협업 + 임금대장 재정비&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;시정명령 0건 / 개선안 임원 승인 / 임금 민원 0건&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 5&quot;, &quot;title&quot;: &quot;총무 직무&quot;, &quot;sub&quot;: &quot;시설 · 계약 · 자산 · 의전 · 행사 — ‘잡일’이 아니라 회사 운영의 인프라를 총괄하는 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;총무 — 핵심 역할&quot;, &quot;title&quot;: &quot;총무 — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;‘다양한 업무’가 가장 많이 나오는 직무 — 그래서 더 구체적이어야 합니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;시설·환경&quot;, &quot;items&quot;: [&quot;사옥 운영&quot;, &quot;청소·보안·주차&quot;, &quot;임차·공사 발주&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;계약·법인&quot;, &quot;items&quot;: [&quot;계약 검토·갱신&quot;, &quot;법인 등기·인허가&quot;, &quot;표준 계약서&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;자산 관리&quot;, &quot;items&quot;: [&quot;취득·등록·폐기&quot;, &quot;재물조사&quot;, &quot;차량·비품&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;행사·의전&quot;, &quot;items&quot;: [&quot;주총·이사회·창립&quot;, &quot;경영진 의전&quot;, &quot;VIP 응대&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;비용 관리·절감&quot;, &quot;items&quot;: [&quot;시설비·소모품 예산&quot;, &quot;공급업체 단가 협상&quot;, &quot;절감 활동&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;총무 — 이력서 전략&quot;, &quot;title&quot;: &quot;총무 — &lt;em&gt;인프라 전문가&lt;/em&gt;로 포지셔닝&quot;, &quot;lede&quot;: &quot;규모·건수·절감률로 증명.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;흔한 실수 3가지&quot;, &quot;title&quot;: &quot;BEFORE (탈락)&quot;, &quot;items&quot;: [&quot;‘다양한 업무를 담당했습니다’ — 무엇·얼마나 안 보임&quot;, &quot;‘비용 절감 활동을 진행했습니다’ — 얼마나 절감했는지 없음&quot;, &quot;‘계약 관련 업무를 지원했습니다’ — 지원/주도 모호&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;구체·정량 (합격)&quot;, &quot;items&quot;: [&quot;연면적 3,500㎡ 사옥 운영 / 시설비 8% 절감 (2,200만원)&quot;, &quot;연간 계약 120건 관리 / 임대차 갱신 3건 100% 조건 개선&quot;, &quot;표준 계약서 12종 정비·전산화&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;총무 — STAR 실전&quot;, &quot;title&quot;: &quot;총무 STAR — &lt;em&gt;구매 리드타임 단축&lt;/em&gt;&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;사무용품 발주~수령 7일 / 부서별 중복 구매 + 예산 초과 반복&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;리드타임 단축 + 연간 사무용품 비용 15% 절감&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;공급업체 3→1 단일화 + 노션 DB 발주 시스템 + 재고 기준량 + 월 1회 실사&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;리드타임 7→2일 / 비용 18% 절감 (800만원) / 중복 0건&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;총무 — 면접 질문&quot;, &quot;title&quot;: &quot;총무 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;긴박했던 상황은?&quot;, &quot;items&quot;: [&quot;NG: ‘힘든 게 없었습니다’&quot;, &quot;→ 시설 긴급·주총 등 + 해결 방법&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;계약서 검토 시 중요 항목&quot;, &quot;items&quot;: [&quot;NG: ‘법무팀이 합니다’&quot;, &quot;→ 기간·자동갱신·위약·해지·물가연동&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;비용 절감 직접 시도 경험&quot;, &quot;items&quot;: [&quot;NG: ‘절약하려고 노력했습니다’&quot;, &quot;→ 재협상·통합·재고 + 절감 금액&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;행사 기획 경험&quot;, &quot;items&quot;: [&quot;NG: ‘행사 보조’&quot;, &quot;→ 규모·예산·기간·역할 STAR&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 6&quot;, &quot;title&quot;: &quot;구매·SCM 직무&quot;, &quot;sub&quot;: &quot;공급업체 관리 · 견적·협상 · 재고 · 원가 절감 — 원가 경쟁력과 공급 안정성을 동시에 확보하는 전략 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;구매 — 핵심 역할&quot;, &quot;title&quot;: &quot;구매·SCM — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;공급업체 평가&quot;, &quot;items&quot;: [&quot;Vendor 리스트&quot;, &quot;품질·납기·가격·재무 평가&quot;, &quot;리스크 모니터링&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;견적·협상&quot;, &quot;items&quot;: [&quot;RFQ 발송&quot;, &quot;단가 협상&quot;, &quot;계약 체결&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;재고 관리&quot;, &quot;items&quot;: [&quot;발주점·안전재고&quot;, &quot;재고 회전율&quot;, &quot;재고 실사&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;원가 절감·TCO&quot;, &quot;items&quot;: [&quot;총비용 분석&quot;, &quot;대체재 발굴&quot;, &quot;절감률 KPI&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;납기·품질&quot;, &quot;items&quot;: [&quot;불이행 관리&quot;, &quot;클레임 처리&quot;, &quot;공급업체 피드백&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;구매 — 이력서 전략&quot;, &quot;title&quot;: &quot;구매 — &lt;em&gt;단가 절감률·관리 건수&lt;/em&gt;로 증명&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;구매 업무를 담당하며 원가 절감 활동을 진행했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;정량 성과 (합격)&quot;, &quot;lede&quot;: &quot;RFQ / 단가 절감률(%) / 공급업체 수 / 재고 회전율 / 납기 불이행률 / TCO·SCM&quot;, &quot;items&quot;: [&quot;공급업체 18개사 RFQ → 단가 평균 9.2% 절감 (연 1.8억)&quot;, &quot;재고 회전율 4.1 → 6.3회/년 개선&quot;, &quot;납기 불이행률 8% → 2% 감소&quot;, &quot;공급업체 정기 평가 체계 신규 수립&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;구매 — STAR 실전&quot;, &quot;title&quot;: &quot;구매 STAR — &lt;em&gt;대체 공급업체 발굴&lt;/em&gt;&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;원자재 단가 상승 / 기존 공급업체 의존도 95%&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;대체 공급업체 발굴 + 연간 원가 2억원+ 절감&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;국내·해외 25개사 RFQ + 샘플 평가 2라운드 + 종합 평가표 + 상위 3개사 협상&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;단가 11% 절감 (연 2.1억) / 불이행 6%→1.2% / 의존도 95%→60%&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;구매 — 면접 질문&quot;, &quot;title&quot;: &quot;구매·SCM 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;구매 협상에서 가장 중요한 것&quot;, &quot;items&quot;: [&quot;NG: ‘가격을 깎는 것’&quot;, &quot;→ BATNA + 원가 구조 + 장기 파트너십&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;재고 발주점 설정 방법&quot;, &quot;items&quot;: [&quot;NG: 공식만 외우기&quot;, &quot;→ 리드타임×사용량+안전재고 + 본인 사례&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;공급업체 갈등 해결 경험&quot;, &quot;items&quot;: [&quot;NG: ‘잘 해결했습니다’&quot;, &quot;→ 사실 확인 → 계약 기준 → Win-Win&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;TCO 관점 구매 결정 경험&quot;, &quot;items&quot;: [&quot;NG: ‘가장 쌌습니다’&quot;, &quot;→ 물류·품질·재고까지 포함 분석&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;직무 7&quot;, &quot;title&quot;: &quot;경영기획 직무&quot;, &quot;sub&quot;: &quot;전략 · 사업계획 · 경영분석 · KPI · 이사회 — CEO·임원의 의사결정을 지원하는 직무.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;경영기획 — 핵심 역할&quot;, &quot;title&quot;: &quot;경영기획 — &lt;em&gt;HR이 보는 5가지 기준&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;‘경영지원’이 아닌 ‘전략 파트너’로 포지셔닝.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;사업계획 수립&quot;, &quot;items&quot;: [&quot;연간·중기 계획 총괄&quot;, &quot;부서 목표 조율&quot;, &quot;YTD 분석&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;경영분석·보고&quot;, &quot;items&quot;: [&quot;손익 분석&quot;, &quot;월간 경영보고서&quot;, &quot;이사회 자료&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;KPI 설계·관리&quot;, &quot;items&quot;: [&quot;성과지표 설계&quot;, &quot;달성률 모니터링&quot;, &quot;시사점 도출&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;M&amp;A·신사업&quot;, &quot;items&quot;: [&quot;타당성 분석(DCF)&quot;, &quot;M&amp;A 실사 지원&quot;, &quot;ROI 시뮬레이션&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;의사결정 지원&quot;, &quot;items&quot;: [&quot;시나리오 분석&quot;, &quot;벤치마킹·대안&quot;, &quot;실행 계획&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;경영기획 — 이력서 전략&quot;, &quot;title&quot;: &quot;경영기획 — &lt;em&gt;‘분석’ → ‘이 결정이 났다’&lt;/em&gt;&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;BEFORE&quot;, &quot;title&quot;: &quot;흔한 표현 (탈락)&quot;, &quot;items&quot;: [&quot;경영 현황 분석 및 보고서 작성 업무를 수행했습니다.&quot;]}, {&quot;num&quot;: &quot;AFTER&quot;, &quot;title&quot;: &quot;결정·임팩트 (합격)&quot;, &quot;lede&quot;: &quot;사업계획 / 이사회 자료 / KPI / 오차율 / NPV·IRR / 시나리오&quot;, &quot;items&quot;: [&quot;월간 경영실적 보고서 12개월 D+2 제출 (기존 D+4)&quot;, &quot;사업계획 vs 실적 오차율 3% 이내 유지&quot;, &quot;신사업 타당성 분석 3건 → 1건 투자 결정 (ROI 28%)&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;경영기획 — STAR 실전&quot;, &quot;title&quot;: &quot;경영기획 STAR — &lt;em&gt;경쟁 대응 사업계획 수정&lt;/em&gt;&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;경쟁사 신제품 출시 / 점유율 하락 / 사업계획 달성 불확실&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;시나리오 분석 + 수정 사업계획 → 이사회 보고&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;점유율·가격·이탈 데이터 분석 + 시나리오 3개 + 부서 협의 14회 + 보고자료 작성&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;이사회 D+7 승인 / 오차율 2.1% 달성 / 보고 만족도 4.7/5&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;경영기획 — 면접 질문&quot;, &quot;title&quot;: &quot;경영기획 면접 — &lt;em&gt;자주 나오는 질문&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;사업계획 수립 시 중요한 것&quot;, &quot;items&quot;: [&quot;NG: ‘열심히 분석’&quot;, &quot;→ 시장+내부 역량+실행 가능성 균형&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;ROI vs IRR 차이·언제 사용&quot;, &quot;items&quot;: [&quot;NG: 공식만&quot;, &quot;→ 장기는 IRR / 단기 비교는 ROI&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;의미없는 KPI 사례&quot;, &quot;items&quot;: [&quot;NG: ‘없습니다’&quot;, &quot;→ 측정 불가·행동 변화 없는 KPI 개선 경험&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;임원에게 나쁜 소식 보고&quot;, &quot;items&quot;: [&quot;NG: ‘좋게 보이게’&quot;, &quot;→ 사실 → 원인 → 대안, 감추지 않고&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;공통 1&quot;, &quot;title&quot;: &quot;경력기술서\nSTAR 구조의 원칙&quot;, &quot;sub&quot;: &quot;신입·경력 모두 동일하게 적용됩니다.&quot;}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;STAR 원칙&quot;, &quot;title&quot;: &quot;STAR — &lt;em&gt;경력기술서의 4단계&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;R(결과)은 반드시 숫자로 — %·건수·금액·기간·비율. 숫자가 없으면 STAR가 아닙니다.&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;S&quot;, &quot;name&quot;: &quot;Situation&quot;, &quot;desc&quot;: &quot;어떤 배경·환경에서 이 일이 시작됐나?\n예: 기존 공급업체 계약 만료로 원자재 조달 리스크 발생&quot;}, {&quot;num&quot;: &quot;T&quot;, &quot;name&quot;: &quot;Task&quot;, &quot;desc&quot;: &quot;내가 맡은 역할과 해결할 문제는?\n예: 대체 공급업체 3개사 발굴·단가 협상 완료&quot;}, {&quot;num&quot;: &quot;A&quot;, &quot;name&quot;: &quot;Action&quot;, &quot;desc&quot;: &quot;구체적으로 내가 한 행동은?\n예: RFQ → 샘플 평가 → 가격 협상 2라운드&quot;}, {&quot;num&quot;: &quot;R&quot;, &quot;name&quot;: &quot;Result&quot;, &quot;desc&quot;: &quot;숫자로 표현 가능한 결과는?\n예: 단가 12% 절감 / 납기 안정성 100%&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;신입에게도 경력기술서가 필요한 이유&quot;, &quot;title&quot;: &quot;&lt;em&gt;없는 경력을 만드는 게 아니라, 있는 경험을 번역&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;학생회 예산 → 재무·회계&quot;, &quot;items&quot;: [&quot;✕ 학생회에서 회계 업무를 맡았습니다&quot;, &quot;○ 연간 2,400만원 예산 수립·집행·결산, 분기 실적 보고서, 지출 투명 공개 시스템&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;동아리 총무 → 총무&quot;, &quot;items&quot;: [&quot;✕ 동아리 총무로 활동했습니다&quot;, &quot;○ 40명 동아리 비품·행사 계약 12건 관리, 총무비 20% 절감, 비품 대장 엑셀 전산화&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;구매팀 인턴 → 구매&quot;, &quot;items&quot;: [&quot;✕ 구매팀 인턴으로 다양한 업무 보조&quot;, &quot;○ 단가 비교표 18개사 작성, RFQ 15건 처리, 구매 대장 DB화로 검색 60% 단축&quot;]}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;직무별 핵심 키워드 총정리&quot;, &quot;title&quot;: &quot;&lt;em&gt;이 키워드가 없으면&lt;/em&gt; 전문가로 보이지 않는다&quot;, &quot;lede&quot;: &quot;언어가 곧 전문성입니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;재무&quot;, &quot;title&quot;: &quot;재무&quot;, &quot;items&quot;: [&quot;결산·현금흐름·예산&quot;, &quot;NPV·IRR·ROI&quot;, &quot;ERP(SAP·오라클)&quot;]}, {&quot;num&quot;: &quot;회계&quot;, &quot;title&quot;: &quot;회계&quot;, &quot;items&quot;: [&quot;분개·전표·세무신고&quot;, &quot;감사 대응·부가세&quot;, &quot;더존·재무제표·IFRS&quot;]}, {&quot;num&quot;: &quot;인사&quot;, &quot;title&quot;: &quot;인사&quot;, &quot;items&quot;: [&quot;채용·KPI·MBO·TTH&quot;, &quot;온보딩·4대보험&quot;, &quot;ATS·이직률·eNPS&quot;]}, {&quot;num&quot;: &quot;노무&quot;, &quot;title&quot;: &quot;노무&quot;, &quot;items&quot;: [&quot;근로기준법·노조법&quot;, &quot;단체협약·취업규칙&quot;, &quot;산재·포괄임금&quot;]}, {&quot;num&quot;: &quot;총무&quot;, &quot;title&quot;: &quot;총무&quot;, &quot;items&quot;: [&quot;계약관리·자산등록&quot;, &quot;재물조사·시설운영&quot;, &quot;비용절감·의전&quot;]}, {&quot;num&quot;: &quot;구매&quot;, &quot;title&quot;: &quot;구매&quot;, &quot;items&quot;: [&quot;RFQ·단가협상&quot;, &quot;재고회전율·TCO&quot;, &quot;SCM·납기관리&quot;]}, {&quot;num&quot;: &quot;기획&quot;, &quot;title&quot;: &quot;기획&quot;, &quot;items&quot;: [&quot;사업계획·KPI&quot;, &quot;경영분석·이사회&quot;, &quot;투자검토·시나리오&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;자소서 — HR이 끝까지 읽는 vs 닫는&quot;, &quot;title&quot;: &quot;자소서 — &lt;em&gt;‘추상’과 ‘구체’의 차이&lt;/em&gt;&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;❌ 닫는 자소서&quot;, &quot;title&quot;: &quot;추상적 표현 (탈락)&quot;, &quot;items&quot;: [&quot;어릴 때부터 꼼꼼하고 책임감이 강했습니다&quot;, &quot;귀사에 입사하여 최선을 다하겠습니다&quot;, &quot;다양한 업무 경험을 통해 성장했습니다&quot;, &quot;경영지원 업무에 흥미를 느껴 지원했습니다&quot;, &quot;저는 성실하고 협력을 중시하는 사람입니다&quot;]}, {&quot;num&quot;: &quot;⭕ 끝까지 읽는 자소서&quot;, &quot;title&quot;: &quot;구체·경험 (합격)&quot;, &quot;items&quot;: [&quot;학생회 예산 2,400만원 관리로 결산 프로세스 직접 설계&quot;, &quot;귀사 사업보고서의 유동비율 개선 배경이 궁금해 지원&quot;, &quot;구매 인턴 6개월, 협상 참여로 단가 8% 절감 경험&quot;, &quot;경영지원은 보이지 않는 곳에서 사업을 지탱함을 경험&quot;, &quot;기획팀 보조 중 임원 보고서 3회 직접 작성한 경험&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;합격 자소서 구조&quot;, &quot;title&quot;: &quot;&lt;em&gt;합격 자소서의 4문단 구조&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;1문단에서 결론이 먼저 나와야 합니다 — HR은 결론 보고 나서 근거를 읽습니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;1문단&quot;, &quot;title&quot;: &quot;결론 먼저&quot;, &quot;items&quot;: [&quot;나는 어떤 사람·어떤 가치 만들 수 있는지&quot;, &quot;‘저는 ○○ 경험이 있는 지원자입니다’&quot;]}, {&quot;num&quot;: &quot;2문단&quot;, &quot;title&quot;: &quot;근거 (경험)&quot;, &quot;items&quot;: [&quot;가장 강력한 경험 1~2개&quot;, &quot;STAR 구조 + 숫자 필수&quot;]}, {&quot;num&quot;: &quot;3문단&quot;, &quot;title&quot;: &quot;회사 연결&quot;, &quot;items&quot;: [&quot;내 경험이 이 회사·직무에 어떻게 쓰일지&quot;, &quot;공고·사업보고서 리서치 후 연결&quot;]}, {&quot;num&quot;: &quot;4문단&quot;, &quot;title&quot;: &quot;구체적 포부&quot;, &quot;items&quot;: [&quot;‘최선을 다하겠다’ ❌&quot;, &quot;‘3년 내 ○○ 전문성 쌓겠다’ ⭕&quot;]}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;직무별 지원동기 합격 예시&quot;, &quot;title&quot;: &quot;&lt;em&gt;이렇게 쓰면 통과합니다&lt;/em&gt; — 실제 합격 사례 기반&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;재무&quot;, &quot;title&quot;: &quot;재무 지원&quot;, &quot;items&quot;: [&quot;✕ 숫자를 좋아하고 꼼꼼한 성격이라 지원&quot;, &quot;○ 투자 분석 수업에서 NPV·IRR로 기업 분석 + 귀사 2024 사업보고서 유동비율 +15% 개선 배경 관심&quot;]}, {&quot;num&quot;: &quot;인사&quot;, &quot;title&quot;: &quot;인사 지원&quot;, &quot;items&quot;: [&quot;✕ 사람을 좋아하고 소통을 잘해서&quot;, &quot;○ 동아리 회장 40명 운영 중 평가 부재로 이탈 → KPI 평가표 설계 → 이탈률 절반 → 직무 확장&quot;]}, {&quot;num&quot;: &quot;구매&quot;, &quot;title&quot;: &quot;구매 지원&quot;, &quot;items&quot;: [&quot;✕ 원가 절감에 관심이 많아서&quot;, &quot;○ 구매팀 인턴 6개월 RFQ 15건 처리 + 귀사 제조원가율 업계 +3%p 분석 → 조달 전략 개선 기여&quot;]}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;경영지원 공통 면접&quot;, &quot;title&quot;: &quot;공통 면접 — &lt;em&gt;자주 나오는 질문 5가지&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;이력서를 통과했다면, 면접에서 결판납니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;왜 경영지원 직무에?&quot;, &quot;items&quot;: [&quot;NG: ‘사람을 좋아해서·꼼꼼해서’&quot;, &quot;→ 구체 경험 → 직무 연결&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;강점·직무 연결&quot;, &quot;items&quot;: [&quot;NG: ‘저는 꼼꼼합니다’ 한 마디&quot;, &quot;→ 강점 + 증명 경험 + 직무 활용&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;가장 힘들었던 업무 경험&quot;, &quot;items&quot;: [&quot;NG: ‘힘든 게 없었습니다’&quot;, &quot;→ 문제→행동→결과 + 학습 마무리&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;5년 후 목표&quot;, &quot;items&quot;: [&quot;NG: ‘열심히 하겠습니다’&quot;, &quot;→ 직무 전문가 + 회사 기여 구체&quot;]}, {&quot;num&quot;: &quot;Q5&quot;, &quot;title&quot;: &quot;지원 회사에 대해 아는 것&quot;, &quot;items&quot;: [&quot;NG: ‘좋은 회사라고 들었습니다’&quot;, &quot;→ IR·사업보고서·뉴스 3 + 숫자&quot;]}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;1부 핵심 요약&quot;, &quot;title&quot;: &quot;오늘 집에서 &lt;em&gt;바로 적용&lt;/em&gt;하세요&quot;, &quot;lede&quot;: &quot;1부 핵심 7가지.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;이력서&quot;, &quot;items&quot;: [&quot;30초 안에 ‘경영지원 직무 경험자’임이 보여야&quot;, &quot;첫 항목이 승부처&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무 키워드&quot;, &quot;items&quot;: [&quot;7개 직무 고유 언어를 반드시 포함&quot;, &quot;언어가 곧 전문성&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;숫자 표현&quot;, &quot;items&quot;: [&quot;모든 성과는 수치로&quot;, &quot;%·건수·금액·기간·비율&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;STAR 구조&quot;, &quot;items&quot;: [&quot;상황→과제→행동→결과&quot;, &quot;R은 반드시 숫자&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;자소서&quot;, &quot;items&quot;: [&quot;결론 먼저, 근거 나중&quot;, &quot;1문단에 핵심 강점&quot;]}, {&quot;num&quot;: &quot;06&quot;, &quot;title&quot;: &quot;차별화&quot;, &quot;items&quot;: [&quot;‘꼼꼼함·책임감’은 모두가 씀&quot;, &quot;구체 경험·숫자로 대체&quot;]}, {&quot;num&quot;: &quot;07&quot;, &quot;title&quot;: &quot;면접&quot;, &quot;items&quot;: [&quot;이력서 STAR로 구술&quot;, &quot;숫자를 외워라&quot;]}]}, {&quot;type&quot;: &quot;qa_close&quot;, &quot;sub&quot;: &quot;ZEROBASE 경영지원 오프라인 설명회 — 1부 마무리&quot;, &quot;thanks&quot;: &quot;경청해 주셔서 감사합니다.&quot;}]}</script>
+<script>
+(function(){
+  var SLIDE_W = 1920, SLIDE_H = 1080;
+  var stage = document.getElementById('stage');
+  var wraps = Array.prototype.slice.call(document.querySelectorAll('.slide-wrap'));
+  var fill  = document.querySelector('.hud .fill');
+  var pager = document.querySelector('.hud .pager');
+  var help  = document.getElementById('help');
+  var total = wraps.length;
+  var idx = 0;
+  var editMode = false;
+
+  // Initial slide from URL hash, e.g. #3
+  var h = parseInt((location.hash || '').replace('#',''), 10);
+  if (!isNaN(h) && h >= 1 && h <= total) idx = h - 1;
+
+  function fit(){
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var scaleW = vw / SLIDE_W, scaleH = vh / SLIDE_H;
+    var scale = Math.min(scaleW, scaleH) * 0.94;
+    var w = SLIDE_W * scale, hh = SLIDE_H * scale;
+    stage.style.width  = w + 'px';
+    stage.style.height = hh + 'px';
+    wraps.forEach(function(wr){
+      var s = wr.querySelector('.slide');
+      if(s) s.style.transform = 'scale(' + scale + ')';
+    });
+  }
+
+  function go(n){
+    idx = Math.max(0, Math.min(total - 1, n));
+    wraps.forEach(function(wr, i){
+      wr.classList.toggle('is-active', i === idx);
+    });
+    if (fill)  fill.style.width = ((idx + 1) / total * 100) + '%';
+    if (pager) pager.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    history.replaceState(null, '', '#' + (idx + 1));
+  }
+
+  // ---------- Edit mode ----------
+  function toggleEdit(){
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      if (editMode) el.setAttribute('contenteditable', 'true');
+      else el.removeAttribute('contenteditable');
+    });
+    var btn = document.getElementById('edit-btn');
+    if (btn) btn.textContent = editMode ? '편집 끝내기 (E)' : '✏️ 편집 (E)';
+    var bar = document.getElementById('edit-bar');
+    if (bar) bar.classList.toggle('show', editMode);
+  }
+
+  function getPathSafe(obj, parts){
+    var cur = obj;
+    for (var i = 0; i < parts.length; i++){
+      if (cur == null) return undefined;
+      cur = cur[parts[i]];
+    }
+    return cur;
+  }
+  function setPath(obj, path, value){
+    var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+    var cur = obj;
+    for (var i = 0; i < parts.length - 1; i++){
+      var k = parts[i];
+      // numeric index
+      if (/^\d+$/.test(k)) k = parseInt(k, 10);
+      if (cur[k] == null){
+        // create container
+        var nextK = parts[i+1];
+        cur[k] = (/^\d+$/.test(nextK)) ? [] : {};
+      }
+      cur = cur[k];
+    }
+    var lastK = parts[parts.length - 1];
+    if (/^\d+$/.test(lastK)) lastK = parseInt(lastK, 10);
+    cur[lastK] = value;
+  }
+
+  function buildEditedJSON(){
+    var srcEl = document.getElementById('deck-source');
+    var src = JSON.parse(srcEl.textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var value;
+      if (asHtml){
+        value = el.innerHTML.trim()
+                  .replace(/<br\s*\/?>/gi, '\n')
+                  .replace(/&nbsp;/g, ' ');
+      } else {
+        value = el.textContent.trim();
+      }
+      setPath(src, path, value);
+    });
+    return src;
+  }
+
+  function downloadJSON(){
+    var data = buildEditedJSON();
+    var name = (document.getElementById('deck-source').getAttribute('data-name') || 'edited') + '.json';
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 100);
+    var msg = document.getElementById('toast');
+    if (msg){ msg.textContent = '저장됨: ' + name; msg.classList.add('show');
+      setTimeout(function(){ msg.classList.remove('show'); }, 2500); }
+  }
+
+  function resetEdits(){
+    if (!confirm('모든 편집을 원래대로 되돌릴까요?')) return;
+    var src = JSON.parse(document.getElementById('deck-source').textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+      var v = getPathSafe(src, parts.map(function(p){return /^\d+$/.test(p)?parseInt(p,10):p;}));
+      if (v == null) return;
+      if (asHtml) el.innerHTML = String(v).replace(/\n/g,'<br>');
+      else el.textContent = String(v);
+    });
+  }
+
+  // ---------- Keyboard ----------
+  document.addEventListener('keydown', function(e){
+    // If typing inside an editable element, don't navigate
+    var t = e.target;
+    var typing = t && t.isContentEditable;
+    if (typing){
+      // Allow Esc to exit edit on element
+      if (e.key === 'Escape') t.blur();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter')   { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace')              { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home')                                                                   { e.preventDefault(); go(0); }
+    else if (e.key === 'End')                                                                    { e.preventDefault(); go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F')                                                      { toggleFullscreen(); }
+    else if (e.key === 'e' || e.key === 'E')                                                      { e.preventDefault(); toggleEdit(); }
+    else if (e.key === 'Escape')                                                                  { if (document.fullscreenElement) document.exitFullscreen(); }
+  });
+
+  function toggleFullscreen(){
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+
+  // ---------- Click zones ----------
+  document.getElementById('nav-prev').addEventListener('click', function(){ if(!editMode) go(idx - 1); });
+  document.getElementById('nav-next').addEventListener('click', function(){ if(!editMode) go(idx + 1); });
+
+  // ---------- Edit bar buttons ----------
+  var btnEdit  = document.getElementById('edit-btn');
+  var btnSave  = document.getElementById('save-btn');
+  var btnReset = document.getElementById('reset-btn');
+  if (btnEdit)  btnEdit.addEventListener('click', toggleEdit);
+  if (btnSave)  btnSave.addEventListener('click', downloadJSON);
+  if (btnReset) btnReset.addEventListener('click', resetEdits);
+
+  // ---------- Touch swipe ----------
+  var tx = 0;
+  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener('touchend',   function(e){
+    if (editMode) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+  }, {passive: true});
+
+  window.addEventListener('resize', fit);
+
+  // Init
+  fit(); go(idx);
+
+  if (help) {
+    help.classList.add('show');
+    setTimeout(function(){ help.classList.remove('show'); }, 4000);
+  }
+})();
+</script>
+</body></html>

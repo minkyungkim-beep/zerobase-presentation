@@ -106,6 +106,70 @@ brew install --cask libreoffice  # macOS
 
 ---
 
+## 이미지 / 사진 넣기
+
+이미지는 프로젝트 루트의 **`assets/`** 폴더에 두고 JSON에서 경로로 참조합니다.
+
+```
+assets/
+├── kimjungkeun.jpg       ← 강사 사진
+├── kt_portfolio_1.png    ← 합격 포트폴리오 캡처
+└── catch_calendar_4.png  ← 캐치 채용 달력
+```
+
+JSON에서:
+```json
+{ "image": "assets/kt_portfolio_1.png" }
+```
+→ HTML 미리보기와 PPTX 양쪽에 자동 반영됨. 비율은 보존, 가용 영역에 자동 맞춤.
+
+### 이미지 슬라이드 타입 3종
+
+| 타입 | 용도 | 필드 |
+|---|---|---|
+| `image_full` | 풀-블리드 이미지 + 캡션 | `image`, `caption`, `bg`(`"light"` 또는 생략) |
+| `image_headed` | 챕터+제목+리드 위에, 이미지 본문 | `chapter`, `title`, `lede`, `image` |
+| `image_split` | 좌·우 분할 (이미지 + 분석) | `chapter`, `title`, `image`, `image_position`(`"left"`/`"right"`), `body_title`, `body_lede`, `items[]` |
+
+### 강사 사진
+
+`speaker` 슬라이드의 placeholder(이름 첫 글자)를 실제 사진으로 바꾸려면:
+```json
+"speaker": {
+  "name": "김준근",
+  "title": "AI/DX 전문 컨설턴트",
+  "photo": "assets/kimjungkeun.jpg",
+  "tags": [ ... ],
+  "bio": [ ... ]
+}
+```
+
+지원 포맷: PNG · JPG · JPEG (정적). [📊 데모 보기](outputs/image_demo.html)
+
+---
+
+## 브라우저에서 바로 텍스트 수정하기
+
+HTML 미리보기 화면에서 **`E` 키**를 누르거나 좌상단 **✏️ 편집 (E)** 버튼을 클릭하면 인라인 편집 모드가 켜져요.
+
+1. 슬라이드의 텍스트 부분을 클릭 → 바로 수정
+2. 상단 바의 **💾 JSON 저장** 클릭 → 변경된 JSON 파일이 다운로드됨
+3. 다운받은 파일을 `inputs/` 폴더에 옮기고(같은 이름이면 덮어쓰기), 다시 빌드:
+   ```bash
+   python3 build.py inputs/2026-05-08_3부.json
+   ```
+   → 수정 사항이 반영된 PPTX·HTML이 새로 생성됨.
+
+조작법:
+- `E` 키 — 편집 모드 토글
+- `↺ 되돌리기` — 모든 편집을 원본 JSON으로 복구
+- 편집 모드에서 텍스트 입력 중에는 좌우 키가 슬라이드 이동 대신 커서 이동으로 동작 (자연스럽게 타이핑 가능)
+- 강조(<em>)나 볼드(<b>) 마크업이 들어 있는 제목은 HTML 그대로 보존됨
+
+> 💡 워크플로우 팁: 빠른 문구 수정·오타 수정은 브라우저에서, 슬라이드 추가/삭제·구조 변경은 JSON 파일 직접 편집이 편해요.
+
+---
+
 ## GitHub 자동 업로드
 
 레포: https://github.com/minkyungkim-beep/zerobase-presentation

@@ -12,6 +12,11 @@ Thumbs.db
 # Working / staging area (final deliverables go to presentations/)
 outputs/
 
+# 강사 프로필 사진 등 사내 자료는 공개 안 함 (디자인 시스템에는 sample_* 만 사용)
+assets/*
+!assets/sample_*.png
+!assets/sample_*.jpg
+
 # Secrets — never commit
 .env
 *.token

@@ -58,7 +58,7 @@ def main():
     pptx_path = out_dir / f"{stem}.pptx"
 
     if not args.no_html:
-        html_path.write_text(render_html.render_deck(data), encoding="utf-8")
+        html_path.write_text(render_html.render_deck(data, source_name=stem), encoding="utf-8")
         print(f"OK  HTML  -> {html_path}")
 
     if not args.no_pptx:

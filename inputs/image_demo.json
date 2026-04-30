@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "title": "이미지 슬라이드 데모",
+    "title_em": "Image Templates",
+    "subtitle": "image_full · image_headed · image_split · speaker.photo",
+    "event_label": "ZEROBASE 디자인 시스템 데모",
+    "date": "2026.04.29",
+    "session": "Demo",
+    "talk_title_in_footer": "이미지 슬라이드 데모",
+    "speaker": {
+      "name": "샘플 강사",
+      "title": "데모용 프로필",
+      "photo": "assets/sample_speaker.png",
+      "tags": ["#이미지 데모", "#3가지 패턴"],
+      "bio": [
+        "speaker.photo 필드에 이미지 경로를 넣으면 placeholder 자리에 사진이 들어갑니다.",
+        "기존처럼 이름 첫 글자로 두고 싶다면 photo 필드를 비우거나 생략."
+      ]
+    }
+  },
+  "slides": [
+    { "type": "cover" },
+    {
+      "type": "speaker",
+      "chapter": "강사 소개",
+      "title": "오늘의 연사 — speaker.photo 적용"
+    },
+    {
+      "type": "image_full",
+      "image": "assets/sample_resume.png",
+      "caption": "image_full — 어두운 배경 위에 풀-블리드. 합격 이력서·포트폴리오 캡처를 그대로 보여주고 싶을 때."
+    },
+    {
+      "type": "image_full",
+      "image": "assets/sample_resume.png",
+      "bg": "light",
+      "caption": "image_full + bg:light — 밝은 배경 버전. 캘린더·차트 캡처처럼 흰 바탕 위에서 더 잘 보이는 자료에 적합."
+    },
+    {
+      "type": "image_headed",
+      "chapter": "PART 03 합격 사례",
+      "title": "<em>image_headed</em> — 헤더 + 자료 이미지",
+      "lede": "챕터 태그·제목·리드를 위에 두고 본문 영역에 자료 이미지를 프레임으로 보여줍니다.",
+      "image": "assets/sample_resume.png"
+    },
+    {
+      "type": "image_split",
+      "chapter": "PART 03 합격 사례",
+      "title": "<em>image_split</em> — 자료 + 분석 (좌·우 분할)",
+      "image": "assets/sample_resume.png",
+      "image_position": "left",
+      "body_title": "이 이력서가 합격한 이유",
+      "body_lede": "이미지를 한쪽에 두고 다른 쪽에 합격 포인트·코멘트를 정리합니다.",
+      "items": [
+        "JD 키워드와 1:1 매칭된 경험 정리",
+        "정량 성과 + Before/After 비교",
+        "본인 역할 명시 + 결과 임팩트 명확",
+        "두괄식 구성으로 ‘다음 장이 더 보고 싶은’ 흐름"
+      ]
+    },
+    {
+      "type": "image_split",
+      "chapter": "PART 03 합격 사례",
+      "title": "image_position을 <em>right</em>로 — 텍스트 먼저",
+      "image": "assets/sample_resume.png",
+      "image_position": "right",
+      "body_title": "메시지 우선, 자료는 보조",
+      "body_lede": "강조하고 싶은 인사이트가 있을 때 텍스트를 좌측에 두고 자료를 우측에 배치합니다.",
+      "items": [
+        "스토리 흐름 → 시각 자료의 순서",
+        "결론 먼저, 증거는 옆에",
+        "프레젠테이션 톤이 강해짐"
+      ]
+    },
+    {
+      "type": "alert_close",
+      "chapter": "사용 방법",
+      "title": "이미지는 <em>assets/</em> 폴더에 두면 끝",
+      "lede": "JSON에서 “image”: “assets/파일명.png” 으로 참조하면 HTML과 PPTX 양쪽에 자동 반영됩니다.",
+      "alert": "<b>지원 포맷:</b> PNG · JPG · GIF (정적). 이미지는 비율 그대로 가운데 정렬 + 가용 영역에 자동 fit."
+    }
+  ]
+}

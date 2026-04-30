@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<title>2026 HR 합격 자료</title>
+<style>/* ZeroBase Online Briefing — Slide Base CSS
+ * 토큰은 design_system/tokens.json 기준. 변경 시 함께 동기화.
+ */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  --ink:        #0E1430;
+  --ink-2:      #1C2885;
+  --ink-3:      #3A4499;
+  --paper:      #FFFFFF;
+  --paper-2:    #F2F3F8;
+  --paper-3:    #E6E8F2;
+  --line:       rgba(28,40,133,0.14);
+  --line-2:     rgba(28,40,133,0.28);
+  --muted:      rgba(14,20,48,0.55);
+  --muted-2:    rgba(14,20,48,0.72);
+  --accent:     #1C2885;
+  --accent-soft:#E6E8F5;
+  --pastel:     #EAF1FB;
+  --pastel-red: #FBEAE9;
+  --alert:      #D0342C;
+  --pass:       #0E8A4F;
+  --fail:       #B53232;
+  --highlight:  #FFF4B8;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0d1a;
+  height: 100%; overflow: hidden;
+}
+body {
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ----- Slideshow viewer ----- */
+.viewer {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+  /* width/height set inline by JS to maintain 16:9 fit */
+}
+/* Each slide is absolutely positioned inside .stage; only the active one is visible */
+.slide-wrap {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+}
+.slide-wrap.is-active { opacity: 1; visibility: visible; }
+
+/* ----- Slide canvas: 1920 × 1080 (fixed; scaled by JS) ----- */
+.slide {
+  width: 1920px; height: 1080px;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0;
+  transform-origin: top left;
+  display: flex; flex-direction: column;
+  padding: 100px;
+  overflow: hidden;
+}
+
+/* ----- Navigation hit areas ----- */
+.nav-zone {
+  position: fixed; top: 0; bottom: 0;
+  width: 22%; cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center;
+  opacity: 0; transition: opacity 0.18s ease;
+}
+.nav-zone:hover { opacity: 1; }
+.nav-zone.prev { left: 0; justify-content: flex-start; padding-left: 24px; }
+.nav-zone.next { right: 0; justify-content: flex-end; padding-right: 24px; }
+.nav-zone .arrow {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #0e1430;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ----- HUD: bottom progress + counter ----- */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+.hud .bar {
+  height: 3px; background: rgba(255,255,255,0.12);
+  position: relative;
+}
+.hud .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #1c2885;
+  transition: width 0.2s ease;
+}
+.hud .bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em;
+}
+.hud .bottom .title { font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: -0.005em; }
+.hud .bottom .pager { font-variant-numeric: tabular-nums; font-weight: 600; color: rgba(255,255,255,0.95); }
+
+/* ----- Help overlay (shown briefly on load) ----- */
+.help {
+  position: fixed; top: 18px; right: 24px; z-index: 13;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 14px; font-size: 12px; color: #0e1430;
+  border-radius: 4px;
+  font-weight: 500; letter-spacing: 0.02em;
+  opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.help.show { opacity: 1; }
+.help kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: #f2f3f8; border: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+}
+.slide.chapter-divider { padding: 120px; background: var(--paper-2); }
+.slide.cover           { padding: 120px; }
+
+/* ----- Head block ----- */
+.chapter-tag {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+.chapter-tag .ch { margin-right: 10px; }
+.chapter-tag.small { font-size: 22px; }
+
+.slide-title {
+  font-size: 88px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.08;
+  margin: 24px 0 0;
+}
+.slide-title em { font-style: normal; color: var(--accent); }
+
+.slide-lede {
+  font-size: 34px; font-weight: 500; line-height: 1.45;
+  color: var(--muted-2); margin-top: 8px; max-width: 1500px;
+}
+
+.head-gap { height: 64px; flex-shrink: 0; }
+
+/* ----- Body region ----- */
+/* 기본: 컨텐츠는 head 바로 아래에 (위 정렬) */
+.body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+.body.body-top    { justify-content: flex-start; }
+/* 명시적으로 아래 정렬이 필요한 슬라이드용 (현재는 사용 안 함) */
+.body.body-bottom { justify-content: flex-end; }
+/* alert/qa 슬라이드: 컨텐츠 가운데 정렬 (살짝 위로 보이도록 padding-bottom) */
+.body.body-center { justify-content: center; align-items: center; text-align: center; padding-bottom: 140px; }
+
+/* ----- Footer bar ----- */
+.footer {
+  position: absolute; left: 100px; right: 100px; bottom: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 18px; color: var(--muted);
+}
+.footer .left { display: flex; gap: 16px; }
+.footer .brand { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+
+/* ----- Cover slide ----- */
+.cover .cover-kicker {
+  font-size: 22px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--accent); text-transform: uppercase;
+}
+.cover .cover-title {
+  font-size: 120px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin: 32px 0 0;
+}
+.cover .cover-title em { color: var(--accent); font-style: normal; }
+.cover .cover-sub {
+  font-size: 36px; font-weight: 500; color: var(--muted-2);
+  margin-top: 36px; line-height: 1.4; max-width: 1400px;
+}
+.cover .cover-meta {
+  position: absolute; left: 120px; right: 120px; bottom: 120px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: 22px; color: var(--muted-2);
+}
+.cover .cover-meta .speaker b { color: var(--ink); font-weight: 700; font-size: 26px; display: block; margin-bottom: 6px; }
+
+/* ----- Chapter Divider ----- */
+.chapter-divider .divider-num {
+  font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
+}
+.chapter-divider .divider-title {
+  font-size: 104px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+  margin-top: 28px; max-width: 1700px;
+}
+.chapter-divider .divider-sub {
+  font-size: 36px; color: var(--muted-2); margin-top: 4px; max-width: 1500px;
+  font-weight: 500; line-height: 1.45;
+}
+
+/* ----- Pastel Card Grid (N-up) ----- */
+.card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.card-grid    { display: grid; gap: 20px; }
+.card-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.card-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.card-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.card-grid.cols-6 { grid-template-columns: repeat(6,1fr); gap: 14px; }
+.card-grid.cols-7 { grid-template-columns: repeat(7,1fr); gap: 12px; }
+/* 6/7-up은 카드 안 글자도 작게 */
+.card-grid.cols-6 .card-pastel,
+.card-grid.cols-7 .card-pastel { padding: 22px 18px; }
+.card-grid.cols-6 .card-pastel .card-title,
+.card-grid.cols-7 .card-pastel .card-title { font-size: 22px; }
+.card-grid.cols-6 .card-pastel ul li,
+.card-grid.cols-7 .card-pastel ul li { font-size: 16px; }
+.card-pastel {
+  background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
+}
+.card-pastel .num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em; color: var(--accent);
+  margin-bottom: 18px;
+}
+.card-pastel .card-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.card-pastel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.card-pastel ul li {
+  font-size: 22px; color: var(--muted-2); line-height: 1.45;
+  padding-left: 20px; position: relative;
+}
+.card-pastel ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+
+/* ----- Stage Flow ----- */
+.stage-row { display: flex; gap: 16px; align-items: stretch; }
+.stage-step {
+  flex: 1; padding: 32px 28px;
+  border: 1px solid var(--line); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.stage-step .step-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+  margin-bottom: 16px;
+}
+.stage-step .step-name { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.stage-step .step-desc { font-size: 20px; color: var(--muted-2); line-height: 1.45; }
+.stage-step.highlight {
+  background: var(--ink-2); color: var(--paper); border-color: var(--ink-2);
+}
+.stage-step.highlight .step-num { color: var(--paper); }
+.stage-step.highlight .step-desc { color: rgba(255,255,255,0.78); }
+.stage-arrow {
+  display: flex; align-items: center; font-size: 32px; color: var(--line-2);
+}
+
+/* ----- Alert / Closing ----- */
+.alert-note {
+  font-size: 64px; line-height: 1.35; color: var(--alert);
+  font-weight: 700; letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 1500px;
+}
+.alert-note b { font-weight: 800; }
+
+/* ----- Bullets (text-heavy slide) ----- */
+.bullets {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 22px;
+}
+.bullets li {
+  font-size: 28px; line-height: 1.5; color: var(--ink);
+  padding-left: 28px; position: relative;
+}
+.bullets li::before {
+  content: ""; position: absolute; left: 0; top: 18px;
+  width: 16px; height: 2px; background: var(--accent);
+}
+
+/* ----- Two-column comparison ----- */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
+  height: 100%;
+}
+.two-col .col {
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 36px 32px;
+  display: flex; flex-direction: column;
+}
+.two-col .col.accent {
+  background: var(--pastel); border-color: transparent;
+}
+.two-col .col-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.two-col .col-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin-bottom: 18px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.two-col .col-lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 22px;
+}
+.two-col .col ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.two-col .col ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.two-col .col ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* ----- Table of Contents ----- */
+/* column-major: 왼쪽 열을 먼저 채우고 오른쪽 열로 (1,2,3,4 / 5,6,7,8) */
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, auto);
+  gap: 18px 48px;
+}
+.toc-item {
+  display: flex; align-items: baseline; gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.toc-num {
+  font-size: 22px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+  min-width: 56px;
+}
+.toc-text {
+  font-size: 28px; font-weight: 500; color: var(--ink);
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+
+/* ----- Speaker profile ----- */
+.speaker-card {
+  display: grid; grid-template-columns: 280px 1fr; gap: 48px;
+  height: 100%;
+}
+.speaker-photo {
+  /* fallback 모드 (사진 없을 때): 이름 첫 글자 표시 */
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 24px; font-weight: 600;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-info .speaker-name {
+  font-size: 56px; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.05; margin-bottom: 12px;
+}
+.speaker-info .speaker-title {
+  font-size: 26px; color: var(--accent); font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 28px;
+}
+.speaker-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+}
+.speaker-tag {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 6px 14px; font-size: 18px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.speaker-bio {
+  list-style: none; padding: 0; margin: 0; display: grid; gap: 16px;
+}
+.speaker-bio li {
+  font-size: 20px; color: var(--ink); line-height: 1.5;
+  padding-left: 20px; position: relative;
+}
+.speaker-bio li::before {
+  content: ""; position: absolute; left: 0; top: 14px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+.speaker-bio li b { font-weight: 700; color: var(--ink); }
+
+/* ----- Closing / Q&A ----- */
+.qa-big {
+  font-size: 240px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--accent); line-height: 1;
+}
+.qa-sub {
+  font-size: 32px; color: var(--muted-2); margin-top: 32px;
+  font-weight: 500; line-height: 1.4;
+}
+.qa-contact {
+  font-size: 26px; color: var(--ink); margin-top: 36px;
+  font-weight: 700; letter-spacing: -0.01em;
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--line);
+  background: var(--paper);
+}
+.qa-thanks {
+  font-size: 24px; color: var(--muted-2); margin-top: 28px;
+  font-weight: 500;
+}
+
+/* ============================================================
+ *  Design system meta — color_palette / type_scale
+ * ============================================================ */
+
+/* ----- color_palette — 컬러 스와치 그리드 ----- */
+.cp-grid { display: grid; gap: 18px; flex: 1; }
+.cp-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.cp-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.cp-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.cp-swatch {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.cp-chip {
+  height: 180px;
+  display: flex; align-items: flex-end; padding: 18px;
+  font-size: 18px; font-weight: 700; letter-spacing: 0.05em;
+}
+.cp-body {
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 14px;
+}
+.cp-body .role { color: var(--ink); font-weight: 600; }
+.cp-body .hex {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted-2); font-size: 13px;
+}
+.cp-body .token {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted); font-size: 12px;
+}
+
+/* ----- type_scale — 타이포그래피 위계 테이블 ----- */
+.ts-table {
+  display: grid; grid-template-columns: 1fr 2fr;
+  border-top: 1px solid var(--line);
+  flex: 1;
+}
+.ts-row { display: contents; }
+.ts-row > div {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.ts-meta {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px; color: var(--muted-2); line-height: 1.7;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ts-meta b {
+  color: var(--ink);
+  font-family: "Pretendard Variable","Pretendard",sans-serif;
+  display: block; font-size: 16px; margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.ts-sample { display: flex; align-items: center; }
+.ts-sample > span { width: 100%; }
+
+/* ============================================================
+ *  새 추가 6종 템플릿 (디자인 다양화)
+ * ============================================================ */
+
+/* ----- 1. checklist — 번호 리스트 + 박스 테두리 ----- */
+.checklist-frame {
+  border: 1px solid var(--ink);
+  padding: 56px 64px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.checklist-frame .ck-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.01em;
+  line-height: 1.2; margin: 0 0 14px;
+}
+.checklist-frame .ck-title em { font-style: normal; color: var(--accent); }
+.checklist-frame .ck-sub {
+  font-size: 24px; color: var(--ink); font-weight: 400;
+  margin: 0 0 38px;
+}
+.checklist-frame ol {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 18px;
+}
+.checklist-frame ol li {
+  font-size: 26px; line-height: 1.5; color: var(--ink); font-weight: 400;
+}
+.checklist-frame ol li.emphasis {
+  font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+  color: var(--ink);
+}
+
+/* ----- 2. summary_takeaway — 3 카드 + 하단 takeaway 바 ----- */
+.summary-head {
+  display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: baseline;
+  margin-bottom: 36px;
+}
+.summary-head .num {
+  font-size: 24px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.summary-head .lead {
+  font-size: 32px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.summary-cards { display: grid; gap: 28px; grid-template-columns: repeat(3,1fr); flex: 1; }
+.summary-cards.cols-2 { grid-template-columns: repeat(2,1fr); }
+.summary-cards.cols-4 { grid-template-columns: repeat(4,1fr); }
+.summary-card {
+  display: flex; flex-direction: column;
+  border-bottom: 1px solid var(--ink);
+}
+.summary-card .head {
+  background: var(--pastel);
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 700; line-height: 1.25;
+  color: var(--ink); letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+.summary-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; flex: 1; }
+.summary-card ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.summary-card ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--accent);
+}
+.summary-card ul li b { font-weight: 700; color: var(--accent); }
+.summary-takeaway {
+  margin-top: 28px;
+  background: var(--accent); color: var(--paper);
+  padding: 28px 32px;
+  font-size: 28px; font-weight: 700; text-align: center;
+  letter-spacing: -0.01em; line-height: 1.4;
+}
+
+/* ----- 3. dual_panel — 두 색 헤더 + 분할 패널 (navy + red) ----- */
+.dp-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 32px;
+  align-items: baseline;
+}
+.dp-head .num {
+  font-size: 26px; font-weight: 700; color: var(--accent);
+}
+.dp-head .lead {
+  font-size: 30px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.dp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--line);
+  flex: 1;
+}
+.dp-pane { display: flex; flex-direction: column; }
+.dp-pane.left { border-right: 1px solid var(--line); }
+.dp-header {
+  padding: 22px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 800;
+  color: var(--paper); letter-spacing: -0.01em;
+}
+.dp-header.navy { background: var(--accent); }
+.dp-header.red  { background: var(--alert); }
+.dp-body {
+  padding: 32px 36px;
+  flex: 1; display: flex; flex-direction: column; gap: 22px;
+}
+.dp-body.tint-blue { background: rgba(234,241,251,0.45); }
+.dp-body.tint-red  { background: rgba(251,234,233,0.55); }
+.dp-section {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-bottom: 18px;
+}
+.dp-section + .dp-section { border-top: 1px solid var(--line); padding-top: 18px; }
+.dp-section .sec-title {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0;
+}
+.dp-section .sec-title.navy { color: var(--accent); }
+.dp-section .sec-title.red  { color: var(--alert); }
+.dp-section ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.dp-section ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.dp-section ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.dp-section ul li b { font-weight: 700; }
+.dp-foot {
+  margin-top: auto;
+  font-size: 16px; color: var(--muted-2); line-height: 1.5;
+  padding-top: 14px;
+}
+.dp-foot::before { content: "* "; }
+
+/* ----- 4. case_grid_4 — 2x2 카드 격자 (blue/red 교차) ----- */
+.cg4 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--ink);
+  flex: 1;
+}
+.cg4 .cell {
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 14px;
+  border-bottom: 1px solid var(--ink);
+  position: relative;
+}
+.cg4 .cell:nth-child(odd)  { border-right: 1px solid var(--ink); background: var(--pastel); }
+.cg4 .cell:nth-child(even) { background: var(--pastel-red); }
+.cg4 .cell .ct {
+  font-size: 26px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cg4 .cell:nth-child(odd) .ct  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .ct { color: var(--alert); }
+.cg4 .cell ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.cg4 .cell ul li {
+  font-size: 19px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.cg4 .cell ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.cg4 .cell .arrow {
+  font-size: 20px; font-weight: 700; line-height: 1.4;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.cg4 .cell:nth-child(odd) .arrow  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .arrow { color: var(--alert); }
+.cg4 .cell .arrow::before { content: "→ "; font-weight: 700; }
+
+/* ----- 5. case_analysis — 자료 + 합격 포인트 + 결론 박스 ----- */
+.ca-grid {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px;
+  flex: 1; min-height: 0;
+}
+.ca-ref {
+  background: var(--paper-2);
+  padding: 32px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ca-ref .ref-title {
+  font-size: 22px; font-weight: 700; margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.ca-ref .ref-image { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ca-ref .ref-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ca-ref .ref-text {
+  font-size: 14px; color: var(--ink); line-height: 1.6;
+  white-space: pre-wrap; flex: 1; overflow: hidden;
+}
+.ca-ref .ref-text mark {
+  background: var(--highlight); padding: 1px 2px;
+  color: var(--ink);
+}
+.ca-points {
+  display: flex; flex-direction: column; gap: 22px;
+}
+.ca-point {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ca-point .pt-label {
+  display: inline-block;
+  background: var(--accent); color: var(--paper);
+  padding: 4px 14px;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+.ca-point .pt-text {
+  font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;
+}
+.ca-conclusion {
+  background: transparent;
+  padding: 22px 0 8px;
+  font-size: 30px; font-weight: 700; line-height: 1.45;
+  color: var(--accent);
+  margin-top: auto;
+  border-top: 2px solid var(--accent);
+  letter-spacing: -0.01em;
+}
+.ca-conclusion b { font-weight: 800; color: var(--ink); }
+
+/* ----- 6. pipeline_matrix — 3-stage horizontal 파이프라인 ----- */
+.pm-row {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr 50px 1fr;
+  gap: 0;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+.pm-row + .pm-row { margin-top: 4px; }
+.pm-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 700; color: var(--ink);
+}
+.pm-cell {
+  background: var(--ink); color: var(--paper);
+  padding: 20px 18px;
+  text-align: center;
+  font-size: 22px; font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center;
+}
+.pm-cell.empty { background: transparent; }
+.pm-cell-row {
+  display: grid; gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+.pm-multi {
+  display: grid; gap: 6px;
+}
+.pm-sub-group {
+  display: grid; grid-template-columns: 1fr; gap: 4px;
+}
+.pm-sub-group .pm-cell { padding: 14px 12px; font-size: 18px; }
+.pm-sub-cells {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.pm-sub-cells .pm-cell { padding: 10px 8px; font-size: 16px; font-weight: 600; }
+.pm-note {
+  position: absolute; right: 100px; top: 50%; transform: translateY(-65%);
+  font-size: 22px; font-weight: 700; color: var(--ink); font-style: italic;
+  text-align: center; max-width: 240px; line-height: 1.4;
+}
+
+/* ----- Image slides ----- */
+.slide.image-full {
+  padding: 0;
+  background: #0e1430;
+}
+.slide.image-full .img-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 60px;
+}
+.slide.image-full .img-wrap img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.slide.image-full.bg-light { background: var(--paper-2); }
+.slide.image-full.bg-light .img-wrap img { box-shadow: 0 6px 24px rgba(28,40,133,0.18); }
+.slide.image-full .image-caption {
+  background: var(--paper);
+  padding: 24px 100px;
+  border-top: 1px solid var(--line);
+  font-size: 22px; color: var(--muted-2);
+  line-height: 1.45;
+}
+.slide.image-full .image-caption b { color: var(--ink); font-weight: 700; }
+
+/* image with header (chapter + title above image) */
+.slide.image-headed { padding: 80px 100px 100px; }
+.slide.image-headed .img-zone {
+  flex: 1;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 32px;
+  margin-top: 28px;
+}
+.slide.image-headed .img-zone img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.image-split {
+  display: grid; gap: 48px; height: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.image-split.left  { grid-template-areas: 'img text'; }
+.image-split.right { grid-template-areas: 'text img'; }
+.image-split .img-pane {
+  grid-area: img;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 24px;
+}
+.image-split .img-pane img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-split .text-pane {
+  grid-area: text;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.image-split .text-pane h3 {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin: 0 0 18px; letter-spacing: -0.01em;
+}
+.image-split .text-pane .lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 24px;
+}
+.image-split .text-pane ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.image-split .text-pane ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.image-split .text-pane ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* Speaker photo with image: 박스/프레임 없이 사진만 깔끔하게 */
+.speaker-photo.has-image {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-photo.has-image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;  /* 인물 사진은 위쪽 비중 — 얼굴이 잘 보이도록 */
+  display: block;
+}
+
+/* ----- Compare table (3-col with row labels) ----- */
+.compare-table {
+  display: grid; gap: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.compare-row {
+  display: grid; grid-template-columns: 280px 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row > div {
+  padding: 26px 28px;
+  border-right: 1px solid var(--line);
+  font-size: 22px; line-height: 1.45; color: var(--ink);
+}
+.compare-row > div:last-child { border-right: none; }
+.compare-row.head > div {
+  background: var(--paper-2);
+  font-weight: 700; font-size: 22px;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.compare-row.head > div:first-child {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); text-transform: uppercase;
+}
+.compare-row > div.label {
+  background: var(--paper-2);
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.compare-row > div.cell {
+  font-size: 22px; color: var(--ink); font-weight: 500; line-height: 1.45;
+}
+.compare-row > div.cell.accent {
+  background: var(--pastel); color: var(--ink);
+}
+.compare-conclusion {
+  margin-top: 28px;
+  padding: 20px 28px;
+  background: var(--accent); color: var(--paper);
+  font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.compare-conclusion b { font-weight: 800; }
+
+/* ----- Edit mode styling ----- */
+body.edit-mode [data-edit] {
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.12s ease;
+  cursor: text;
+}
+body.edit-mode [data-edit]:hover { outline-color: rgba(28,40,133,0.45); }
+body.edit-mode [data-edit]:focus {
+  outline: 2px solid #1c2885;
+  background: rgba(234,241,251,0.45);
+}
+body.edit-mode .nav-zone { display: none !important; }
+
+#edit-bar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 14;
+  display: none; gap: 8px; padding: 8px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(28,40,133,0.18);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  font-size: 13px;
+}
+#edit-bar.show { display: flex; }
+#edit-bar button {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border: 1px solid rgba(28,40,133,0.2);
+  background: #fff; color: #0e1430; cursor: pointer;
+  letter-spacing: -0.005em;
+}
+#edit-bar button:hover { background: #f2f3f8; }
+#edit-bar button.primary { background: #1c2885; color: #fff; border-color: #1c2885; }
+#edit-bar button.primary:hover { background: #0e1430; }
+#edit-bar .hint { font-size: 11px; color: #737991; padding: 0 8px; align-self: center; }
+
+#edit-toggle {
+  position: fixed; top: 16px; left: 16px; z-index: 13;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.94); color: #0e1430;
+  border: 1px solid rgba(28,40,133,0.18); border-radius: 4px;
+  cursor: pointer; letter-spacing: -0.005em;
+}
+#edit-toggle:hover { background: #fff; }
+
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #0e8a4f; color: #fff;
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 15; letter-spacing: -0.005em;
+}
+#toast.show { opacity: 1; }
+
+/* ===== Print mode (Cmd+P → PDF로 저장) ===== */
+@media print {
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  .viewer { position: static !important; display: block !important; }
+  .stage { box-shadow: none !important; width: 1920px !important; height: auto !important; }
+  .slide-wrap {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important; visibility: visible !important;
+    width: 1920px !important; height: 1080px !important;
+    page-break-after: always; break-after: page;
+    display: block !important;
+  }
+  .slide-wrap:last-child { page-break-after: auto; }
+  .slide {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    transform: none !important;
+  }
+  .nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+  @page { size: 1920px 1080px; margin: 0; }
+}
+</style>
+</head><body>
+<div class="viewer">
+  <div id="stage" class="stage">
+    <div class="slide-wrap" data-idx="1">
+    <section class="slide cover">
+      <div class="cover-kicker" data-edit="meta.event_label">ZEROBASE 취업정보회사</div>
+      <div class="cover-title">
+        <span data-edit="meta.title">2026 HR 합격 자료</span><br>
+        <em data-edit="meta.title_em">대기업 경력기술서 · 자소서 완전 공개</em>
+      </div>
+      <div class="cover-sub" data-edit="meta.subtitle">13년 차 HRer가 직접 분석한 — 삼성·쿠팡·요기요·SK E&S 실제 합격 자료.</div>
+      <div class="cover-meta">
+        <div class="speaker">
+          <b data-edit="meta.speaker.name">13년차 HRer</b>
+          <span data-edit="meta.speaker.title">취업정보회사 — HR 직무 컨설턴트</span>
+        </div>
+        <div><span data-edit="meta.date">2026 HR Edition</span> · <span data-edit="meta.session">Part 1~4</span></div>
+      </div>
+    </section></div><div class="slide-wrap" data-idx="2">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[1].chapter">강사 소개</div>
+      <h2 class="slide-title" data-edit="slides[1].title">13년 차 HRer가 직접 분석합니다</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="speaker-card">
+        <div class="speaker-photo">1</div>
+        <div class="speaker-info">
+          <div class="speaker-name" data-edit="meta.speaker.name">13년차 HRer</div>
+          <div class="speaker-title" data-edit="meta.speaker.title">취업정보회사 — HR 직무 컨설턴트</div>
+          <div class="speaker-tags"><span class="speaker-tag" data-edit="meta.speaker.tags[0]">#HR 채용</span><span class="speaker-tag" data-edit="meta.speaker.tags[1]">#경력 13년+</span><span class="speaker-tag" data-edit="meta.speaker.tags[2]">#실제 합격 자료</span><span class="speaker-tag" data-edit="meta.speaker.tags[3]">#삼성·쿠팡·요기요·SK E&S</span></div>
+          <ul class="speaker-bio"><li data-edit="meta.speaker.bio[0]">롯데그룹 인사담당자 출신 — HSG 휴먼솔루션그룹 HRD 현직.</li><li data-edit="meta.speaker.bio[1]">공인노무사 1차 합격 · 인사관리·조직행동·노사관계 등 인사 전 영역 학습.</li><li data-edit="meta.speaker.bio[2]">HR 직무 구직자 자기소개서·포트폴리오 검토 1,000+ 건.</li></ul>
+        </div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">02 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="3">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[2].chapter">Contents</div>
+      <h2 class="slide-title" data-edit="slides[2].title" data-edit-html="1">오늘 다룰 4가지 PART</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="toc-grid">
+        <div class="toc-item">
+          <span class="toc-num">01</span>
+          <span class="toc-text" data-edit="slides[2].items[0]">취업정보회사 — 새로운 서비스를 선보이게 된 이유</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">02</span>
+          <span class="toc-text" data-edit="slides[2].items[1]">HR 직무 취업을 위해 해야 할 5가지</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">03</span>
+          <span class="toc-text" data-edit="slides[2].items[2]">13년 차 HRer가 읽고 싶은 지원동기 + 포트폴리오</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">04</span>
+          <span class="toc-text" data-edit="slides[2].items[3]">실제 데이터로 본 합격 인사이트 — 4사 사례</span>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">03 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="4">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[3].ch">PART 01</div>
+      <h1 class="divider-title" data-edit="slides[3].title" data-edit-html="1">취업정보회사<br>새로운 서비스의 출발점</h1>
+      <p class="divider-sub" data-edit="slides[3].sub">사람마다 시작점도 목표도 다르다 — 그래서 ‘각자에게 맞는 전략’이 필요합니다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">04 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="5">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[4].chapter">PART 01 출발점</div>
+      <h2 class="slide-title" data-edit="slides[4].title" data-edit-html="1">취준생마다 <em>시작점이 다르다</em></h2>
+      <p class="slide-lede" data-edit="slides[4].lede">좋은 프로그램일수록 각자에게 맞는 선택지를 먼저 제시할 수 있어야 합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[0].num">CASE 01</div>
+          <div class="card-title" data-edit="slides[4].cards[0].title">목표 명확형</div>
+          <ul><li data-edit="slides[4].cards[0].items[0]">이미 명확한 목표 기업 보유</li><li data-edit="slides[4].cards[0].items[1]">직무·기업 매칭 검증이 핵심</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[1].num">CASE 02</div>
+          <div class="card-title" data-edit="slides[4].cards[1].title">직무 탐색형</div>
+          <ul><li data-edit="slides[4].cards[1].items[0]">어떤 직무가 맞는지부터 고민</li><li data-edit="slides[4].cards[1].items[1]">자기 분석 + 직무 매핑 필요</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[2].num">CASE 03</div>
+          <div class="card-title" data-edit="slides[4].cards[2].title">실무 vs 서류 갭</div>
+          <ul><li data-edit="slides[4].cards[2].items[0]">실무 경험은 충분한데 서류에서 막힘</li><li data-edit="slides[4].cards[2].items[1]">표현·구성 보완 집중</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[3].num">CASE 04</div>
+          <div class="card-title" data-edit="slides[4].cards[3].title">학습 vs 실전 갭</div>
+          <ul><li data-edit="slides[4].cards[3].items[0]">학습은 많이 했지만 실전 경험 부족</li><li data-edit="slides[4].cards[3].items[1]">프로젝트·인턴 + 사례화</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">05 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="6">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[5].chapter">PART 01 결론</div>
+      <h2 class="slide-title" data-edit="slides[5].title" data-edit-html="1"><em>‘배우는 양’</em>이 아니라 <em>‘각자의 목표에 맞는 길’</em></h2>
+      <p class="slide-lede" data-edit="slides[5].lede">결과를 만드는 데 필요한 과정만을 선명하게 — 그것이 취업정보회사의 가치.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[5].alert" data-edit-html="1"><b>처음 만나는 순간부터</b>
+각자에게 맞는 전략을 바로 세워줍니다.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">06 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="7">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[6].ch">PART 02</div>
+      <h1 class="divider-title" data-edit="slides[6].title" data-edit-html="1">HR 직무 취업을 위해<br>해야 할 5가지</h1>
+      <p class="divider-sub" data-edit="slides[6].sub">신입에게 기대하는 건 전문성이 아니라 ‘직무를 향한 관심’입니다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">07 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="8">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[7].chapter">PART 02 — 5가지 활동</div>
+      <h2 class="slide-title" data-edit="slides[7].title" data-edit-html="1">재학생도 할 수 있는 <em>HR 관심 어필 5가지</em></h2>
+      <p class="slide-lede" data-edit="slides[7].lede">‘얼마나 구체적으로 준비했는지’의 과정을 보여주세요.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[7].cards[0].title">관련 전공과목</div>
+          <ul><li data-edit="slides[7].cards[0].items[0]">전공자라면 인사 관련 과목만 이수</li><li data-edit="slides[7].cards[0].items[1]">인사관리·조직행동론·노사관계 등</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[7].cards[1].title">간접 회사 경험</div>
+          <ul><li data-edit="slides[7].cards[1].items[0]">동아리를 ‘회사’처럼 운영한 경험</li><li data-edit="slides[7].cards[1].items[1]">‘일개 부원이 아닌 인사담당자’ 포지셔닝</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[7].cards[2].title">현직자 인터뷰</div>
+          <ul><li data-edit="slides[7].cards[2].items[0]">현업의 실제 목소리 듣기</li><li data-edit="slides[7].cards[2].items[1]">내가 적합한지 검증할 수 있음</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[7].cards[3].title">관련 자격증</div>
+          <ul><li data-edit="slides[7].cards[3].items[0]">공인노무사 1차 같은 법률 지식</li><li data-edit="slides[7].cards[3].items[1]">근로계약·복리후생 등 연결 가능</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[7].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[7].cards[4].title">관련 잡지</div>
+          <ul><li data-edit="slides[7].cards[4].items[0]">월간 DBR · HR Insight 정독</li><li data-edit="slides[7].cards[4].items[1]">직무 용어 + HR 트렌드 익히기</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">08 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="9">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[8].chapter">PART 02 — 02. 간접 회사 경험</div>
+      <h2 class="slide-title" data-edit="slides[8].title" data-edit-html="1">실제 사례 — <em>‘증권사의 인사담당자’</em>가 되다</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[8].ref_title">주식투자 동아리 ‘블루칩뮤추얼펀드’ — 회사처럼 운영한 활동 정리</div><div class="ref-text" data-edit="slides[8].ref_text" data-edit-html="1">[동아리를 ‘회사’로 운영]
+· 동아리장은 ‘대표이사’
+· 부원에게 ‘직책’ 부여
+· 부원들이 직접 수익 발생시키는 구조
+
+[저의 역할 — 인사담당자]
+· 신규 동아리 부원 채용 진행 (자기소개서 검토 + 면접)
+· ‘엠티’가 아닌 ‘연수회’ 기획·운영
+· ‘나의 인생 주가 그래프 작성·발표’ 등 활동 직접 기획
+· ‘바닷가 레크레이션’ 대신 ‘단체 활동’
+· ‘회식’ 대신 ‘간담회’로 명명
+
+[자기소개서에서 강조한 포인트]
+‘일개 동아리 부원이 아닌 증권사의 인사담당자’로서 채용·기획·운영·소통의 전 과정을 직접 수행한 경험.</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[8].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[8].findings[0].text" data-edit-html="1"><b>‘회사 경험’의 시뮬레이션</b> — 동아리를 회사처럼 운영하며 채용·연수·간담회 등 실제 인사 업무 흐름을 직접 경험.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[8].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[8].findings[1].text" data-edit-html="1"><b>역할의 명확한 정의</b> — ‘부원’이 아닌 ‘인사담당자’로 자기 포지셔닝. 면접관에게 직무 매칭이 직관적으로 전달됨.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[8].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[8].findings[2].text" data-edit-html="1"><b>구체적 활동 결과물</b> — 자기소개서 검토·면접·연수 기획 등 구체적인 산출물로 ‘무엇을 해봤는가’ 증명.</div>
+        </div><div class="ca-conclusion" data-edit="slides[8].conclusion" data-edit-html="1">재학생도 ‘회사 경험’을 만들 수 있다 — <b>구체적인 ‘역할’과 ‘산출물’</b>이 핵심.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">09 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="10">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[9].ch">PART 03</div>
+      <h1 class="divider-title" data-edit="slides[9].title" data-edit-html="1">13년 차 HRer가<br>읽고 싶은 지원동기</h1>
+      <p class="divider-sub" data-edit="slides[9].sub">직무에 ‘긍정적인 의미’를 부여하는 사람 — 벽돌공이 아닌 성당 짓는 사람.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">10 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="11">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[10].chapter">PART 03 — 지원동기의 본질</div>
+      <h2 class="slide-title" data-edit="slides[10].title" data-edit-html="1">두 명의 벽돌공 — <em>같은 일, 다른 의미</em></h2>
+      <p class="slide-lede" data-edit="slides[10].lede">‘무슨 일을 하고 계십니까?’ — 한 명은 벽돌을 쌓고, 한 명은 성당을 짓습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[10].alert" data-edit-html="1"><b>같은 지원자라도</b>
+자기 일에 의미를 부여하는 사람에게 더 눈길이 갑니다.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">11 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="12">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[11].chapter">PART 03 — 포트폴리오 작성법</div>
+      <h2 class="slide-title" data-edit="slides[11].title" data-edit-html="1">포트폴리오 — <em>강점의 보조·증빙 자료</em></h2>
+      <p class="slide-lede" data-edit="slides[11].lede">내용이 중요합니다 — 과장하지 말고, 팩트 중심으로.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[11].cards[0].title">내가 작성한 자료를 이미지화</div>
+          <ul><li data-edit="slides[11].cards[0].items[0]">기획서·제안서·교육 프로그램 목차</li><li data-edit="slides[11].cards[0].items[1]">교육 교재 등 증빙 가능한 결과물</li><li data-edit="slides[11].cards[0].items[2]">샘플과 함께 구성</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[11].cards[1].title">자유 양식 회사라면 첨부</div>
+          <ul><li data-edit="slides[11].cards[1].items[0]">공채는 첨부 양식이 없을 수도</li><li data-edit="slides[11].cards[1].items[1]">자유 양식 회사(HSG 등)라면 적극 첨부</li><li data-edit="slides[11].cards[1].items[2]">호감도 상승 효과</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[11].cards[2].title">팩트 중심·노션·PPT 활용</div>
+          <ul><li data-edit="slides[11].cards[2].items[0]">최근 트렌드 — 인턴 사진·노션·PPT 슬라이드</li><li data-edit="slides[11].cards[2].items[1]">공모전 주요 슬라이드만 이미지화</li><li data-edit="slides[11].cards[2].items[2]">프로젝트별 ‘어떤 역할’을 명확히</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">12 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="13">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[12].chapter">PART 03 — 직무 이해도</div>
+      <h2 class="slide-title" data-edit="slides[12].title" data-edit-html="1">과거로 돌아가서 <em>꼭 했으면 좋았을 활동</em></h2>
+      <p class="slide-lede" data-edit="slides[12].lede">특히 컨설팅펌 지원자라면.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[12].cols[0].num">WHAT</div>
+          <div class="col-title" data-edit="slides[12].cols[0].title">할 수 있는 것</div>
+          
+          <ul><li data-edit="slides[12].cols[0].items[0]">HR 컨설팅펌 홈페이지 둘러보기</li><li data-edit="slides[12].cols[0].items[1]">어떤 교육·프로젝트를 제공하는지 정리</li><li data-edit="slides[12].cols[0].items[2]">공개된 정보를 활용한 직무 이해 깊이</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[12].cols[1].num">WHY</div>
+          <div class="col-title" data-edit="slides[12].cols[1].title">면접에서의 효과</div>
+          
+          <ul><li data-edit="slides[12].cols[1].items[0]">지원사 사업·서비스에 대한 이해 입증</li><li data-edit="slides[12].cols[1].items[1]">‘저는 귀사의 ○○ 프로그램이 인상 깊어…’</li><li data-edit="slides[12].cols[1].items[2]">지원동기의 구체성 ↑</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">13 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="14">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[13].ch">PART 04</div>
+      <h1 class="divider-title" data-edit="slides[13].title" data-edit-html="1">HR 추천 활동<br>+ Right People</h1>
+      <p class="divider-sub" data-edit="slides[13].sub">전공 무관 — 인하우스 vs 외부 컨설팅 두 갈래. 인턴으로 현장 경험이 핵심.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">14 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="15">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[14].chapter">PART 04 — 추천 활동</div>
+      <h2 class="slide-title" data-edit="slides[14].title" data-edit-html="1">HR 직무 취업을 위한 <em>추천 활동</em></h2>
+      <p class="slide-lede" data-edit="slides[14].lede">기업 생태계를 알 수 있는 방법 = 직접 일을 해보는 것.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[14].cards[0].title">인하우스 인사팀 인턴</div>
+          <ul><li data-edit="slides[14].cards[0].items[0]">기업 내 채용·교육 운영·문서 작업</li><li data-edit="slides[14].cards[0].items[1]">데이터 정리·행사 기획 등</li><li data-edit="slides[14].cards[0].items[2]">직무 적합성 자가 검증</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[14].cards[1].title">HRD 컨설팅펌 인턴</div>
+          <ul><li data-edit="slides[14].cards[1].items[0]">외부 교육·컨설팅 업체</li><li data-edit="slides[14].cards[1].items[1]">교육 현장 진행 과정 관찰</li><li data-edit="slides[14].cards[1].items[2]">외부 전문가 커리어 경로 탐색</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[14].cards[2].title">사회단체·동아리·커뮤니티</div>
+          <ul><li data-edit="slides[14].cards[2].items[0]">다양한 사람들과 만나는 기회</li><li data-edit="slides[14].cards[2].items[1]">조직 내 ‘소통’ 능력의 기초</li><li data-edit="slides[14].cards[2].items[2]">HR은 결국 사람·소통 직무</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">15 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="16">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[15].chapter">PART 04 — 결국 조직이 채용하는 사람</div>
+      <h2 class="slide-title" data-edit="slides[15].title" data-edit-html="1"><em>Best People</em>이 아닌 <em>Right People</em></h2>
+      <p class="slide-lede" data-edit="slides[15].lede">기업은 ‘우수한 인재’보다 ‘조직과 직무에 적합한 사람’을 찾고 있습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[15].alert" data-edit-html="1"><b>공고의 채용 포지션을 수행하는 데 필요한 역량은 무엇인가</b>
+— 그 안에 지식·기술·태도·인재상·핵심가치·일하는 방식이 모두 들어있습니다.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">16 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="17">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[16].ch">PART 05</div>
+      <h1 class="divider-title" data-edit="slides[16].title" data-edit-html="1">실제 데이터로 본<br>합격 인사이트</h1>
+      <p class="divider-sub" data-edit="slides[16].sub">최근 네이버·삼성·쿠팡·SK E&S 등 대기업 HR 합격자의 자료를 분석합니다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">17 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="18">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[17].chapter">PART 05 합격 사례 ① 삼성 HR</div>
+      <h2 class="slide-title" data-edit="slides[17].title" data-edit-html="1">삼성 HR 합격 — <em>‘관심과 오지랖, 그 사이’</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[17].ref_title">삼성 HR 합격 자기소개서 (3문항 핵심 발췌)</div><div class="ref-text" data-edit="slides[17].ref_text" data-edit-html="1">[Q1. 성격의 장단점]
+장점: 타인을 돕고 성장하는 모습에서 보람. 어린 시절부터 주위 사람에게 관심을 갖고 도울 부분 파악. 교내 민원 응대 — 어려운 용어는 풀어 설명, 복잡한 문제는 원격 지원. 불만 → 고맙다는 말로 마무리.
+단점: 타인 관심이 ‘참견’이 될 때도. 후배에게 장학금 정보 적극 공유 → 부담으로 느낌. 이후 ‘선택에는 참견하지 않는 습관’.
+
+[Q2. 공동체를 위해 노력한 경험]
+교내 봉사 활동 기획 — 봉사 강도 대신 ‘문화’ 변화. 추억집 + 트렌드 반영 스냅 사진 도입. ‘가기 싫었던 봉사가 이제 기다려진다’.
+
+[Q3. 어려운 상황 극복]
+인턴 근무 — 코로나 긴급 신설 부서, 체계 없어 불만 다발. 매주 불만율 10% 감소·최종 0% 목표 설정. 응대 매뉴얼·민원 기록·카드뉴스 → <b>최종 불만율 2% 달성</b>.</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[17].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[17].findings[0].text" data-edit-html="1"><b>장단점이 ‘공감 가능’</b> — ‘참견이 될 때도’ 같은 단점은 면접관도 ‘나도 그렇다’ 공감 가능. 단점이 단점다움.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[17].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[17].findings[1].text" data-edit-html="1"><b>문항 의도에 정확히 맞춤</b> — 경험 + 배운 점 + 회사 적용까지 명확한 흐름.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[17].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[17].findings[2].text" data-edit-html="1"><b>구체적 수치 + 행동 묘사</b> — ‘불만율 2%’ 같은 정량 결과 + ‘응대 매뉴얼·카드뉴스 배포’ 구체 행동.</div>
+        </div><div class="ca-conclusion" data-edit="slides[17].conclusion" data-edit-html="1">삼성 HR 합격의 핵심 = <b>공감 가능한 솔직함</b> + <b>정량 성과로 입증되는 행동</b>.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">18 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="19">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[18].chapter">PART 05 합격 사례 ② 쿠팡 HR</div>
+      <h2 class="slide-title" data-edit="slides[18].title" data-edit-html="1">쿠팡 HR 합격 — <em>5년 10개월 경력</em> + 현장형 채용 경험</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[18].ref_title">쿠팡 HR 합격 이력서 (경력 핵심)</div><div class="ref-text" data-edit="slides[18].ref_text" data-edit-html="1">[쿠팡로지스틱스서비스 — 인사·채용팀 Lv.4 (2020.09 ~ 2023.11 / 3년 3개월)]
+· 현장상황에 따른 채용전략 수립 (일 평균 10명 ~ 최대 200명 채용)
+· 팀 초기설립 단계 채용프로세스 + 인력 DB 정제·분석
+· 노무 이슈 방지 위한 근무자 면담
+· 채용 개선·현황분석 대시보드 생성
+→ <b>적정인력 채용계획 수립으로 생산성 증가, 채용 응대 리드타임 감소</b>
+
+[에이스휴먼파워 (2019.10 ~ 2020.10 / 1년 1개월)]
+· 마켓컬리 물류센터 — 일 평균 50~350명 일용직 채용
+· 벌크 리쿠르팅 + 유관부서 소통 + 일용/상용직 급여 관리
+
+[유안에이치알 (2017.05 ~ 2018.10 / 1년 6개월)]
+· 삼성생명/NICE/NH/KB캐피탈 파견직 관리 (40명)
+· 채권·상담·사무직 인력 써치/면접/관리
+
+[자기소개서 핵심]
+‘도전정신과 꾸준한 업무 개선을 통한 업무 프로세스 혁신’ + ‘채용과 운영은 다름이 아닌 하나라는 마음으로’.</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[18].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[18].findings[0].text" data-edit-html="1"><b>5년 10개월 누적 경력</b> — 일용직 대규모 채용에서 정규 채용·인사 운영까지의 발전 경로.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[18].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[18].findings[1].text" data-edit-html="1"><b>‘프로세스 혁신’ 스토리</b> — 구글폼 발주 시스템·DB 분석 대시보드 등 본인이 만든 결과물 명확.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[18].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[18].findings[2].text" data-edit-html="1"><b>‘채용 + 운영’ 통합 마인드</b> — 채용팀·현장 대립이 아닌 협의 통한 성과. 쿠팡식 ‘소유주의’ 가치관 매칭.</div>
+        </div><div class="ca-conclusion" data-edit="slides[18].conclusion" data-edit-html="1">쿠팡 HR 합격 = <b>대규모 채용 운영 능력</b> + <b>‘구조를 만든 사람’ 포지셔닝</b>.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">19 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="20">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[19].chapter">PART 05 합격 사례 ③ 요기요 HR</div>
+      <h2 class="slide-title" data-edit="slides[19].title" data-edit-html="1">요기요 HR — <em>채용 프로세스를 ‘시스템화’</em>한 사례</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[19].ref_title">요기요 HR 합격 이력서 (포트폴리오 핵심)</div><div class="ref-text" data-edit="slides[19].ref_text" data-edit-html="1">[추구하는 채용 프로세스]
+‘#빠르게, #합리적인 방식으로’ 인재를 채용.
+
+[채용 브랜드 이미지 = 3가지 요인]
+ⅰ) 합리적인 채용 프로세스
+ⅱ) 입사 후 On-boarding
+ⅲ) 성과를 만드는 지원 + 성장에 대한 도움
+
+[Plan → Do → See → Check 프레임워크]
+· Recruiter — 채용 Kick-off → JD 작성 → 채용 노출 → 서류/면접 피드백 → Offer → Debrief
+· Hiring Manager — TO 발생 → 인재 페르소나 정의 → 서류/면접 피드백 기준 → 면접 전형 → On-boarding
+· Candidate — 현직장 문제 → 이직 고민 → 도전 결심 → 정보 탐색 → 입사 준비 → Pre-boarding
+
+[Recruiting Action — 3대 축]
+· 인재 정의 — JD 작성, 인재 기준 Align
+· 검증 능력 강화 — 객관적 피드백, Debrief 미팅
+· Direct Sourcing — 인재 풀 확보, 추천 프로그램</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[19].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[19].findings[0].text" data-edit-html="1"><b>이력서를 ‘시스템 다이어그램’으로</b> — 채용 프로세스를 Plan-Do-See-Check 프레임으로 시각화.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[19].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[19].findings[1].text" data-edit-html="1"><b>3주체(Recruiter/HM/Candidate) 통합 관점</b> — 채용을 다층적으로 본다는 것을 한눈에 보여줌.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[19].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[19].findings[2].text" data-edit-html="1"><b>Action 3대 축의 명확함</b> — ‘정의·검증·소싱’이라는 본인만의 채용 철학 정리.</div>
+        </div><div class="ca-conclusion" data-edit="slides[19].conclusion" data-edit-html="1">요기요 HR 합격 = <b>본인의 채용 철학을 시각화</b>한 ‘이력서 = 포트폴리오’ 형태.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">20 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="21">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[20].chapter">PART 05 합격 사례 ④ SK E&S HR</div>
+      <h2 class="slide-title" data-edit="slides[20].title" data-edit-html="1">SK E&S HR — <em>13년 차 컨설턴트</em>의 ‘균형 있는 소통’</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[20].ref_title">SK E&S HR 합격 자기소개서 (핵심 발췌)</div><div class="ref-text" data-edit="slides[20].ref_text" data-edit-html="1">[1번 자기소개]
+인사담당자에게 가장 중요한 역량 = ‘균형 있는 소통’.
+구성원 입사 → 성과 창출 지원 → 퇴사까지의 ‘성장과 경험의 여정’ 관리.
+
+· LG이노텍·한화솔루션/큐셀 — 인사제도 기획자로서 회사 비전과 구성원 동기부여 균형
+· 딜로이트 컨설팅 — HR 전략·조직/제도 설계, M&A HR DD/PMI 경험
+· 인사 제도 근간(조직·직급·평가·승진·보상) + 리더십·조직문화까지
+
+[2번 지원동기 — 회사 선택 기준 = ‘지속가능한 성장 가능성’]
+① 회사 관점: SK E&S 사업 방향(깨끗한 에너지)의 무한 동력
+② 구성원 관점: ‘성취감’ 느낄 수 있는 다양한 과업
+
+[입사 후 포부]
+HR 기획 담당으로 그라운드를 누비는 선수들이 더 멋진 성과 낼 수 있도록 지원.
+‘잔디 상태’를 체크하고 컨디션 안 좋으면 먼저 뛰어가 원인 분석.</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[20].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[20].findings[0].text" data-edit-html="1"><b>경력의 일관된 흐름</b> — 인하우스(LG·한화) → 컨설팅(딜로이트)으로 HR 깊이 + 폭 모두 성장.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[20].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[20].findings[1].text" data-edit-html="1"><b>지원동기의 ‘이중 관점’</b> — 회사 비전 + 구성원 성취감 모두를 SK E&S와 연결.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[20].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[20].findings[2].text" data-edit-html="1"><b>비유로 직무 본질 표현</b> — ‘그라운드의 잔디 상태’ 비유로 HR의 책임감과 역할 깊이 전달.</div>
+        </div><div class="ca-conclusion" data-edit="slides[20].conclusion" data-edit-html="1">SK E&S HR 합격 = <b>균형 있는 소통</b> + <b>회사·구성원의 이중 관점</b> + <b>본인만의 직무 비유</b>.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">21 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="22">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[21].chapter">PART 05 — 합격 패턴 종합</div>
+      <h2 class="slide-title" data-edit="slides[21].title" data-edit-html="1">4사 합격 사례에서 보이는 <em>공통 패턴 4가지</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[21].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[21].cards[0].title">공감 가능한 솔직함</div>
+          <ul><li data-edit="slides[21].cards[0].items[0]">장단점이 면접관도 공감 가능</li><li data-edit="slides[21].cards[0].items[1]">약점도 ‘극복 행동’과 함께</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[21].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[21].cards[1].title">정량 성과 + 구체 행동</div>
+          <ul><li data-edit="slides[21].cards[1].items[0]">‘불만율 2%’ ‘하루 200명 채용’</li><li data-edit="slides[21].cards[1].items[1]">행동·결과 모두 수치로</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[21].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[21].cards[2].title">본인의 ‘직무 철학’</div>
+          <ul><li data-edit="slides[21].cards[2].items[0]">‘균형 있는 소통’ ‘채용+운영 통합’</li><li data-edit="slides[21].cards[2].items[1]">‘잔디 관리’ 같은 비유로 차별화</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[21].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[21].cards[3].title">회사·직무에 ‘이중 매칭’</div>
+          <ul><li data-edit="slides[21].cards[3].items[0]">회사 비전 + 본인 가치관</li><li data-edit="slides[21].cards[3].items[1]">‘왜 이 회사’ + ‘왜 이 직무’</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">22 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="23">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[22].ch">PART 06</div>
+      <h1 class="divider-title" data-edit="slides[22].title" data-edit-html="1">면접 질문 리스트<br>실제 SK E&S HR 면접 기출</h1>
+      <p class="divider-sub" data-edit="slides[22].sub">이력서를 통과했다면, 이제 면접에서 결판납니다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">23 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="24">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[23].chapter">PART 06 — 면접 질문 ①</div>
+      <h2 class="slide-title" data-edit="slides[23].title" data-edit-html="1">면접 질문 — <em>경력·지원동기 영역</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[23].cards[0].num">Q1</div>
+          <div class="card-title" data-edit="slides[23].cards[0].title">1분 자기소개</div>
+          <ul><li data-edit="slides[23].cards[0].items[0]">지원자의 경험과 성장배경 중심</li><li data-edit="slides[23].cards[0].items[1]">경력의 ‘일관된 스토리’가 핵심</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[23].cards[1].num">Q2</div>
+          <div class="card-title" data-edit="slides[23].cards[1].title">지원 동기</div>
+          <ul><li data-edit="slides[23].cards[1].items[0]">회사에 대해 알고 있는 내용</li><li data-edit="slides[23].cards[1].items[1]">산업·사업·문화 모두 언급</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[23].cards[2].num">Q3</div>
+          <div class="card-title" data-edit="slides[23].cards[2].title">사업 이해</div>
+          <ul><li data-edit="slides[23].cards[2].items[0]">밸류체인 내 회사가 영위하는 사업</li><li data-edit="slides[23].cards[2].items[1]">단순 IR 정보 이상의 시각</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[23].cards[3].num">Q4</div>
+          <div class="card-title" data-edit="slides[23].cards[3].title">경쟁력 분석</div>
+          <ul><li data-edit="slides[23].cards[3].items[0]">경쟁사 대비 강점·약점</li><li data-edit="slides[23].cards[3].items[1]">보완을 위해 본인의 기여 가능성</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">24 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="25">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[24].chapter">PART 06 — 면접 질문 ②</div>
+      <h2 class="slide-title" data-edit="slides[24].title" data-edit-html="1">면접 질문 — <em>직무·역량 영역</em></h2>
+      
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[24].cards[0].num">Q5</div>
+          <div class="card-title" data-edit="slides[24].cards[0].title">직무 역할</div>
+          <ul><li data-edit="slides[24].cards[0].items[0]">회사 운영에서 이 직무의 역할</li><li data-edit="slides[24].cards[0].items[1]">공고의 다양한 업무 중 본인 강점</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[24].cards[1].num">Q6</div>
+          <div class="card-title" data-edit="slides[24].cards[1].title">이전 회사 경험</div>
+          <ul><li data-edit="slides[24].cards[1].items[0]">역할 + 강점 + 약점</li><li data-edit="slides[24].cards[1].items[1]">이전 경험을 SK E&S에 어떻게 기여</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[24].cards[2].num">Q7</div>
+          <div class="card-title" data-edit="slides[24].cards[2].title">이직 사유</div>
+          <ul><li data-edit="slides[24].cards[2].items[0]">현 회사에서 이직 희망 이유</li><li data-edit="slides[24].cards[2].items[1]">왜 SK E&S에 지원했나</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[24].cards[3].num">Q8</div>
+          <div class="card-title" data-edit="slides[24].cards[3].title">마지막 한 마디</div>
+          <ul><li data-edit="slides[24].cards[3].items[0]">면접 마무리 인상 강화</li><li data-edit="slides[24].cards[3].items[1]">지원자만의 차별화 포인트</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">25 / 26</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="26">
+    <section class="slide" style="justify-content: center; align-items: center; text-align: center;">
+      <div style="margin: auto;">
+        <div class="qa-big">Q&amp;A</div>
+        <div class="qa-sub" data-edit="slides[25].sub">ZEROBASE 취업정보회사 — 13년 차 HRer가 직접 분석한 합격 자료</div>
+        
+        <div class="qa-thanks" data-edit="slides[25].thanks">끝까지 함께해 주셔서 감사합니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span></div>
+      <div class="right">26 / 26</div>
+    </div>
+    </section></div>
+  </div>
+</div>
+
+<div id="nav-prev" class="nav-zone prev" title="이전"><div class="arrow">‹</div></div>
+<div id="nav-next" class="nav-zone next" title="다음"><div class="arrow">›</div></div>
+
+<button id="edit-toggle" type="button" onclick="document.getElementById('edit-btn').click()">✏️ 편집 (E)</button>
+
+<div id="edit-bar">
+  <button id="edit-btn" type="button">편집 끝내기 (E)</button>
+  <button id="save-btn" type="button" class="primary">💾 JSON 저장</button>
+  <button id="reset-btn" type="button">↺ 되돌리기</button>
+  <span class="hint">텍스트 클릭 → 수정 → JSON 저장</span>
+</div>
+
+<div class="hud">
+  <div class="bar"><div class="fill"></div></div>
+  <div class="bottom">
+    <span class="title">2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개</span>
+    <span class="pager">01 / 26</span>
+  </div>
+</div>
+
+<div id="help" class="help">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 · <kbd>F</kbd> 풀스크린 · <kbd>E</kbd> 편집 모드 · <kbd>Esc</kbd> 종료
+</div>
+
+<div id="toast"></div>
+
+<script type="application/json" id="deck-source" data-name="2026-HR-합격자료">{&quot;meta&quot;: {&quot;title&quot;: &quot;2026 HR 합격 자료&quot;, &quot;title_em&quot;: &quot;대기업 경력기술서 · 자소서 완전 공개&quot;, &quot;subtitle&quot;: &quot;13년 차 HRer가 직접 분석한 — 삼성·쿠팡·요기요·SK E&amp;S 실제 합격 자료.&quot;, &quot;event_label&quot;: &quot;ZEROBASE 취업정보회사&quot;, &quot;date&quot;: &quot;2026 HR Edition&quot;, &quot;session&quot;: &quot;Part 1~4&quot;, &quot;talk_title_in_footer&quot;: &quot;2026 HR 합격 자료 — 대기업 경력기술서·자소서 공개&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;13년차 HRer&quot;, &quot;title&quot;: &quot;취업정보회사 — HR 직무 컨설턴트&quot;, &quot;tags&quot;: [&quot;#HR 채용&quot;, &quot;#경력 13년+&quot;, &quot;#실제 합격 자료&quot;, &quot;#삼성·쿠팡·요기요·SK E&amp;S&quot;], &quot;bio&quot;: [&quot;롯데그룹 인사담당자 출신 — HSG 휴먼솔루션그룹 HRD 현직.&quot;, &quot;공인노무사 1차 합격 · 인사관리·조직행동·노사관계 등 인사 전 영역 학습.&quot;, &quot;HR 직무 구직자 자기소개서·포트폴리오 검토 1,000+ 건.&quot;]}}, &quot;slides&quot;: [{&quot;type&quot;: &quot;cover&quot;}, {&quot;type&quot;: &quot;speaker&quot;, &quot;chapter&quot;: &quot;강사 소개&quot;, &quot;title&quot;: &quot;13년 차 HRer가 직접 분석합니다&quot;}, {&quot;type&quot;: &quot;toc&quot;, &quot;chapter&quot;: &quot;Contents&quot;, &quot;title&quot;: &quot;오늘 다룰 4가지 PART&quot;, &quot;items&quot;: [&quot;취업정보회사 — 새로운 서비스를 선보이게 된 이유&quot;, &quot;HR 직무 취업을 위해 해야 할 5가지&quot;, &quot;13년 차 HRer가 읽고 싶은 지원동기 + 포트폴리오&quot;, &quot;실제 데이터로 본 합격 인사이트 — 4사 사례&quot;]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 01&quot;, &quot;title&quot;: &quot;취업정보회사\n새로운 서비스의 출발점&quot;, &quot;sub&quot;: &quot;사람마다 시작점도 목표도 다르다 — 그래서 ‘각자에게 맞는 전략’이 필요합니다.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 01 출발점&quot;, &quot;title&quot;: &quot;취준생마다 &lt;em&gt;시작점이 다르다&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;좋은 프로그램일수록 각자에게 맞는 선택지를 먼저 제시할 수 있어야 합니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;CASE 01&quot;, &quot;title&quot;: &quot;목표 명확형&quot;, &quot;items&quot;: [&quot;이미 명확한 목표 기업 보유&quot;, &quot;직무·기업 매칭 검증이 핵심&quot;]}, {&quot;num&quot;: &quot;CASE 02&quot;, &quot;title&quot;: &quot;직무 탐색형&quot;, &quot;items&quot;: [&quot;어떤 직무가 맞는지부터 고민&quot;, &quot;자기 분석 + 직무 매핑 필요&quot;]}, {&quot;num&quot;: &quot;CASE 03&quot;, &quot;title&quot;: &quot;실무 vs 서류 갭&quot;, &quot;items&quot;: [&quot;실무 경험은 충분한데 서류에서 막힘&quot;, &quot;표현·구성 보완 집중&quot;]}, {&quot;num&quot;: &quot;CASE 04&quot;, &quot;title&quot;: &quot;학습 vs 실전 갭&quot;, &quot;items&quot;: [&quot;학습은 많이 했지만 실전 경험 부족&quot;, &quot;프로젝트·인턴 + 사례화&quot;]}]}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;PART 01 결론&quot;, &quot;title&quot;: &quot;&lt;em&gt;‘배우는 양’&lt;/em&gt;이 아니라 &lt;em&gt;‘각자의 목표에 맞는 길’&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;결과를 만드는 데 필요한 과정만을 선명하게 — 그것이 취업정보회사의 가치.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;처음 만나는 순간부터&lt;/b&gt;\n각자에게 맞는 전략을 바로 세워줍니다.&quot;}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 02&quot;, &quot;title&quot;: &quot;HR 직무 취업을 위해\n해야 할 5가지&quot;, &quot;sub&quot;: &quot;신입에게 기대하는 건 전문성이 아니라 ‘직무를 향한 관심’입니다.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 02 — 5가지 활동&quot;, &quot;title&quot;: &quot;재학생도 할 수 있는 &lt;em&gt;HR 관심 어필 5가지&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;‘얼마나 구체적으로 준비했는지’의 과정을 보여주세요.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;관련 전공과목&quot;, &quot;items&quot;: [&quot;전공자라면 인사 관련 과목만 이수&quot;, &quot;인사관리·조직행동론·노사관계 등&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;간접 회사 경험&quot;, &quot;items&quot;: [&quot;동아리를 ‘회사’처럼 운영한 경험&quot;, &quot;‘일개 부원이 아닌 인사담당자’ 포지셔닝&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;현직자 인터뷰&quot;, &quot;items&quot;: [&quot;현업의 실제 목소리 듣기&quot;, &quot;내가 적합한지 검증할 수 있음&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;관련 자격증&quot;, &quot;items&quot;: [&quot;공인노무사 1차 같은 법률 지식&quot;, &quot;근로계약·복리후생 등 연결 가능&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;관련 잡지&quot;, &quot;items&quot;: [&quot;월간 DBR · HR Insight 정독&quot;, &quot;직무 용어 + HR 트렌드 익히기&quot;]}]}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;PART 02 — 02. 간접 회사 경험&quot;, &quot;title&quot;: &quot;실제 사례 — &lt;em&gt;‘증권사의 인사담당자’&lt;/em&gt;가 되다&quot;, &quot;ref_title&quot;: &quot;주식투자 동아리 ‘블루칩뮤추얼펀드’ — 회사처럼 운영한 활동 정리&quot;, &quot;ref_text&quot;: &quot;[동아리를 ‘회사’로 운영]\n· 동아리장은 ‘대표이사’\n· 부원에게 ‘직책’ 부여\n· 부원들이 직접 수익 발생시키는 구조\n\n[저의 역할 — 인사담당자]\n· 신규 동아리 부원 채용 진행 (자기소개서 검토 + 면접)\n· ‘엠티’가 아닌 ‘연수회’ 기획·운영\n· ‘나의 인생 주가 그래프 작성·발표’ 등 활동 직접 기획\n· ‘바닷가 레크레이션’ 대신 ‘단체 활동’\n· ‘회식’ 대신 ‘간담회’로 명명\n\n[자기소개서에서 강조한 포인트]\n‘일개 동아리 부원이 아닌 증권사의 인사담당자’로서 채용·기획·운영·소통의 전 과정을 직접 수행한 경험.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;&lt;b&gt;‘회사 경험’의 시뮬레이션&lt;/b&gt; — 동아리를 회사처럼 운영하며 채용·연수·간담회 등 실제 인사 업무 흐름을 직접 경험.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;&lt;b&gt;역할의 명확한 정의&lt;/b&gt; — ‘부원’이 아닌 ‘인사담당자’로 자기 포지셔닝. 면접관에게 직무 매칭이 직관적으로 전달됨.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;&lt;b&gt;구체적 활동 결과물&lt;/b&gt; — 자기소개서 검토·면접·연수 기획 등 구체적인 산출물로 ‘무엇을 해봤는가’ 증명.&quot;}], &quot;conclusion&quot;: &quot;재학생도 ‘회사 경험’을 만들 수 있다 — &lt;b&gt;구체적인 ‘역할’과 ‘산출물’&lt;/b&gt;이 핵심.&quot;}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 03&quot;, &quot;title&quot;: &quot;13년 차 HRer가\n읽고 싶은 지원동기&quot;, &quot;sub&quot;: &quot;직무에 ‘긍정적인 의미’를 부여하는 사람 — 벽돌공이 아닌 성당 짓는 사람.&quot;}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;PART 03 — 지원동기의 본질&quot;, &quot;title&quot;: &quot;두 명의 벽돌공 — &lt;em&gt;같은 일, 다른 의미&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;‘무슨 일을 하고 계십니까?’ — 한 명은 벽돌을 쌓고, 한 명은 성당을 짓습니다.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;같은 지원자라도&lt;/b&gt;\n자기 일에 의미를 부여하는 사람에게 더 눈길이 갑니다.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 03 — 포트폴리오 작성법&quot;, &quot;title&quot;: &quot;포트폴리오 — &lt;em&gt;강점의 보조·증빙 자료&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;내용이 중요합니다 — 과장하지 말고, 팩트 중심으로.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;내가 작성한 자료를 이미지화&quot;, &quot;items&quot;: [&quot;기획서·제안서·교육 프로그램 목차&quot;, &quot;교육 교재 등 증빙 가능한 결과물&quot;, &quot;샘플과 함께 구성&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;자유 양식 회사라면 첨부&quot;, &quot;items&quot;: [&quot;공채는 첨부 양식이 없을 수도&quot;, &quot;자유 양식 회사(HSG 등)라면 적극 첨부&quot;, &quot;호감도 상승 효과&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;팩트 중심·노션·PPT 활용&quot;, &quot;items&quot;: [&quot;최근 트렌드 — 인턴 사진·노션·PPT 슬라이드&quot;, &quot;공모전 주요 슬라이드만 이미지화&quot;, &quot;프로젝트별 ‘어떤 역할’을 명확히&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;PART 03 — 직무 이해도&quot;, &quot;title&quot;: &quot;과거로 돌아가서 &lt;em&gt;꼭 했으면 좋았을 활동&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;특히 컨설팅펌 지원자라면.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;WHAT&quot;, &quot;title&quot;: &quot;할 수 있는 것&quot;, &quot;items&quot;: [&quot;HR 컨설팅펌 홈페이지 둘러보기&quot;, &quot;어떤 교육·프로젝트를 제공하는지 정리&quot;, &quot;공개된 정보를 활용한 직무 이해 깊이&quot;]}, {&quot;num&quot;: &quot;WHY&quot;, &quot;title&quot;: &quot;면접에서의 효과&quot;, &quot;items&quot;: [&quot;지원사 사업·서비스에 대한 이해 입증&quot;, &quot;‘저는 귀사의 ○○ 프로그램이 인상 깊어…’&quot;, &quot;지원동기의 구체성 ↑&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 04&quot;, &quot;title&quot;: &quot;HR 추천 활동\n+ Right People&quot;, &quot;sub&quot;: &quot;전공 무관 — 인하우스 vs 외부 컨설팅 두 갈래. 인턴으로 현장 경험이 핵심.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 04 — 추천 활동&quot;, &quot;title&quot;: &quot;HR 직무 취업을 위한 &lt;em&gt;추천 활동&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;기업 생태계를 알 수 있는 방법 = 직접 일을 해보는 것.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;인하우스 인사팀 인턴&quot;, &quot;items&quot;: [&quot;기업 내 채용·교육 운영·문서 작업&quot;, &quot;데이터 정리·행사 기획 등&quot;, &quot;직무 적합성 자가 검증&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;HRD 컨설팅펌 인턴&quot;, &quot;items&quot;: [&quot;외부 교육·컨설팅 업체&quot;, &quot;교육 현장 진행 과정 관찰&quot;, &quot;외부 전문가 커리어 경로 탐색&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;사회단체·동아리·커뮤니티&quot;, &quot;items&quot;: [&quot;다양한 사람들과 만나는 기회&quot;, &quot;조직 내 ‘소통’ 능력의 기초&quot;, &quot;HR은 결국 사람·소통 직무&quot;]}]}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;PART 04 — 결국 조직이 채용하는 사람&quot;, &quot;title&quot;: &quot;&lt;em&gt;Best People&lt;/em&gt;이 아닌 &lt;em&gt;Right People&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;기업은 ‘우수한 인재’보다 ‘조직과 직무에 적합한 사람’을 찾고 있습니다.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;공고의 채용 포지션을 수행하는 데 필요한 역량은 무엇인가&lt;/b&gt;\n— 그 안에 지식·기술·태도·인재상·핵심가치·일하는 방식이 모두 들어있습니다.&quot;}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 05&quot;, &quot;title&quot;: &quot;실제 데이터로 본\n합격 인사이트&quot;, &quot;sub&quot;: &quot;최근 네이버·삼성·쿠팡·SK E&amp;S 등 대기업 HR 합격자의 자료를 분석합니다.&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;PART 05 합격 사례 ① 삼성 HR&quot;, &quot;title&quot;: &quot;삼성 HR 합격 — &lt;em&gt;‘관심과 오지랖, 그 사이’&lt;/em&gt;&quot;, &quot;ref_title&quot;: &quot;삼성 HR 합격 자기소개서 (3문항 핵심 발췌)&quot;, &quot;ref_text&quot;: &quot;[Q1. 성격의 장단점]\n장점: 타인을 돕고 성장하는 모습에서 보람. 어린 시절부터 주위 사람에게 관심을 갖고 도울 부분 파악. 교내 민원 응대 — 어려운 용어는 풀어 설명, 복잡한 문제는 원격 지원. 불만 → 고맙다는 말로 마무리.\n단점: 타인 관심이 ‘참견’이 될 때도. 후배에게 장학금 정보 적극 공유 → 부담으로 느낌. 이후 ‘선택에는 참견하지 않는 습관’.\n\n[Q2. 공동체를 위해 노력한 경험]\n교내 봉사 활동 기획 — 봉사 강도 대신 ‘문화’ 변화. 추억집 + 트렌드 반영 스냅 사진 도입. ‘가기 싫었던 봉사가 이제 기다려진다’.\n\n[Q3. 어려운 상황 극복]\n인턴 근무 — 코로나 긴급 신설 부서, 체계 없어 불만 다발. 매주 불만율 10% 감소·최종 0% 목표 설정. 응대 매뉴얼·민원 기록·카드뉴스 → &lt;b&gt;최종 불만율 2% 달성&lt;/b&gt;.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;&lt;b&gt;장단점이 ‘공감 가능’&lt;/b&gt; — ‘참견이 될 때도’ 같은 단점은 면접관도 ‘나도 그렇다’ 공감 가능. 단점이 단점다움.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;&lt;b&gt;문항 의도에 정확히 맞춤&lt;/b&gt; — 경험 + 배운 점 + 회사 적용까지 명확한 흐름.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;&lt;b&gt;구체적 수치 + 행동 묘사&lt;/b&gt; — ‘불만율 2%’ 같은 정량 결과 + ‘응대 매뉴얼·카드뉴스 배포’ 구체 행동.&quot;}], &quot;conclusion&quot;: &quot;삼성 HR 합격의 핵심 = &lt;b&gt;공감 가능한 솔직함&lt;/b&gt; + &lt;b&gt;정량 성과로 입증되는 행동&lt;/b&gt;.&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;PART 05 합격 사례 ② 쿠팡 HR&quot;, &quot;title&quot;: &quot;쿠팡 HR 합격 — &lt;em&gt;5년 10개월 경력&lt;/em&gt; + 현장형 채용 경험&quot;, &quot;ref_title&quot;: &quot;쿠팡 HR 합격 이력서 (경력 핵심)&quot;, &quot;ref_text&quot;: &quot;[쿠팡로지스틱스서비스 — 인사·채용팀 Lv.4 (2020.09 ~ 2023.11 / 3년 3개월)]\n· 현장상황에 따른 채용전략 수립 (일 평균 10명 ~ 최대 200명 채용)\n· 팀 초기설립 단계 채용프로세스 + 인력 DB 정제·분석\n· 노무 이슈 방지 위한 근무자 면담\n· 채용 개선·현황분석 대시보드 생성\n→ &lt;b&gt;적정인력 채용계획 수립으로 생산성 증가, 채용 응대 리드타임 감소&lt;/b&gt;\n\n[에이스휴먼파워 (2019.10 ~ 2020.10 / 1년 1개월)]\n· 마켓컬리 물류센터 — 일 평균 50~350명 일용직 채용\n· 벌크 리쿠르팅 + 유관부서 소통 + 일용/상용직 급여 관리\n\n[유안에이치알 (2017.05 ~ 2018.10 / 1년 6개월)]\n· 삼성생명/NICE/NH/KB캐피탈 파견직 관리 (40명)\n· 채권·상담·사무직 인력 써치/면접/관리\n\n[자기소개서 핵심]\n‘도전정신과 꾸준한 업무 개선을 통한 업무 프로세스 혁신’ + ‘채용과 운영은 다름이 아닌 하나라는 마음으로’.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;&lt;b&gt;5년 10개월 누적 경력&lt;/b&gt; — 일용직 대규모 채용에서 정규 채용·인사 운영까지의 발전 경로.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;&lt;b&gt;‘프로세스 혁신’ 스토리&lt;/b&gt; — 구글폼 발주 시스템·DB 분석 대시보드 등 본인이 만든 결과물 명확.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;&lt;b&gt;‘채용 + 운영’ 통합 마인드&lt;/b&gt; — 채용팀·현장 대립이 아닌 협의 통한 성과. 쿠팡식 ‘소유주의’ 가치관 매칭.&quot;}], &quot;conclusion&quot;: &quot;쿠팡 HR 합격 = &lt;b&gt;대규모 채용 운영 능력&lt;/b&gt; + &lt;b&gt;‘구조를 만든 사람’ 포지셔닝&lt;/b&gt;.&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;PART 05 합격 사례 ③ 요기요 HR&quot;, &quot;title&quot;: &quot;요기요 HR — &lt;em&gt;채용 프로세스를 ‘시스템화’&lt;/em&gt;한 사례&quot;, &quot;ref_title&quot;: &quot;요기요 HR 합격 이력서 (포트폴리오 핵심)&quot;, &quot;ref_text&quot;: &quot;[추구하는 채용 프로세스]\n‘#빠르게, #합리적인 방식으로’ 인재를 채용.\n\n[채용 브랜드 이미지 = 3가지 요인]\nⅰ) 합리적인 채용 프로세스\nⅱ) 입사 후 On-boarding\nⅲ) 성과를 만드는 지원 + 성장에 대한 도움\n\n[Plan → Do → See → Check 프레임워크]\n· Recruiter — 채용 Kick-off → JD 작성 → 채용 노출 → 서류/면접 피드백 → Offer → Debrief\n· Hiring Manager — TO 발생 → 인재 페르소나 정의 → 서류/면접 피드백 기준 → 면접 전형 → On-boarding\n· Candidate — 현직장 문제 → 이직 고민 → 도전 결심 → 정보 탐색 → 입사 준비 → Pre-boarding\n\n[Recruiting Action — 3대 축]\n· 인재 정의 — JD 작성, 인재 기준 Align\n· 검증 능력 강화 — 객관적 피드백, Debrief 미팅\n· Direct Sourcing — 인재 풀 확보, 추천 프로그램&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;&lt;b&gt;이력서를 ‘시스템 다이어그램’으로&lt;/b&gt; — 채용 프로세스를 Plan-Do-See-Check 프레임으로 시각화.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;&lt;b&gt;3주체(Recruiter/HM/Candidate) 통합 관점&lt;/b&gt; — 채용을 다층적으로 본다는 것을 한눈에 보여줌.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;&lt;b&gt;Action 3대 축의 명확함&lt;/b&gt; — ‘정의·검증·소싱’이라는 본인만의 채용 철학 정리.&quot;}], &quot;conclusion&quot;: &quot;요기요 HR 합격 = &lt;b&gt;본인의 채용 철학을 시각화&lt;/b&gt;한 ‘이력서 = 포트폴리오’ 형태.&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;PART 05 합격 사례 ④ SK E&amp;S HR&quot;, &quot;title&quot;: &quot;SK E&amp;S HR — &lt;em&gt;13년 차 컨설턴트&lt;/em&gt;의 ‘균형 있는 소통’&quot;, &quot;ref_title&quot;: &quot;SK E&amp;S HR 합격 자기소개서 (핵심 발췌)&quot;, &quot;ref_text&quot;: &quot;[1번 자기소개]\n인사담당자에게 가장 중요한 역량 = ‘균형 있는 소통’.\n구성원 입사 → 성과 창출 지원 → 퇴사까지의 ‘성장과 경험의 여정’ 관리.\n\n· LG이노텍·한화솔루션/큐셀 — 인사제도 기획자로서 회사 비전과 구성원 동기부여 균형\n· 딜로이트 컨설팅 — HR 전략·조직/제도 설계, M&amp;A HR DD/PMI 경험\n· 인사 제도 근간(조직·직급·평가·승진·보상) + 리더십·조직문화까지\n\n[2번 지원동기 — 회사 선택 기준 = ‘지속가능한 성장 가능성’]\n① 회사 관점: SK E&amp;S 사업 방향(깨끗한 에너지)의 무한 동력\n② 구성원 관점: ‘성취감’ 느낄 수 있는 다양한 과업\n\n[입사 후 포부]\nHR 기획 담당으로 그라운드를 누비는 선수들이 더 멋진 성과 낼 수 있도록 지원.\n‘잔디 상태’를 체크하고 컨디션 안 좋으면 먼저 뛰어가 원인 분석.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;&lt;b&gt;경력의 일관된 흐름&lt;/b&gt; — 인하우스(LG·한화) → 컨설팅(딜로이트)으로 HR 깊이 + 폭 모두 성장.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;&lt;b&gt;지원동기의 ‘이중 관점’&lt;/b&gt; — 회사 비전 + 구성원 성취감 모두를 SK E&amp;S와 연결.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;&lt;b&gt;비유로 직무 본질 표현&lt;/b&gt; — ‘그라운드의 잔디 상태’ 비유로 HR의 책임감과 역할 깊이 전달.&quot;}], &quot;conclusion&quot;: &quot;SK E&amp;S HR 합격 = &lt;b&gt;균형 있는 소통&lt;/b&gt; + &lt;b&gt;회사·구성원의 이중 관점&lt;/b&gt; + &lt;b&gt;본인만의 직무 비유&lt;/b&gt;.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 05 — 합격 패턴 종합&quot;, &quot;title&quot;: &quot;4사 합격 사례에서 보이는 &lt;em&gt;공통 패턴 4가지&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;공감 가능한 솔직함&quot;, &quot;items&quot;: [&quot;장단점이 면접관도 공감 가능&quot;, &quot;약점도 ‘극복 행동’과 함께&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;정량 성과 + 구체 행동&quot;, &quot;items&quot;: [&quot;‘불만율 2%’ ‘하루 200명 채용’&quot;, &quot;행동·결과 모두 수치로&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;본인의 ‘직무 철학’&quot;, &quot;items&quot;: [&quot;‘균형 있는 소통’ ‘채용+운영 통합’&quot;, &quot;‘잔디 관리’ 같은 비유로 차별화&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;회사·직무에 ‘이중 매칭’&quot;, &quot;items&quot;: [&quot;회사 비전 + 본인 가치관&quot;, &quot;‘왜 이 회사’ + ‘왜 이 직무’&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 06&quot;, &quot;title&quot;: &quot;면접 질문 리스트\n실제 SK E&amp;S HR 면접 기출&quot;, &quot;sub&quot;: &quot;이력서를 통과했다면, 이제 면접에서 결판납니다.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 06 — 면접 질문 ①&quot;, &quot;title&quot;: &quot;면접 질문 — &lt;em&gt;경력·지원동기 영역&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q1&quot;, &quot;title&quot;: &quot;1분 자기소개&quot;, &quot;items&quot;: [&quot;지원자의 경험과 성장배경 중심&quot;, &quot;경력의 ‘일관된 스토리’가 핵심&quot;]}, {&quot;num&quot;: &quot;Q2&quot;, &quot;title&quot;: &quot;지원 동기&quot;, &quot;items&quot;: [&quot;회사에 대해 알고 있는 내용&quot;, &quot;산업·사업·문화 모두 언급&quot;]}, {&quot;num&quot;: &quot;Q3&quot;, &quot;title&quot;: &quot;사업 이해&quot;, &quot;items&quot;: [&quot;밸류체인 내 회사가 영위하는 사업&quot;, &quot;단순 IR 정보 이상의 시각&quot;]}, {&quot;num&quot;: &quot;Q4&quot;, &quot;title&quot;: &quot;경쟁력 분석&quot;, &quot;items&quot;: [&quot;경쟁사 대비 강점·약점&quot;, &quot;보완을 위해 본인의 기여 가능성&quot;]}]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 06 — 면접 질문 ②&quot;, &quot;title&quot;: &quot;면접 질문 — &lt;em&gt;직무·역량 영역&lt;/em&gt;&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;Q5&quot;, &quot;title&quot;: &quot;직무 역할&quot;, &quot;items&quot;: [&quot;회사 운영에서 이 직무의 역할&quot;, &quot;공고의 다양한 업무 중 본인 강점&quot;]}, {&quot;num&quot;: &quot;Q6&quot;, &quot;title&quot;: &quot;이전 회사 경험&quot;, &quot;items&quot;: [&quot;역할 + 강점 + 약점&quot;, &quot;이전 경험을 SK E&amp;S에 어떻게 기여&quot;]}, {&quot;num&quot;: &quot;Q7&quot;, &quot;title&quot;: &quot;이직 사유&quot;, &quot;items&quot;: [&quot;현 회사에서 이직 희망 이유&quot;, &quot;왜 SK E&amp;S에 지원했나&quot;]}, {&quot;num&quot;: &quot;Q8&quot;, &quot;title&quot;: &quot;마지막 한 마디&quot;, &quot;items&quot;: [&quot;면접 마무리 인상 강화&quot;, &quot;지원자만의 차별화 포인트&quot;]}]}, {&quot;type&quot;: &quot;qa_close&quot;, &quot;sub&quot;: &quot;ZEROBASE 취업정보회사 — 13년 차 HRer가 직접 분석한 합격 자료&quot;, &quot;thanks&quot;: &quot;끝까지 함께해 주셔서 감사합니다.&quot;}]}</script>
+<script>
+(function(){
+  var SLIDE_W = 1920, SLIDE_H = 1080;
+  var stage = document.getElementById('stage');
+  var wraps = Array.prototype.slice.call(document.querySelectorAll('.slide-wrap'));
+  var fill  = document.querySelector('.hud .fill');
+  var pager = document.querySelector('.hud .pager');
+  var help  = document.getElementById('help');
+  var total = wraps.length;
+  var idx = 0;
+  var editMode = false;
+
+  // Initial slide from URL hash, e.g. #3
+  var h = parseInt((location.hash || '').replace('#',''), 10);
+  if (!isNaN(h) && h >= 1 && h <= total) idx = h - 1;
+
+  function fit(){
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var scaleW = vw / SLIDE_W, scaleH = vh / SLIDE_H;
+    var scale = Math.min(scaleW, scaleH) * 0.94;
+    var w = SLIDE_W * scale, hh = SLIDE_H * scale;
+    stage.style.width  = w + 'px';
+    stage.style.height = hh + 'px';
+    wraps.forEach(function(wr){
+      var s = wr.querySelector('.slide');
+      if(s) s.style.transform = 'scale(' + scale + ')';
+    });
+  }
+
+  function go(n){
+    idx = Math.max(0, Math.min(total - 1, n));
+    wraps.forEach(function(wr, i){
+      wr.classList.toggle('is-active', i === idx);
+    });
+    if (fill)  fill.style.width = ((idx + 1) / total * 100) + '%';
+    if (pager) pager.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    history.replaceState(null, '', '#' + (idx + 1));
+  }
+
+  // ---------- Edit mode ----------
+  function toggleEdit(){
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      if (editMode) el.setAttribute('contenteditable', 'true');
+      else el.removeAttribute('contenteditable');
+    });
+    var btn = document.getElementById('edit-btn');
+    if (btn) btn.textContent = editMode ? '편집 끝내기 (E)' : '✏️ 편집 (E)';
+    var bar = document.getElementById('edit-bar');
+    if (bar) bar.classList.toggle('show', editMode);
+  }
+
+  function getPathSafe(obj, parts){
+    var cur = obj;
+    for (var i = 0; i < parts.length; i++){
+      if (cur == null) return undefined;
+      cur = cur[parts[i]];
+    }
+    return cur;
+  }
+  function setPath(obj, path, value){
+    var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+    var cur = obj;
+    for (var i = 0; i < parts.length - 1; i++){
+      var k = parts[i];
+      // numeric index
+      if (/^\d+$/.test(k)) k = parseInt(k, 10);
+      if (cur[k] == null){
+        // create container
+        var nextK = parts[i+1];
+        cur[k] = (/^\d+$/.test(nextK)) ? [] : {};
+      }
+      cur = cur[k];
+    }
+    var lastK = parts[parts.length - 1];
+    if (/^\d+$/.test(lastK)) lastK = parseInt(lastK, 10);
+    cur[lastK] = value;
+  }
+
+  function buildEditedJSON(){
+    var srcEl = document.getElementById('deck-source');
+    var src = JSON.parse(srcEl.textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var value;
+      if (asHtml){
+        value = el.innerHTML.trim()
+                  .replace(/<br\s*\/?>/gi, '\n')
+                  .replace(/&nbsp;/g, ' ');
+      } else {
+        value = el.textContent.trim();
+      }
+      setPath(src, path, value);
+    });
+    return src;
+  }
+
+  function downloadJSON(){
+    var data = buildEditedJSON();
+    var name = (document.getElementById('deck-source').getAttribute('data-name') || 'edited') + '.json';
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 100);
+    var msg = document.getElementById('toast');
+    if (msg){ msg.textContent = '저장됨: ' + name; msg.classList.add('show');
+      setTimeout(function(){ msg.classList.remove('show'); }, 2500); }
+  }
+
+  function resetEdits(){
+    if (!confirm('모든 편집을 원래대로 되돌릴까요?')) return;
+    var src = JSON.parse(document.getElementById('deck-source').textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+      var v = getPathSafe(src, parts.map(function(p){return /^\d+$/.test(p)?parseInt(p,10):p;}));
+      if (v == null) return;
+      if (asHtml) el.innerHTML = String(v).replace(/\n/g,'<br>');
+      else el.textContent = String(v);
+    });
+  }
+
+  // ---------- Keyboard ----------
+  document.addEventListener('keydown', function(e){
+    // If typing inside an editable element, don't navigate
+    var t = e.target;
+    var typing = t && t.isContentEditable;
+    if (typing){
+      // Allow Esc to exit edit on element
+      if (e.key === 'Escape') t.blur();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter')   { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace')              { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home')                                                                   { e.preventDefault(); go(0); }
+    else if (e.key === 'End')                                                                    { e.preventDefault(); go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F')                                                      { toggleFullscreen(); }
+    else if (e.key === 'e' || e.key === 'E')                                                      { e.preventDefault(); toggleEdit(); }
+    else if (e.key === 'Escape')                                                                  { if (document.fullscreenElement) document.exitFullscreen(); }
+  });
+
+  function toggleFullscreen(){
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+
+  // ---------- Click zones ----------
+  document.getElementById('nav-prev').addEventListener('click', function(){ if(!editMode) go(idx - 1); });
+  document.getElementById('nav-next').addEventListener('click', function(){ if(!editMode) go(idx + 1); });
+
+  // ---------- Edit bar buttons ----------
+  var btnEdit  = document.getElementById('edit-btn');
+  var btnSave  = document.getElementById('save-btn');
+  var btnReset = document.getElementById('reset-btn');
+  if (btnEdit)  btnEdit.addEventListener('click', toggleEdit);
+  if (btnSave)  btnSave.addEventListener('click', downloadJSON);
+  if (btnReset) btnReset.addEventListener('click', resetEdits);
+
+  // ---------- Touch swipe ----------
+  var tx = 0;
+  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener('touchend',   function(e){
+    if (editMode) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+  }, {passive: true});
+
+  window.addEventListener('resize', fit);
+
+  // Init
+  fit(); go(idx);
+
+  if (help) {
+    help.classList.add('show');
+    setTimeout(function(){ help.classList.remove('show'); }, 4000);
+  }
+})();
+</script>
+</body></html>

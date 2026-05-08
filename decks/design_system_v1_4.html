@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<title>ZEROBASE</title>
+<style>/* ZeroBase Online Briefing — Slide Base CSS
+ * 토큰은 design_system/tokens.json 기준. 변경 시 함께 동기화.
+ */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  --ink:        #0E1430;
+  --ink-2:      #1C2885;
+  --ink-3:      #3A4499;
+  --paper:      #FFFFFF;
+  --paper-2:    #F2F3F8;
+  --paper-3:    #E6E8F2;
+  --line:       rgba(28,40,133,0.14);
+  --line-2:     rgba(28,40,133,0.28);
+  --muted:      rgba(14,20,48,0.55);
+  --muted-2:    rgba(14,20,48,0.72);
+  --accent:     #1C2885;
+  --accent-soft:#E6E8F5;
+  --pastel:     #EAF1FB;
+  --pastel-red: #FBEAE9;
+  --alert:      #D0342C;
+  --pass:       #0E8A4F;
+  --fail:       #B53232;
+  --highlight:  #FFF4B8;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0d1a;
+  height: 100%; overflow: hidden;
+}
+body {
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ----- Slideshow viewer ----- */
+.viewer {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+  /* width/height set inline by JS to maintain 16:9 fit */
+}
+/* Each slide is absolutely positioned inside .stage; only the active one is visible */
+.slide-wrap {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+}
+.slide-wrap.is-active { opacity: 1; visibility: visible; }
+
+/* ----- Slide canvas: 1920 × 1080 (fixed; scaled by JS) ----- */
+.slide {
+  width: 1920px; height: 1080px;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0;
+  transform-origin: top left;
+  display: flex; flex-direction: column;
+  padding: 100px;
+  overflow: hidden;
+}
+
+/* ----- Navigation hit areas ----- */
+.nav-zone {
+  position: fixed; top: 0; bottom: 0;
+  width: 22%; cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center;
+  opacity: 0; transition: opacity 0.18s ease;
+}
+.nav-zone:hover { opacity: 1; }
+.nav-zone.prev { left: 0; justify-content: flex-start; padding-left: 24px; }
+.nav-zone.next { right: 0; justify-content: flex-end; padding-right: 24px; }
+.nav-zone .arrow {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #0e1430;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ----- HUD: bottom progress + counter ----- */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+.hud .bar {
+  height: 3px; background: rgba(255,255,255,0.12);
+  position: relative;
+}
+.hud .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #1c2885;
+  transition: width 0.2s ease;
+}
+.hud .bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em;
+}
+.hud .bottom .title { font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: -0.005em; }
+.hud .bottom .pager { font-variant-numeric: tabular-nums; font-weight: 600; color: rgba(255,255,255,0.95); }
+
+/* ----- Help overlay (shown briefly on load) ----- */
+.help {
+  position: fixed; top: 18px; right: 24px; z-index: 13;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 14px; font-size: 12px; color: #0e1430;
+  border-radius: 4px;
+  font-weight: 500; letter-spacing: 0.02em;
+  opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.help.show { opacity: 1; }
+.help kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: #f2f3f8; border: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+}
+.slide.chapter-divider { padding: 120px; background: var(--paper-2); }
+.slide.cover           { padding: 120px; }
+
+/* ----- Head block ----- */
+.chapter-tag {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+.chapter-tag .ch { margin-right: 10px; }
+.chapter-tag.small { font-size: 22px; }
+
+.slide-title {
+  font-size: 88px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.08;
+  margin: 24px 0 0;
+}
+.slide-title em { font-style: normal; color: var(--accent); }
+
+.slide-lede {
+  font-size: 34px; font-weight: 500; line-height: 1.45;
+  color: var(--muted-2); margin-top: 8px; max-width: 1500px;
+}
+
+.head-gap { height: 64px; flex-shrink: 0; }
+
+/* ----- Body region ----- */
+/* 기본: 컨텐츠는 head 바로 아래에 (위 정렬) */
+.body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+.body.body-top    { justify-content: flex-start; }
+/* 명시적으로 아래 정렬이 필요한 슬라이드용 (현재는 사용 안 함) */
+.body.body-bottom { justify-content: flex-end; }
+/* alert/qa 슬라이드: 컨텐츠 가운데 정렬 (살짝 위로 보이도록 padding-bottom) */
+.body.body-center { justify-content: center; align-items: center; text-align: center; padding-bottom: 140px; }
+
+/* ----- Footer bar ----- */
+.footer {
+  position: absolute; left: 100px; right: 100px; bottom: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 18px; color: var(--muted);
+}
+.footer .left { display: flex; gap: 16px; }
+.footer .brand { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+
+/* ----- Cover slide ----- */
+.cover .cover-kicker {
+  font-size: 22px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--accent); text-transform: uppercase;
+}
+.cover .cover-title {
+  font-size: 120px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin: 32px 0 0;
+}
+.cover .cover-title em { color: var(--accent); font-style: normal; }
+.cover .cover-sub {
+  font-size: 36px; font-weight: 500; color: var(--muted-2);
+  margin-top: 36px; line-height: 1.4; max-width: 1400px;
+}
+.cover .cover-meta {
+  position: absolute; left: 120px; right: 120px; bottom: 120px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: 22px; color: var(--muted-2);
+}
+.cover .cover-meta .speaker b { color: var(--ink); font-weight: 700; font-size: 26px; display: block; margin-bottom: 6px; }
+
+/* ----- Chapter Divider ----- */
+.chapter-divider .divider-num {
+  font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
+}
+.chapter-divider .divider-title {
+  font-size: 104px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+  margin-top: 28px; max-width: 1700px;
+}
+.chapter-divider .divider-sub {
+  font-size: 36px; color: var(--muted-2); margin-top: 4px; max-width: 1500px;
+  font-weight: 500; line-height: 1.45;
+}
+
+/* ----- Pastel Card Grid (N-up) ----- */
+.card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.card-grid    { display: grid; gap: 20px; }
+.card-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.card-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.card-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.card-grid.cols-6 { grid-template-columns: repeat(6,1fr); gap: 14px; }
+.card-grid.cols-7 { grid-template-columns: repeat(7,1fr); gap: 12px; }
+/* 6/7-up은 카드 안 글자도 작게 */
+.card-grid.cols-6 .card-pastel,
+.card-grid.cols-7 .card-pastel { padding: 22px 18px; }
+.card-grid.cols-6 .card-pastel .card-title,
+.card-grid.cols-7 .card-pastel .card-title { font-size: 22px; }
+.card-grid.cols-6 .card-pastel ul li,
+.card-grid.cols-7 .card-pastel ul li { font-size: 16px; }
+.card-pastel {
+  background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
+}
+.card-pastel .num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em; color: var(--accent);
+  margin-bottom: 18px;
+}
+.card-pastel .card-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.card-pastel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.card-pastel ul li {
+  font-size: 22px; color: var(--muted-2); line-height: 1.45;
+  padding-left: 20px; position: relative;
+}
+.card-pastel ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+
+/* ----- Stage Flow ----- */
+.stage-row { display: flex; gap: 16px; align-items: stretch; }
+.stage-step {
+  flex: 1; padding: 32px 28px;
+  border: 1px solid var(--line); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.stage-step .step-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+  margin-bottom: 16px;
+}
+.stage-step .step-name { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.stage-step .step-desc { font-size: 20px; color: var(--muted-2); line-height: 1.45; }
+.stage-step.highlight {
+  background: var(--ink-2); color: var(--paper); border-color: var(--ink-2);
+}
+.stage-step.highlight .step-num { color: var(--paper); }
+.stage-step.highlight .step-desc { color: rgba(255,255,255,0.78); }
+.stage-arrow {
+  display: flex; align-items: center; font-size: 32px; color: var(--line-2);
+}
+
+/* ----- Alert / Closing ----- */
+.alert-note {
+  font-size: 64px; line-height: 1.35; color: var(--alert);
+  font-weight: 700; letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 1500px;
+}
+.alert-note b { font-weight: 800; }
+
+/* ----- Bullets (text-heavy slide) ----- */
+.bullets {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 22px;
+}
+.bullets li {
+  font-size: 28px; line-height: 1.5; color: var(--ink);
+  padding-left: 28px; position: relative;
+}
+.bullets li::before {
+  content: ""; position: absolute; left: 0; top: 18px;
+  width: 16px; height: 2px; background: var(--accent);
+}
+
+/* ----- Two-column comparison ----- */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
+  height: 100%;
+}
+.two-col .col {
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 36px 32px;
+  display: flex; flex-direction: column;
+}
+.two-col .col.accent {
+  background: var(--pastel); border-color: transparent;
+}
+.two-col .col-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.two-col .col-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin-bottom: 18px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.two-col .col-lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 22px;
+}
+.two-col .col ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.two-col .col ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.two-col .col ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* ----- Table of Contents ----- */
+/* column-major: 왼쪽 열을 먼저 채우고 오른쪽 열로 (1,2,3,4 / 5,6,7,8) */
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, auto);
+  gap: 18px 48px;
+}
+.toc-item {
+  display: flex; align-items: baseline; gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.toc-num {
+  font-size: 22px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+  min-width: 56px;
+}
+.toc-text {
+  font-size: 28px; font-weight: 500; color: var(--ink);
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+
+/* ----- Speaker profile ----- */
+.speaker-card {
+  display: grid; grid-template-columns: 280px 1fr; gap: 48px;
+  height: 100%;
+}
+.speaker-photo {
+  /* fallback 모드 (사진 없을 때): 이름 첫 글자 표시 */
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 24px; font-weight: 600;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-info .speaker-name {
+  font-size: 56px; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.05; margin-bottom: 12px;
+}
+.speaker-info .speaker-title {
+  font-size: 26px; color: var(--accent); font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 28px;
+}
+.speaker-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+}
+.speaker-tag {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 6px 14px; font-size: 18px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.speaker-bio {
+  list-style: none; padding: 0; margin: 0; display: grid; gap: 16px;
+}
+.speaker-bio li {
+  font-size: 20px; color: var(--ink); line-height: 1.5;
+  padding-left: 20px; position: relative;
+}
+.speaker-bio li::before {
+  content: ""; position: absolute; left: 0; top: 14px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+.speaker-bio li b { font-weight: 700; color: var(--ink); }
+
+/* ----- Closing / Q&A ----- */
+.qa-big {
+  font-size: 240px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--accent); line-height: 1;
+}
+.qa-sub {
+  font-size: 32px; color: var(--muted-2); margin-top: 32px;
+  font-weight: 500; line-height: 1.4;
+}
+.qa-contact {
+  font-size: 26px; color: var(--ink); margin-top: 36px;
+  font-weight: 700; letter-spacing: -0.01em;
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--line);
+  background: var(--paper);
+}
+.qa-thanks {
+  font-size: 24px; color: var(--muted-2); margin-top: 28px;
+  font-weight: 500;
+}
+
+/* ============================================================
+ *  Design system meta — color_palette / type_scale
+ * ============================================================ */
+
+/* ----- color_palette — 컬러 스와치 그리드 ----- */
+.cp-grid { display: grid; gap: 18px; flex: 1; }
+.cp-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.cp-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.cp-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.cp-swatch {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.cp-chip {
+  height: 180px;
+  display: flex; align-items: flex-end; padding: 18px;
+  font-size: 18px; font-weight: 700; letter-spacing: 0.05em;
+}
+.cp-body {
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 14px;
+}
+.cp-body .role { color: var(--ink); font-weight: 600; }
+.cp-body .hex {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted-2); font-size: 13px;
+}
+.cp-body .token {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted); font-size: 12px;
+}
+
+/* ----- type_scale — 타이포그래피 위계 테이블 ----- */
+.ts-table {
+  display: grid; grid-template-columns: 1fr 2fr;
+  border-top: 1px solid var(--line);
+  flex: 1;
+}
+.ts-row { display: contents; }
+.ts-row > div {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.ts-meta {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px; color: var(--muted-2); line-height: 1.7;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ts-meta b {
+  color: var(--ink);
+  font-family: "Pretendard Variable","Pretendard",sans-serif;
+  display: block; font-size: 16px; margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.ts-sample { display: flex; align-items: center; }
+.ts-sample > span { width: 100%; }
+
+/* ============================================================
+ *  새 추가 6종 템플릿 (디자인 다양화)
+ * ============================================================ */
+
+/* ----- 1. checklist — 번호 리스트 + 박스 테두리 ----- */
+.checklist-frame {
+  border: 1px solid var(--ink);
+  padding: 56px 64px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.checklist-frame .ck-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.01em;
+  line-height: 1.2; margin: 0 0 14px;
+}
+.checklist-frame .ck-title em { font-style: normal; color: var(--accent); }
+.checklist-frame .ck-sub {
+  font-size: 24px; color: var(--ink); font-weight: 400;
+  margin: 0 0 38px;
+}
+.checklist-frame ol {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 18px;
+}
+.checklist-frame ol li {
+  font-size: 26px; line-height: 1.5; color: var(--ink); font-weight: 400;
+}
+.checklist-frame ol li.emphasis {
+  font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+  color: var(--ink);
+}
+
+/* ----- 2. summary_takeaway — 3 카드 + 하단 takeaway 바 ----- */
+.summary-head {
+  display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: baseline;
+  margin-bottom: 36px;
+}
+.summary-head .num {
+  font-size: 24px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.summary-head .lead {
+  font-size: 32px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.summary-cards { display: grid; gap: 28px; grid-template-columns: repeat(3,1fr); flex: 1; }
+.summary-cards.cols-2 { grid-template-columns: repeat(2,1fr); }
+.summary-cards.cols-4 { grid-template-columns: repeat(4,1fr); }
+.summary-card {
+  display: flex; flex-direction: column;
+  border-bottom: 1px solid var(--ink);
+}
+.summary-card .head {
+  background: var(--pastel);
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 700; line-height: 1.25;
+  color: var(--ink); letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+.summary-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; flex: 1; }
+.summary-card ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.summary-card ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--accent);
+}
+.summary-card ul li b { font-weight: 700; color: var(--accent); }
+.summary-takeaway {
+  margin-top: 28px;
+  background: var(--accent); color: var(--paper);
+  padding: 28px 32px;
+  font-size: 28px; font-weight: 700; text-align: center;
+  letter-spacing: -0.01em; line-height: 1.4;
+}
+
+/* ----- 3. dual_panel — 두 색 헤더 + 분할 패널 (navy + red) ----- */
+.dp-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 32px;
+  align-items: baseline;
+}
+.dp-head .num {
+  font-size: 26px; font-weight: 700; color: var(--accent);
+}
+.dp-head .lead {
+  font-size: 30px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.dp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--line);
+  flex: 1;
+}
+.dp-pane { display: flex; flex-direction: column; }
+.dp-pane.left { border-right: 1px solid var(--line); }
+.dp-header {
+  padding: 22px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 800;
+  color: var(--paper); letter-spacing: -0.01em;
+}
+.dp-header.navy { background: var(--accent); }
+.dp-header.red  { background: var(--alert); }
+.dp-body {
+  padding: 32px 36px;
+  flex: 1; display: flex; flex-direction: column; gap: 22px;
+}
+.dp-body.tint-blue { background: rgba(234,241,251,0.45); }
+.dp-body.tint-red  { background: rgba(251,234,233,0.55); }
+.dp-section {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-bottom: 18px;
+}
+.dp-section + .dp-section { border-top: 1px solid var(--line); padding-top: 18px; }
+.dp-section .sec-title {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0;
+}
+.dp-section .sec-title.navy { color: var(--accent); }
+.dp-section .sec-title.red  { color: var(--alert); }
+.dp-section ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.dp-section ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.dp-section ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.dp-section ul li b { font-weight: 700; }
+.dp-foot {
+  margin-top: auto;
+  font-size: 16px; color: var(--muted-2); line-height: 1.5;
+  padding-top: 14px;
+}
+.dp-foot::before { content: "* "; }
+
+/* ----- 4. case_grid_4 — 2x2 카드 격자 (blue/red 교차) ----- */
+.cg4 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--ink);
+  flex: 1;
+}
+.cg4 .cell {
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 14px;
+  border-bottom: 1px solid var(--ink);
+  position: relative;
+}
+.cg4 .cell:nth-child(odd)  { border-right: 1px solid var(--ink); background: var(--pastel); }
+.cg4 .cell:nth-child(even) { background: var(--pastel-red); }
+.cg4 .cell .ct {
+  font-size: 26px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cg4 .cell:nth-child(odd) .ct  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .ct { color: var(--alert); }
+.cg4 .cell ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.cg4 .cell ul li {
+  font-size: 19px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.cg4 .cell ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.cg4 .cell .arrow {
+  font-size: 20px; font-weight: 700; line-height: 1.4;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.cg4 .cell:nth-child(odd) .arrow  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .arrow { color: var(--alert); }
+.cg4 .cell .arrow::before { content: "→ "; font-weight: 700; }
+
+/* ----- 5. case_analysis — 자료 + 합격 포인트 + 결론 박스 ----- */
+.ca-grid {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px;
+  flex: 1; min-height: 0;
+}
+.ca-ref {
+  background: var(--paper-2);
+  padding: 32px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ca-ref .ref-title {
+  font-size: 22px; font-weight: 700; margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.ca-ref .ref-image { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ca-ref .ref-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ca-ref .ref-text {
+  font-size: 14px; color: var(--ink); line-height: 1.6;
+  white-space: pre-wrap; flex: 1; overflow: hidden;
+}
+.ca-ref .ref-text mark {
+  background: var(--highlight); padding: 1px 2px;
+  color: var(--ink);
+}
+.ca-points {
+  display: flex; flex-direction: column; gap: 22px;
+}
+.ca-point {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ca-point .pt-label {
+  display: inline-block;
+  background: var(--accent); color: var(--paper);
+  padding: 4px 14px;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+.ca-point .pt-text {
+  font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;
+}
+.ca-conclusion {
+  background: transparent;
+  padding: 22px 0 8px;
+  font-size: 30px; font-weight: 700; line-height: 1.45;
+  color: var(--accent);
+  margin-top: auto;
+  border-top: 2px solid var(--accent);
+  letter-spacing: -0.01em;
+}
+.ca-conclusion b { font-weight: 800; color: var(--ink); }
+
+/* ----- 6. pipeline_matrix — 3-stage horizontal 파이프라인 ----- */
+.pm-row {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr 50px 1fr;
+  gap: 0;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+.pm-row + .pm-row { margin-top: 4px; }
+.pm-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 700; color: var(--ink);
+}
+.pm-cell {
+  background: var(--ink); color: var(--paper);
+  padding: 20px 18px;
+  text-align: center;
+  font-size: 22px; font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center;
+}
+.pm-cell.empty { background: transparent; }
+.pm-cell-row {
+  display: grid; gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+.pm-multi {
+  display: grid; gap: 6px;
+}
+.pm-sub-group {
+  display: grid; grid-template-columns: 1fr; gap: 4px;
+}
+.pm-sub-group .pm-cell { padding: 14px 12px; font-size: 18px; }
+.pm-sub-cells {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.pm-sub-cells .pm-cell { padding: 10px 8px; font-size: 16px; font-weight: 600; }
+.pm-note {
+  position: absolute; right: 100px; top: 50%; transform: translateY(-65%);
+  font-size: 22px; font-weight: 700; color: var(--ink); font-style: italic;
+  text-align: center; max-width: 240px; line-height: 1.4;
+}
+
+/* ----- Image slides ----- */
+.slide.image-full {
+  padding: 0;
+  background: #0e1430;
+}
+.slide.image-full .img-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 60px;
+}
+.slide.image-full .img-wrap img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.slide.image-full.bg-light { background: var(--paper-2); }
+.slide.image-full.bg-light .img-wrap img { box-shadow: 0 6px 24px rgba(28,40,133,0.18); }
+.slide.image-full .image-caption {
+  background: var(--paper);
+  padding: 24px 100px;
+  border-top: 1px solid var(--line);
+  font-size: 22px; color: var(--muted-2);
+  line-height: 1.45;
+}
+.slide.image-full .image-caption b { color: var(--ink); font-weight: 700; }
+
+/* image with header (chapter + title above image) */
+.slide.image-headed { padding: 80px 100px 100px; }
+.slide.image-headed .img-zone {
+  flex: 1;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 32px;
+  margin-top: 28px;
+}
+.slide.image-headed .img-zone img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.image-split {
+  display: grid; gap: 48px; height: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.image-split.left  { grid-template-areas: 'img text'; }
+.image-split.right { grid-template-areas: 'text img'; }
+.image-split .img-pane {
+  grid-area: img;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 24px;
+}
+.image-split .img-pane img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-split .text-pane {
+  grid-area: text;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.image-split .text-pane h3 {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin: 0 0 18px; letter-spacing: -0.01em;
+}
+.image-split .text-pane .lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 24px;
+}
+.image-split .text-pane ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.image-split .text-pane ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.image-split .text-pane ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* Speaker photo with image: 박스/프레임 없이 사진만 깔끔하게 */
+.speaker-photo.has-image {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-photo.has-image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;  /* 인물 사진은 위쪽 비중 — 얼굴이 잘 보이도록 */
+  display: block;
+}
+
+/* ----- Compare table (3-col with row labels) ----- */
+.compare-table {
+  display: grid; gap: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.compare-row {
+  display: grid; grid-template-columns: 280px 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row > div {
+  padding: 26px 28px;
+  border-right: 1px solid var(--line);
+  font-size: 22px; line-height: 1.45; color: var(--ink);
+}
+.compare-row > div:last-child { border-right: none; }
+.compare-row.head > div {
+  background: var(--paper-2);
+  font-weight: 700; font-size: 22px;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.compare-row.head > div:first-child {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); text-transform: uppercase;
+}
+.compare-row > div.label {
+  background: var(--paper-2);
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.compare-row > div.cell {
+  font-size: 22px; color: var(--ink); font-weight: 500; line-height: 1.45;
+}
+.compare-row > div.cell.accent {
+  background: var(--pastel); color: var(--ink);
+}
+.compare-conclusion {
+  margin-top: 28px;
+  padding: 20px 28px;
+  background: var(--accent); color: var(--paper);
+  font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.compare-conclusion b { font-weight: 800; }
+
+/* ===== concept_pill — 알약 컨테이너 + 원형 요소 (A + B + C 공식형) ===== */
+.concept-pill {
+  position: relative;
+  width: 58%;                       /* 기본(3요소): 더 컴팩트하게 */
+  margin: 0 auto;
+  background: var(--accent);
+  border-radius: 999px;            /* stadium / pill */
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 12px 36px rgba(28,40,133,0.18);
+}
+.concept-pill .cp-circle {
+  flex: 1 1 0;
+  aspect-ratio: 1 / 1;
+  background: var(--paper-2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  padding: 10px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  word-break: keep-all;
+}
+.concept-pill .cp-op {
+  flex: 0 0 auto;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--paper);
+  opacity: 0.9;
+  line-height: 1;
+}
+.concept-pill-row {
+  display: flex;
+  width: 58%;
+  margin: 18px auto 0;
+  gap: 16px;
+  padding: 0 36px;       /* match pill horizontal padding so labels align under circles */
+  box-sizing: border-box;
+}
+.concept-pill-row .cp-desc {
+  flex: 1 1 0;
+  text-align: center;
+  font-size: 22px;        /* 서브 텍스트 키움 */
+  color: var(--muted-2);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.concept-pill-row .cp-spacer {
+  flex: 0 0 auto;
+  width: 30px;            /* matches operator width */
+}
+
+/* 2요소: 가장 작게 */
+.concept-pill.cols-2 { width: 46%; }
+.concept-pill.cols-2 .cp-circle { font-size: 32px; }
+.concept-pill.cols-2 + .concept-pill-row { width: 46%; }
+
+/* 4요소: 가로폭 더 필요 (현재 적정) */
+.concept-pill.cols-4 { width: 72%; padding: 26px 34px; }
+.concept-pill.cols-4 .cp-circle { font-size: 30px; }
+.concept-pill.cols-4 + .concept-pill-row { width: 72%; padding: 0 34px; }
+.concept-pill.cols-4 + .concept-pill-row .cp-desc { font-size: 22px; }
+
+/* ===== priority_matrix — 기호(◎/○/△) 매트릭스 + 행 강조 + 결론 배너 ===== */
+.priority-matrix-wrap { width: 100%; }
+.priority-legend {
+  display: flex; gap: 22px; justify-content: flex-end;
+  font-size: 16px; color: var(--muted-2); margin-bottom: 8px;
+}
+.priority-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.priority-legend b { color: var(--ink); font-weight: 700; }
+.priority-matrix {
+  display: grid;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.priority-matrix > div {
+  padding: 18px 8px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--ink);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+}
+.priority-matrix > div:last-child,
+.priority-matrix > div.row-end { border-right: none; }
+.priority-matrix .pm-head {
+  background: var(--accent); color: var(--paper);
+  font-weight: 700; letter-spacing: -0.01em;
+  padding: 16px 8px; font-size: 20px;
+}
+.priority-matrix .pm-row-label {
+  background: var(--paper-2);
+  font-weight: 600; color: var(--ink);
+  font-size: 19px; text-align: center;
+}
+.priority-matrix .pm-symbol {
+  font-size: 26px; color: var(--ink);
+  font-weight: 600;
+}
+.priority-matrix .pm-symbol.muted { color: var(--muted); font-weight: 400; }
+.priority-matrix .pm-row.is-highlight > div {
+  background: rgba(28,40,133,0.06);
+  outline: 2px dashed var(--accent);
+  outline-offset: -3px;
+}
+.priority-conclusion {
+  margin-top: 22px;
+  padding: 18px 28px;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.priority-conclusion b { font-weight: 800; }
+
+/* ===== step_compare — 두 카드 + 숫자 뱃지 단계 비교 ===== */
+.step-compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  width: 100%;
+}
+.step-compare .sc-card {
+  background: var(--ink); color: var(--paper);
+  border-radius: 18px;
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.step-compare .sc-card.accent { background: var(--accent); }
+.step-compare .sc-head {
+  display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.step-compare .sc-label {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.01em;
+}
+.step-compare .sc-sub {
+  font-size: 15px; opacity: 0.8;
+}
+.step-compare .sc-list { display: flex; flex-direction: column; gap: 12px; }
+.step-compare .sc-item {
+  display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: start;
+}
+.step-compare .sc-num {
+  background: rgba(255,255,255,0.16);
+  color: var(--paper);
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+}
+.step-compare .sc-card.accent .sc-num { background: rgba(255,255,255,0.22); }
+.step-compare .sc-text .sc-title { font-size: 19px; font-weight: 700; line-height: 1.35; }
+.step-compare .sc-text .sc-desc  { font-size: 15px; opacity: 0.78; margin-top: 4px; line-height: 1.4; }
+.step-compare-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 20px;
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+.step-compare-footer b { font-style: normal; font-weight: 800; }
+
+/* ===== before_after — 두 인용 박스 + 가운데 화살표 ===== */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr;
+  gap: 0;
+  align-items: stretch;
+  width: 100%;
+}
+.before-after .ba-box {
+  border: 2px solid var(--fail);
+  border-radius: 14px;
+  padding: 28px 30px;
+  background: var(--paper);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.before-after .ba-box.after { border-color: var(--accent); }
+.before-after .ba-label {
+  font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+  color: var(--fail);
+}
+.before-after .ba-box.after .ba-label { color: var(--accent); }
+.before-after .ba-quote {
+  font-size: 18px; line-height: 1.6; color: var(--ink);
+  font-style: italic;
+}
+.before-after .ba-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; color: var(--accent); font-weight: 300;
+}
+.before-after-note {
+  margin-top: 22px;
+  font-size: 17px; color: var(--muted-2);
+  text-align: center; line-height: 1.5;
+}
+.before-after-source {
+  margin-top: 8px;
+  font-size: 13px; color: var(--muted);
+  text-align: right; font-style: italic;
+}
+
+/* ===== tagged_rows — 좌측 컬러 라벨 + 가로 행 비교 ===== */
+.tagged-rows { width: 100%; }
+.tagged-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tagged-row:last-of-type { border-bottom: none; }
+.tagged-row .tr-tag {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 19px; font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.tagged-row .tr-mid {
+  font-size: 19px; color: var(--ink); line-height: 1.5;
+}
+.tagged-row .tr-end {
+  font-size: 19px; color: var(--muted-2); line-height: 1.5;
+}
+.tagged-conclusion {
+  margin-top: 22px;
+  padding: 16px 28px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 19px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.tagged-conclusion b { font-weight: 800; }
+
+/* ===== case_profile — 좌 PROFILE 키-값 + 우 번호 findings + Key Insight ===== */
+.case-profile {
+  display: grid;
+  grid-template-columns: 460px 1fr;   /* profile 더 크게, findings 살짝 좁게 */
+  gap: 28px;
+  width: 100%;
+}
+.case-profile .cp-profile {
+  background: var(--paper-2);
+  padding: 32px 36px;
+  border-radius: 14px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.case-profile .cp-profile-head {
+  font-size: 19px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+.case-profile .cp-kv {
+  display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: baseline;
+}
+.case-profile .cp-key {
+  font-size: 17px; color: var(--muted); font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.case-profile .cp-val {
+  font-size: 22px; color: var(--ink); font-weight: 700; line-height: 1.4;
+}
+.case-profile .cp-findings {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 32px 36px;            /* PROFILE 카드와 동일한 padding */
+  display: flex; flex-direction: column; gap: 18px;
+}
+.case-profile .cp-findings-head {
+  font-size: 19px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.case-profile .cp-finding {
+  display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start;
+}
+.case-profile .cp-num {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--accent); color: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+}
+.case-profile .cp-finding-title {
+  font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.35;
+}
+.case-profile .cp-finding-sub {
+  font-size: 16px; color: var(--muted-2); margin-top: 6px; line-height: 1.5;
+}
+.case-insight {
+  margin-top: 44px;        /* Key Insight 더 내림 */
+  padding: 20px 32px;
+  background: var(--highlight);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 21px; color: var(--ink); font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.case-insight b { font-weight: 800; }
+
+
+/* ----- Edit mode styling ----- */
+body.edit-mode [data-edit] {
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.12s ease;
+  cursor: text;
+}
+body.edit-mode [data-edit]:hover { outline-color: rgba(28,40,133,0.45); }
+body.edit-mode [data-edit]:focus {
+  outline: 2px solid #1c2885;
+  background: rgba(234,241,251,0.45);
+}
+body.edit-mode .nav-zone { display: none !important; }
+
+#edit-bar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 14;
+  display: none; gap: 8px; padding: 8px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(28,40,133,0.18);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  font-size: 13px;
+}
+#edit-bar.show { display: flex; }
+#edit-bar button {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border: 1px solid rgba(28,40,133,0.2);
+  background: #fff; color: #0e1430; cursor: pointer;
+  letter-spacing: -0.005em;
+}
+#edit-bar button:hover { background: #f2f3f8; }
+#edit-bar button.primary { background: #1c2885; color: #fff; border-color: #1c2885; }
+#edit-bar button.primary:hover { background: #0e1430; }
+#edit-bar .hint { font-size: 11px; color: #737991; padding: 0 8px; align-self: center; }
+
+#edit-toggle {
+  position: fixed; top: 16px; left: 16px; z-index: 13;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.94); color: #0e1430;
+  border: 1px solid rgba(28,40,133,0.18); border-radius: 4px;
+  cursor: pointer; letter-spacing: -0.005em;
+}
+#edit-toggle:hover { background: #fff; }
+
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #0e8a4f; color: #fff;
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 15; letter-spacing: -0.005em;
+}
+#toast.show { opacity: 1; }
+
+/* ===== Print mode (Cmd+P → PDF로 저장) ===== */
+@media print {
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  .viewer { position: static !important; display: block !important; }
+  .stage { box-shadow: none !important; width: 1920px !important; height: auto !important; }
+  .slide-wrap {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important; visibility: visible !important;
+    width: 1920px !important; height: 1080px !important;
+    page-break-after: always; break-after: page;
+    display: block !important;
+  }
+  .slide-wrap:last-child { page-break-after: auto; }
+  .slide {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    transform: none !important;
+  }
+  .nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+  @page { size: 1920px 1080px; margin: 0; }
+}
+</style>
+</head><body>
+<div class="viewer">
+  <div id="stage" class="stage">
+    <div class="slide-wrap" data-idx="1">
+    <section class="slide cover">
+      <div class="cover-kicker" data-edit="meta.event_label">ZEROBASE · 데이원컴퍼니</div>
+      <div class="cover-title">
+        <span data-edit="meta.title">ZEROBASE</span><br>
+        <em data-edit="meta.title_em">Design System v1.4</em>
+      </div>
+      <div class="cover-sub" data-edit="meta.subtitle">온라인 설명회 덱 디자인 시스템 — 원칙·컬러·타이포그래피·슬라이드 템플릿 카탈로그.</div>
+      <div class="cover-meta">
+        <div class="speaker">
+          <b data-edit="meta.speaker.name">Design System</b>
+          <span data-edit="meta.speaker.title">ZEROBASE 온라인 설명회 덱</span>
+        </div>
+        <div><span data-edit="meta.date">2026.05.07</span> · <span data-edit="meta.session">v1.4</span></div>
+      </div>
+    </section></div><div class="slide-wrap" data-idx="2">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[1].chapter">Contents</div>
+      <h2 class="slide-title" data-edit="slides[1].title" data-edit-html="1">v1.4의 4 섹션 구성</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="toc-grid">
+        <div class="toc-item">
+          <span class="toc-num">01</span>
+          <span class="toc-text" data-edit="slides[1].items[0]">PRINCIPLES · 디자인 원칙 5가지</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">02</span>
+          <span class="toc-text" data-edit="slides[1].items[1]">COLORS · 컬러 팔레트 (Brand · Surface · Semantic)</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">03</span>
+          <span class="toc-text" data-edit="slides[1].items[2]">TYPOGRAPHY · Pretendard 단일 서체, 두께와 크기로 위계</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">04</span>
+          <span class="toc-text" data-edit="slides[1].items[3]">TEMPLATES · 슬라이드 템플릿 26종 카탈로그</span>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">02 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="3">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[2].ch">PART 01</div>
+      <h1 class="divider-title" data-edit="slides[2].title" data-edit-html="1">PRINCIPLES</h1>
+      <p class="divider-sub" data-edit="slides[2].sub">매주 연사·주제는 바뀌어도 변하지 않는 4가지 원칙.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">03 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="4">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[3].chapter">PART 01 PRINCIPLES</div>
+      <h2 class="slide-title" data-edit="slides[3].title" data-edit-html="1">디자인 원칙 5가지</h2>
+      <p class="slide-lede" data-edit="slides[3].lede">매주 연사·주제는 바뀌어도 이 다섯 가지는 변하지 않습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[3].cards[0].title">컨설팅 톤, 교육 무게감</div>
+          <ul><li data-edit="slides[3].cards[0].items[0]">프로모션이 아닌 ‘리포트’에 가까운 인상</li><li data-edit="slides[3].cards[0].items[1]">여백·정렬·표 중심, 장식은 최소화</li><li data-edit="slides[3].cards[0].items[2]">신뢰도가 곧 설득력</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[3].cards[1].title">각진 모서리, 얇은 구분선</div>
+          <ul><li data-edit="slides[3].cards[1].items[0]">border-radius: 0</li><li data-edit="slides[3].cards[1].items[1]">1px 라인으로 구조를 분명히</li><li data-edit="slides[3].cards[1].items[2]">데이터를 시각적으로 정직하게</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[3].cards[2].title">한 톤의 네이비</div>
+          <ul><li data-edit="slides[3].cards[2].items[0]">주색 단 1가지: #1C2885</li><li data-edit="slides[3].cards[2].items[1]">파스텔 블루는 강조 블록에만</li><li data-edit="slides[3].cards[2].items[2]">빨강은 리스크·주의 신호용으로 제한</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[3].cards[3].title">Pretendard 단일 서체</div>
+          <ul><li data-edit="slides[3].cards[3].items[0]">한글·영문·숫자 모두 Pretendard</li><li data-edit="slides[3].cards[3].items[1]">두께·크기로만 위계 형성</li><li data-edit="slides[3].cards[3].items[2]">PPTX는 ea·cs 폰트 슬롯까지 지정</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[3].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[3].cards[4].title">타이틀은 자연스러운 문장</div>
+          <ul><li data-edit="slides[3].cards[4].items[0]">타이틀에 <b>—, →, +, ×</b> 같은 기호 사용 금지</li><li data-edit="slides[3].cards[4].items[1]">조사·어미로 매끄럽게 읽히게</li><li data-edit="slides[3].cards[4].items[2]">강조는 <b>&lt;em&gt;</b> 태그로만 처리</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">04 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="5">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[4].ch">PART 02</div>
+      <h1 class="divider-title" data-edit="slides[4].title" data-edit-html="1">COLORS</h1>
+      <p class="divider-sub" data-edit="slides[4].sub">브랜드 네이비를 중심으로, 뉴트럴과 액센트를 최소한으로.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">05 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="6">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[5].chapter">PART 02 COLORS · Brand & Ink</div>
+      <h2 class="slide-title" data-edit="slides[5].title" data-edit-html="1">핵심 톤을 만드는 <em>Brand & Ink</em></h2>
+      <p class="slide-lede" data-edit="slides[5].lede">본문 텍스트와 강조에 쓰는 네이비 계열.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="cp-grid cols-4">
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#0E1430; color:#FFFFFF;"
+                data-edit="slides[5].swatches[0].name">Ink · Primary</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[5].swatches[0].role">본문 텍스트, 슬라이드 타이틀</span>
+            <span class="hex" data-edit="slides[5].swatches[0].hex">#0E1430</span>
+            <span class="token" data-edit="slides[5].swatches[0].token">--ink</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#1C2885; color:#FFFFFF;"
+                data-edit="slides[5].swatches[1].name">Navy · Brand</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[5].swatches[1].role">브랜드, 강조, 챕터태그</span>
+            <span class="hex" data-edit="slides[5].swatches[1].hex">#1C2885</span>
+            <span class="token" data-edit="slides[5].swatches[1].token">--ink-2 / --accent</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#3A4499; color:#FFFFFF;"
+                data-edit="slides[5].swatches[2].name">Navy Light</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[5].swatches[2].role">2차 강조, 아이콘</span>
+            <span class="hex" data-edit="slides[5].swatches[2].hex">#3A4499</span>
+            <span class="token" data-edit="slides[5].swatches[2].token">--ink-3</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#E6E8F5; color:#1C2885;"
+                data-edit="slides[5].swatches[3].name">Navy Soft</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[5].swatches[3].role">강조 블록 배경, 태그</span>
+            <span class="hex" data-edit="slides[5].swatches[3].hex">#E6E8F5</span>
+            <span class="token" data-edit="slides[5].swatches[3].token">--accent-soft</span>
+          </div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">06 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="7">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[6].chapter">PART 02 COLORS · Surface & Line</div>
+      <h2 class="slide-title" data-edit="slides[6].title" data-edit-html="1">면과 선을 위한 <em>Surface & Line</em></h2>
+      <p class="slide-lede" data-edit="slides[6].lede">슬라이드 배경, 카드 배경, 구분선 톤.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="cp-grid cols-4">
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#FFFFFF; color:#0E1430;"
+                data-edit="slides[6].swatches[0].name">Paper</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[6].swatches[0].role">슬라이드 배경</span>
+            <span class="hex" data-edit="slides[6].swatches[0].hex">#FFFFFF</span>
+            <span class="token" data-edit="slides[6].swatches[0].token">--paper</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#F2F3F8; color:#0E1430;"
+                data-edit="slides[6].swatches[1].name">Paper 2</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[6].swatches[1].role">섹션 배경, 인용문</span>
+            <span class="hex" data-edit="slides[6].swatches[1].hex">#F2F3F8</span>
+            <span class="token" data-edit="slides[6].swatches[1].token">--paper-2</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#EAF1FB; color:#1C2885;"
+                data-edit="slides[6].swatches[2].name">Pastel Blue</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[6].swatches[2].role">정보 카드 배경</span>
+            <span class="hex" data-edit="slides[6].swatches[2].hex">#EAF1FB</span>
+            <span class="token" data-edit="slides[6].swatches[2].token">--pastel</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#FBEAE9; color:#B53232;"
+                data-edit="slides[6].swatches[3].name">Pastel Red</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[6].swatches[3].role">비교 패널 / 케이스 배경</span>
+            <span class="hex" data-edit="slides[6].swatches[3].hex">#FBEAE9</span>
+            <span class="token" data-edit="slides[6].swatches[3].token">--pastel-red</span>
+          </div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">07 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="8">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[7].chapter">PART 02 COLORS · Semantic</div>
+      <h2 class="slide-title" data-edit="slides[7].title" data-edit-html="1">신호를 표현하는 <em>Semantic</em> 톤</h2>
+      <p class="slide-lede" data-edit="slides[7].lede">통과·탈락·주의 등 시그널성 컬러는 제한적으로.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="cp-grid cols-4">
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#0E8A4F; color:#FFFFFF;"
+                data-edit="slides[7].swatches[0].name">Pass</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[7].swatches[0].role">통과 · 긍정 시그널</span>
+            <span class="hex" data-edit="slides[7].swatches[0].hex">#0E8A4F</span>
+            <span class="token" data-edit="slides[7].swatches[0].token">--pass</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#B53232; color:#FFFFFF;"
+                data-edit="slides[7].swatches[1].name">Fail</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[7].swatches[1].role">탈락 · 리스크</span>
+            <span class="hex" data-edit="slides[7].swatches[1].hex">#B53232</span>
+            <span class="token" data-edit="slides[7].swatches[1].token">--fail</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#D0342C; color:#FFFFFF;"
+                data-edit="slides[7].swatches[2].name">Alert</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[7].swatches[2].role">강한 주의 · 행동 유도</span>
+            <span class="hex" data-edit="slides[7].swatches[2].hex">#D0342C</span>
+            <span class="token" data-edit="slides[7].swatches[2].token">--alert-red</span>
+          </div>
+        </div>
+        <div class="cp-swatch">
+          <div class="cp-chip" style="background:#FFF4B8; color:#0E1430;"
+                data-edit="slides[7].swatches[3].name">Highlight</div>
+          <div class="cp-body">
+            <span class="role" data-edit="slides[7].swatches[3].role">이력서 형광펜 / 결론 박스 배경</span>
+            <span class="hex" data-edit="slides[7].swatches[3].hex">#FFF4B8</span>
+            <span class="token" data-edit="slides[7].swatches[3].token">--highlight</span>
+          </div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">08 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="9">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[8].ch">PART 03</div>
+      <h1 class="divider-title" data-edit="slides[8].title" data-edit-html="1">TYPOGRAPHY</h1>
+      <p class="divider-sub" data-edit="slides[8].sub">Pretendard 단일 서체. 두께와 크기로만 위계를 만든다.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">09 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="10">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[9].chapter">PART 03 TYPOGRAPHY</div>
+      <h2 class="slide-title" data-edit="slides[9].title" data-edit-html="1"><em>Display와 Title</em> 영역의 타이포그래피</h2>
+      <p class="slide-lede" data-edit="slides[9].lede">표지·디바이더·본문 타이틀의 큰 타입.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ts-table">
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[9].items[0].name">Cover Title</b>font-size: 120px<br>font-weight: 800<br>line-height: 1.05<br>letter-spacing: -0.02em</div>
+          <div class="ts-sample"><span style="font-size:120px; font-weight:800; line-height:1.05; letter-spacing:-0.02em; color:var(--ink);" data-edit="slides[9].items[0].sample" data-edit-html="1">온라인 취업 박람회</span></div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[9].items[1].name">Slide Title</b>font-size: 88px<br>font-weight: 800<br>line-height: 1.08<br>letter-spacing: -0.02em</div>
+          <div class="ts-sample"><span style="font-size:88px; font-weight:800; line-height:1.08; letter-spacing:-0.02em; color:var(--ink);" data-edit="slides[9].items[1].sample" data-edit-html="1">상반기 채용은 진행 중</span></div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[9].items[2].name">Chapter Tag</b>font-size: 28px<br>font-weight: 700<br>line-height: 1.2<br>letter-spacing: -0.01em</div>
+          <div class="ts-sample"><span style="font-size:28px; font-weight:700; line-height:1.2; letter-spacing:-0.01em; color:var(--ink);" data-edit="slides[9].items[2].sample" data-edit-html="1">면접 프로세스 및 채용 트렌드</span></div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">10 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="11">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[10].chapter">PART 03 TYPOGRAPHY</div>
+      <h2 class="slide-title" data-edit="slides[10].title" data-edit-html="1"><em>Body와 Caption</em> 영역의 타이포그래피</h2>
+      <p class="slide-lede" data-edit="slides[10].lede">본문·리드·카드 타이틀·캡션의 사용 영역.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ts-table">
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[10].items[0].name">Slide Lede</b>font-size: 34px<br>font-weight: 500<br>line-height: 1.45<br>letter-spacing: 0em</div>
+          <div class="ts-sample"><span style="font-size:34px; font-weight:500; line-height:1.45; letter-spacing:0em; color:var(--ink);" data-edit="slides[10].items[0].sample" data-edit-html="1">지원 회사·직무별 체계적 준비</span></div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[10].items[1].name">Card Title</b>font-size: 32px<br>font-weight: 700<br>line-height: 1.25<br>letter-spacing: -0.01em</div>
+          <div class="ts-sample"><span style="font-size:32px; font-weight:700; line-height:1.25; letter-spacing:-0.01em; color:var(--ink);" data-edit="slides[10].items[1].sample" data-edit-html="1">공채 비중 축소</span></div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[10].items[2].name">Body · Default</b>font-size: 24px<br>font-weight: 400<br>line-height: 1.45<br>letter-spacing: 0em</div>
+          <div class="ts-sample"><span style="font-size:24px; font-weight:400; line-height:1.45; letter-spacing:0em; color:var(--ink);" data-edit="slides[10].items[2].sample" data-edit-html="1">준비된 면접의 필요, 검증의 한계</span></div>
+        </div>
+        <div class="ts-row">
+          <div class="ts-meta"><b data-edit="slides[10].items[3].name">Micro · Caption</b>font-size: 20px<br>font-weight: 500<br>line-height: 1.4<br>letter-spacing: 0.05em</div>
+          <div class="ts-sample"><span style="font-size:20px; font-weight:500; line-height:1.4; letter-spacing:0.05em; color:var(--ink);" data-edit="slides[10].items[3].sample" data-edit-html="1">© 2026. (주)데이원컴퍼니</span></div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">11 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="12">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[11].ch">PART 04</div>
+      <h1 class="divider-title" data-edit="slides[11].title" data-edit-html="1">TEMPLATES</h1>
+      <p class="divider-sub" data-edit="slides[11].sub">슬라이드 템플릿 26종 카탈로그. 구조·본문·비교·흐름·사람·이미지·공식형·매트릭스.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">12 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="13">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[12].chapter">Template 01 · alert_close</div>
+      <h2 class="slide-title" data-edit="slides[12].title" data-edit-html="1"><em>알림형 강조</em>로 마무리하는 슬라이드</h2>
+      <p class="slide-lede" data-edit="slides[12].lede">본문 + 빨간색 강조 멘트로 행동을 촉구하는 마무리.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[12].alert" data-edit-html="1"><b>오늘 이후, 내가 지금 준비하는 단계가</b>
+어디인지부터 점검하세요.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">13 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="14">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[13].chapter">Template 02 · content</div>
+      <h2 class="slide-title" data-edit="slides[13].title" data-edit-html="1"><em>제목과 리드, 불릿</em>으로 구성한 기본 본문 슬라이드</h2>
+      <p class="slide-lede" data-edit="slides[13].lede">가장 기본 형태. 챕터 태그·제목·리드·불릿 0~5개.</p>
+      <div class="head-gap"></div>
+      <div class="body body-top"><ul class='bullets'><li data-edit="slides[13].bullets[0]">공채 비중은 줄고, 수시·경력 채용은 분기 내내 열려 있음</li><li data-edit="slides[13].bullets[1]">서류·인적성·1차 면접까지 평균 2~3주 안에 진행</li><li data-edit="slides[13].bullets[2]">준비된 지원자만이 다음 단계 기회를 잡습니다</li></ul></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">14 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="15">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[14].chapter">Template 03 · card_grid (3-up)</div>
+      <h2 class="slide-title" data-edit="slides[14].title" data-edit-html="1">2~7개로 가변되는 <em>카드 그리드</em></h2>
+      <p class="slide-lede" data-edit="slides[14].lede">파스텔 블루 카드. cards[]의 개수에 따라 자동 layout.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[14].cards[0].title">공채 비중 축소</div>
+          <ul><li data-edit="slides[14].cards[0].items[0]">1~2시간 내 검증의 한계</li><li data-edit="slides[14].cards[0].items[1]">준비된 면접의 필요</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[14].cards[1].title">수시·경력 확대</div>
+          <ul><li data-edit="slides[14].cards[1].items[0]">즉시 투입 가능 여부</li><li data-edit="slides[14].cards[1].items[1]">성과 증빙 요구</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[14].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[14].cards[2].title">맞춤형 인재</div>
+          <ul><li data-edit="slides[14].cards[2].items[0]">직무 이해도</li><li data-edit="slides[14].cards[2].items[1]">조직 적합성</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">15 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="16">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[15].chapter">Template 04 · two_col</div>
+      <h2 class="slide-title" data-edit="slides[15].title" data-edit-html="1">두 항목을 나란히 비교하는 <em>2-컬럼 레이아웃</em></h2>
+      <p class="slide-lede" data-edit="slides[15].lede">Before/After·Old/New·옵션 A/B 등 두 항목을 나란히 비교할 때.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[15].cols[0].num">PRESENT</div>
+          <div class="col-title" data-edit="slides[15].cols[0].title">핵심 변화: 업무의 본질</div>
+          <div class="col-lede" data-edit="slides[15].cols[0].lede">AI를 ‘일하는 방식 자체’로 재정의.</div>
+          <ul><li data-edit="slides[15].cols[0].items[0]">신입·주니어 채용 급감</li><li data-edit="slides[15].cols[0].items[1]">AI 활용 생산성 차이가 본질적 경쟁력</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[15].cols[1].num">FUTURE</div>
+          <div class="col-title" data-edit="slides[15].cols[1].title">평가 기준의 변화</div>
+          <div class="col-lede" data-edit="slides[15].cols[1].lede">‘무엇을 만들 수 있는가’.</div>
+          <ul><li data-edit="slides[15].cols[1].items[0]">GitHub·Kaggle·기술블로그 결과물 필수</li><li data-edit="slides[15].cols[1].items[1]">‘포트폴리오 없는 지원자 = 검증 불가’</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">16 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="17">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[16].chapter">Template 05 · stage_flow</div>
+      <h2 class="slide-title" data-edit="slides[16].title" data-edit-html="1"><em>4~5단계 흐름</em>을 보여주는 스테이지</h2>
+      <p class="slide-lede" data-edit="slides[16].lede">프로세스나 단계가 있는 콘텐츠. 마지막 단계는 강조 색으로 구분.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[16].steps[0].num">STEP 01</div>
+            <div class="step-name" data-edit="slides[16].steps[0].name">서류 전형</div>
+            <div class="step-desc" data-edit="slides[16].steps[0].desc">이력서 · 자소서 · 포트폴리오</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[16].steps[1].num">STEP 02</div>
+            <div class="step-name" data-edit="slides[16].steps[1].name">1차 면접</div>
+            <div class="step-desc" data-edit="slides[16].steps[1].desc">실무 · 직무 역량</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[16].steps[2].num">STEP 03</div>
+            <div class="step-name" data-edit="slides[16].steps[2].name">2차 면접</div>
+            <div class="step-desc" data-edit="slides[16].steps[2].desc">임원 · 인성</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[16].steps[3].num">FINAL</div>
+            <div class="step-name" data-edit="slides[16].steps[3].name">최종 단계</div>
+            <div class="step-desc" data-edit="slides[16].steps[3].desc">처우 협의 · 온보딩</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">17 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="18">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[17].chapter">Template 06 · compare_table</div>
+      <h2 class="slide-title" data-edit="slides[17].title" data-edit-html="1"><em>3-컬럼 비교 표</em>와 행 라벨 구조</h2>
+      <p class="slide-lede" data-edit="slides[17].lede">여러 항목을 일정한 기준으로 비교할 때. 한쪽 컬럼은 강조 색으로.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="compare-table">
+        <div class="compare-row head">
+          <div data-edit="slides[17].headers[0]">구분</div>
+          <div data-edit="slides[17].headers[1]">신입 (Entry)</div>
+          <div data-edit="slides[17].headers[2]">경력직 (Experienced)</div>
+        </div>
+        <div class="compare-row">
+          <div class="label" data-edit="slides[17].rows[0][0]">평가 기준</div>
+          <div class="cell" data-edit="slides[17].rows[0][1]">성장 잠재력과 가능성</div>
+          <div class="cell accent" data-edit="slides[17].rows[0][2]">검증된 성과</div>
+        </div>
+        <div class="compare-row">
+          <div class="label" data-edit="slides[17].rows[1][0]">주요 질문</div>
+          <div class="cell" data-edit="slides[17].rows[1][1]">‘무엇을 할 수 있는가?’</div>
+          <div class="cell accent" data-edit="slides[17].rows[1][2]">‘무엇을 해봤는가?’</div>
+        </div>
+        <div class="compare-row">
+          <div class="label" data-edit="slides[17].rows[2][0]">핵심 어필</div>
+          <div class="cell" data-edit="slides[17].rows[2][1]">기본기와 학습 태도</div>
+          <div class="cell accent" data-edit="slides[17].rows[2][2]">즉시 투입 가능성</div>
+        </div></div>
+        <div class="compare-conclusion" data-edit="slides[17].conclusion" data-edit-html="1">경력직 이직은 <b>‘어떤 문제를 해결해봤는지’</b>를 증명하는 자리입니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">18 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="19">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[18].chapter">Template 07 · summary_takeaway</div>
+      <h2 class="slide-title" data-edit="slides[18].title" data-edit-html="1">여러 카드와 하단의 <em>takeaway 바</em></h2>
+      <p class="slide-lede" data-edit="slides[18].lede">여러 변화·요인을 카드로 보여주고 하단 강조 바에 한 줄 결론.</p>
+      <div class="head-gap"></div>
+      <div class="body" style="gap: 18px;">
+        <div class="summary-cards cols-3">
+        <div class="summary-card">
+          <div class="head" data-edit="slides[18].cards[0].title" data-edit-html="1">경쟁 심화 구조</div>
+          <ul><li data-edit="slides[18].cards[0].items[0]" data-edit-html="1">병목 현상</li><li data-edit="slides[18].cards[0].items[1]" data-edit-html="1">단 5명 채용에 수백명</li></ul>
+        </div>
+        <div class="summary-card">
+          <div class="head" data-edit="slides[18].cards[1].title" data-edit-html="1">채용 방식 변화</div>
+          <ul><li data-edit="slides[18].cards[1].items[0]" data-edit-html="1">공채 축소</li><li data-edit="slides[18].cards[1].items[1]" data-edit-html="1">인턴 → 전환형</li></ul>
+        </div>
+        <div class="summary-card">
+          <div class="head" data-edit="slides[18].cards[2].title" data-edit-html="1">AI Impact 본격화</div>
+          <ul><li data-edit="slides[18].cards[2].items[0]" data-edit-html="1">AI 인력 수요 증가</li><li data-edit="slides[18].cards[2].items[1]" data-edit-html="1">Agent화 가속</li></ul>
+        </div></div>
+        <div class="summary-takeaway" data-edit="slides[18].takeaway" data-edit-html="1">‘좋은 스펙’이 아니라 ‘바로 쓸 수 있는 사람’을 뽑는다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">19 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="20">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[19].chapter">Template 08 · dual_panel</div>
+      <h2 class="slide-title" data-edit="slides[19].title" data-edit-html="1"><em>네이비와 레드</em>로 대비를 만드는 분할 패널</h2>
+      <p class="slide-lede" data-edit="slides[19].lede">현실/이상, 문제/해결 등 강한 대비가 필요한 두 관점을 나란히.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="dp-grid">
+        <div class="dp-pane left">
+          <div class="dp-header navy" data-edit="slides[19].left.header">임원의 현실</div>
+          <div class="dp-body tint-blue">
+            <div class="dp-section">
+              <div class="sec-title navy" data-edit="slides[19].left.sections[0].title">제한된 시간, 넘치는 지원자</div>
+              <ul><li data-edit="slides[19].left.sections[0].items[0]" data-edit-html="1">서류 정독 시간 부족</li><li data-edit="slides[19].left.sections[0].items[1]" data-edit-html="1">핵심만 본다</li></ul>
+            </div>
+            <div class="dp-section">
+              <div class="sec-title navy" data-edit="slides[19].left.sections[1].title">메시지 중심</div>
+              <ul><li data-edit="slides[19].left.sections[1].items[0]" data-edit-html="1">결과·숫자·역할 중심</li></ul>
+            </div></div>
+        </div>
+        <div class="dp-pane right">
+          <div class="dp-header red" data-edit="slides[19].right.header">3대 평가 기준</div>
+          <div class="dp-body tint-red">
+            <div class="dp-section">
+              <div class="sec-title red" data-edit="slides[19].right.sections[0].title">1. 바로 일할 수 있는가?</div>
+              <ul><li data-edit="slides[19].right.sections[0].items[0]" data-edit-html="1">실무 즉시 투입</li></ul>
+            </div>
+            <div class="dp-section">
+              <div class="sec-title red" data-edit="slides[19].right.sections[1].title">2. 리스크 없는 사람인가?</div>
+              <ul><li data-edit="slides[19].right.sections[1].items[0]" data-edit-html="1">치명적 단점 / 조기 퇴사</li></ul>
+            </div>
+            <div class="dp-section">
+              <div class="sec-title red" data-edit="slides[19].right.sections[2].title">3. 조직에 잘 맞는가?</div>
+              <ul><li data-edit="slides[19].right.sections[2].items[0]" data-edit-html="1">Culture Fit</li></ul>
+            </div></div>
+        </div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">20 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="21">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[20].chapter">Template 09 · case_grid_4</div>
+      <h2 class="slide-title" data-edit="slides[20].title" data-edit-html="1">네 가지 사례를 모은 <em>2 by 2 케이스 카드</em></h2>
+      <p class="slide-lede" data-edit="slides[20].lede">유형이 다른 4가지 사례를 한눈에. blue↔red 교차로 시각적 변별.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="cg4">
+        <div class="cell">
+          <div class="ct" data-edit="slides[20].cards[0].title" data-edit-html="1">신입 A — 경험으로 합격</div>
+          <ul><li data-edit="slides[20].cards[0].items[0]" data-edit-html="1">학벌 스펙 최하</li><li data-edit="slides[20].cards[0].items[1]" data-edit-html="1">스타트업 5개월</li></ul>
+          <div class="arrow" data-edit="slides[20].cards[0].arrow" data-edit-html="1">경험으로부터 배운다는 전형</div>
+        </div>
+        <div class="cell">
+          <div class="ct" data-edit="slides[20].cards[1].title" data-edit-html="1">대학원 B — 전문 경험 > 학위</div>
+          <ul><li data-edit="slides[20].cards[1].items[0]" data-edit-html="1">프로젝트 즉시 적용 가능</li><li data-edit="slides[20].cards[1].items[1]" data-edit-html="1">4명 모두 탁월</li></ul>
+          <div class="arrow" data-edit="slides[20].cards[1].arrow" data-edit-html="1">최고학력 스펙 탈락</div>
+        </div>
+        <div class="cell">
+          <div class="ct" data-edit="slides[20].cards[2].title" data-edit-html="1">경력 C — 필요한 시기</div>
+          <ul><li data-edit="slides[20].cards[2].items[0]" data-edit-html="1">전문 분야 지원자 부족</li><li data-edit="slides[20].cards[2].items[1]" data-edit-html="1">사내 모집 어려움</li></ul>
+          <div class="arrow" data-edit="slides[20].cards[2].arrow" data-edit-html="1">타이밍이 만든 합격</div>
+        </div>
+        <div class="cell">
+          <div class="ct" data-edit="slides[20].cards[3].title" data-edit-html="1">경력 D·E — 추천/스카우트</div>
+          <ul><li data-edit="slides[20].cards[3].items[0]" data-edit-html="1">임원 네트워크 추천</li><li data-edit="slides[20].cards[3].items[1]" data-edit-html="1">중소→대기업</li></ul>
+          <div class="arrow" data-edit="slides[20].cards[3].arrow" data-edit-html="1">사내 추천 채널의 힘</div>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">21 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="22">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[21].chapter">Template 10 · checklist</div>
+      <h2 class="slide-title" data-edit="slides[21].title" data-edit-html="1">외곽 박스 안의 <em>번호 리스트</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="checklist-frame">
+        <div class="ck-title" data-edit="slides[21].box_title" data-edit-html="1">모든 직무 동일. 반드시 만들어야 하는 <em>눈에 띄는 포트폴리오</em></div>
+        <p class="ck-sub" data-edit="slides[21].subtitle">: JD에 있는 요건/우대사항 내용 중심의 impact</p>
+        <ol><li data-edit="slides[21].items[0]" data-edit-html="1">1) 나는 어떤 성과를 낼 수 있는 사람인가?</li><li data-edit="slides[21].items[1]" data-edit-html="1">2) 나는 어떻게 차별화된 사람인가?</li><li class="emphasis" data-edit="slides[21].items[2].text" data-edit-html="1">3) 나는 어떤 문제를 해결해왔는가?</li><li class="emphasis" data-edit="slides[21].items[3].text" data-edit-html="1">4) 그 문제 해결과정은 어땠고 어떤 임팩트가 있었는가?</li><li data-edit="slides[21].items[4]" data-edit-html="1">5) 소프트 스킬 / 검증 요소가 포함되었는가?</li></ol>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">22 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="23">
+    <section class="slide" style="position:relative;">
+      <div class="chapter-tag small" data-edit="slides[22].chapter">Template 11 · pipeline_matrix</div>
+      <h2 class="slide-title" data-edit="slides[22].title" data-edit-html="1"><em>3-스테이지 매트릭스</em>로 그리는 Plan A·B 파이프라인</h2>
+      <p class="slide-lede" data-edit="slides[22].lede">직무·산업·기업의 다층 분기를 한 슬라이드로.</p>
+      <div class="head-gap"></div>
+      <div class="body" style="position: relative;">
+        <div><div class="pm-row"><div class="pm-cell" data-edit="slides[22].stages[0].header">직무/회사 기반의 경험 정리</div><div class="pm-arrow">→</div><div class="pm-cell" data-edit="slides[22].stages[1].header">마스터 이력서 / 포트폴리오</div><div class="pm-arrow">→</div><div class="pm-cell" data-edit="slides[22].stages[2].header">산업 / 기업 특화 서류·면접</div></div><div class="pm-row"><div class="pm-cell" data-edit="slides[22].stages[0].rows[0]">직무 A (Plan A)</div><div class="pm-arrow"></div><div class="pm-cell empty" style="background:none; padding:0;"><div class="pm-cell-row" style="width:100%; grid-template-columns: repeat(3, 1fr); display:grid; gap:6px;"><div class="pm-cell" data-edit="slides[22].stages[1].rows[0][0]">서류A</div><div class="pm-cell" data-edit="slides[22].stages[1].rows[0][1]">서류B</div><div class="pm-cell" data-edit="slides[22].stages[1].rows[0][2]">서류C</div></div></div><div class="pm-arrow"></div><div class="pm-cell empty" style="background:none; padding:0;"><div class="pm-cell-row" style="width:100%; grid-template-columns: repeat(2, 1fr); display:grid; gap:6px;"><div class="pm-cell" data-edit="slides[22].stages[2].rows[0][0]">산업 A</div><div class="pm-cell" data-edit="slides[22].stages[2].rows[0][1]">산업 B</div></div></div></div><div class="pm-row"><div class="pm-cell" data-edit="slides[22].stages[0].rows[1]">직무 B (Plan B)</div><div class="pm-arrow"></div><div class="pm-cell empty" style="background:none; padding:0;"><div class="pm-cell-row" style="width:100%; grid-template-columns: repeat(3, 1fr); display:grid; gap:6px;"><div class="pm-cell" data-edit="slides[22].stages[1].rows[1][0]">서류A</div><div class="pm-cell" data-edit="slides[22].stages[1].rows[1][1]">서류B</div><div class="pm-cell" data-edit="slides[22].stages[1].rows[1][2]">서류C</div></div></div><div class="pm-arrow"></div><div class="pm-cell empty" style="background:none; padding:0;"><div class="pm-cell-row" style="width:100%; grid-template-columns: repeat(2, 1fr); display:grid; gap:6px;"><div class="pm-cell" data-edit="slides[22].stages[2].rows[1][0]">산업 A</div><div class="pm-cell" data-edit="slides[22].stages[2].rows[1][1]">산업 B</div></div></div></div></div>
+        <div class="pm-note" data-edit="slides[22].note">직무/산업/기업별<br>서류 패키징 필요</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">23 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="24">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[23].chapter">Template 12 · case_analysis</div>
+      <h2 class="slide-title" data-edit="slides[23].title" data-edit-html="1">이력서·포트폴리오 분석과 <em>합격 포인트 3가지</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="ca-grid">
+        <div class="ca-ref"><div class="ref-title" data-edit="slides[23].ref_title">샘플 이력서 (요약)</div><div class="ref-text" data-edit="slides[23].ref_text" data-edit-html="1">개발자의 역할은 결국 문제를 기술로 해결하는 것이라고 생각합니다.
+
+[고객의 입장에 서] 일정 조율 서비스 ‘OneTime’ 직접 개발·운영, 누적 사용자 7,500명+. ‘내 스케줄’ 접근성 문제로 실사용자 5명에 그쳤으나, 에브리타임 시간표 연동 기능 구현 후 80명+ 증가.
+
+[레거시 기반 개선] SKT 기업 프로젝트에서 데보션 마이페이지 개선 — Java 8/JSP/MyBatis 레거시 분석, 신규 기능 추가, 컨벤션 준수.</div></div>
+        <div class="ca-points">
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[23].findings[0].label">합격 포인트 ①</div>
+          <div class="pt-text" data-edit="slides[23].findings[0].text" data-edit-html="1">일정 조율 서비스 직접 개발·운영하며 실사용 서비스 운영 경험을 보여주고 있음.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[23].findings[1].label">합격 포인트 ②</div>
+          <div class="pt-text" data-edit="slides[23].findings[1].text" data-edit-html="1">팀 프로젝트에서 반복 업무 효율성·정확도 개선을 이끌어냄.</div>
+        </div>
+        <div class="ca-point">
+          <div class="pt-label" data-edit="slides[23].findings[2].label">합격 포인트 ③</div>
+          <div class="pt-text" data-edit="slides[23].findings[2].text" data-edit-html="1">SKT 기업 프로젝트 + Java/JS/JSP/MyBatis 등 실무 스택 활용 능력 보유.</div>
+        </div><div class="ca-conclusion" data-edit="slides[23].conclusion" data-edit-html="1"><b>실사용 서비스 운영 경험 + 효율 개선</b>으로 실무 적용 가능 역량을 보여준 것이 합격의 핵심.</div></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">24 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="25">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[24].chapter">Template 13 · speaker</div>
+      <h2 class="slide-title" data-edit="slides[24].title"><em>사진과 약력</em>으로 보여주는 강사 소개</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="speaker-card">
+        <div class="speaker-photo">샘</div>
+        <div class="speaker-info">
+          <div class="speaker-name" data-edit="slides[24].speaker.name">샘플 멘토</div>
+          <div class="speaker-title" data-edit="slides[24].speaker.title">AI/DX 전문 컨설턴트</div>
+          <div class="speaker-tags"><span class="speaker-tag" data-edit="slides[24].speaker.tags[0]">#임원면접 멘토링</span><span class="speaker-tag" data-edit="slides[24].speaker.tags[1]">#취업 컨설팅</span><span class="speaker-tag" data-edit="slides[24].speaker.tags[2]">#AI/DX</span></div>
+          <ul class="speaker-bio"><li data-edit="slides[24].speaker.bio[0]">speaker.photo 필드에 이미지 경로 → 회색 박스 없이 사진만 노출</li><li data-edit="slides[24].speaker.bio[1]">사진은 3:4 portrait 비율, object-fit: cover로 자동 정렬</li><li data-edit="slides[24].speaker.bio[2]">EXIF 회전 자동 처리, 고해상도 자동 리사이즈</li></ul>
+        </div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">25 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="26">
+    <section class="slide image-full bg-light">
+      <div class="img-wrap"><img src="../assets/sample_resume.png" alt=""></div>
+      <div class="image-caption" data-edit="slides[25].caption" data-edit-html="1">Template 14 · <b>image_full</b>: 풀-블리드 자료 이미지와 선택적 캡션. (어두운·밝은 배경)</div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">26 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="27">
+    <section class="slide image-headed">
+      <div class="chapter-tag small" data-edit="slides[26].chapter">Template 15 · image_headed</div>
+      <h2 class="slide-title" data-edit="slides[26].title" data-edit-html="1"><em>헤더와 자료 이미지</em>를 함께 보여주는 슬라이드</h2>
+      <p class="slide-lede" data-edit="slides[26].lede">챕터·제목·리드 후 자료 이미지를 프레임 안에 배치.</p>
+      <div class="img-zone"><img src="../assets/sample_resume.png" alt=""></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">27 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="28">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[27].chapter">Template 16 · image_split</div>
+      <h2 class="slide-title" data-edit="slides[27].title" data-edit-html="1"><em>자료를 옆에 두고 분석</em>하는 분할 슬라이드</h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="image-split left">
+        <div class="img-pane"><img src="../assets/sample_resume.png" alt=""></div>
+        <div class="text-pane"><h3 data-edit="slides[27].body_title" data-edit-html="1">이 자료가 합격한 이유</h3><div class="lede" data-edit="slides[27].body_lede">좌·우 분할로 자료와 분석을 동시에.</div><ul><li data-edit="slides[27].items[0]">JD 키워드와 1:1 매칭된 경험</li><li data-edit="slides[27].items[1]">정량 성과 + Before/After 비교</li><li data-edit="slides[27].items[2]">본인 역할·임팩트 명확히 전달</li></ul></div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">28 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="29">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[28].chapter">Template 17 · concept_pill (3요소)</div>
+      <h2 class="slide-title" data-edit="slides[28].title" data-edit-html="1">자기소개서를 구성하는 <em>3가지 핵심 요소</em></h2>
+      <p class="slide-lede" data-edit="slides[28].lede" data-edit-html="1">알약 컨테이너 안에 원형 요소를 배치하는 공식형 템플릿. 2~4요소까지 가변.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-3"><div class="cp-circle" data-edit="slides[28].items[0].circle" data-edit-html="1">지원동기</div><div class="cp-op" data-edit="slides[28].op">+</div><div class="cp-circle" data-edit="slides[28].items[1].circle" data-edit-html="1">직무상 강점
+경험 서술</div><div class="cp-op" data-edit="slides[28].op">+</div><div class="cp-circle" data-edit="slides[28].items[2].circle" data-edit-html="1">입사 후 포부</div></div>
+        <div class="concept-pill-row"><div class="cp-desc" data-edit="slides[28].items[0].desc" data-edit-html="1">회사 및 직무에 대한
+이해도 · 적합도</div><div class="cp-spacer"></div><div class="cp-desc" data-edit="slides[28].items[1].desc" data-edit-html="1">구체적인 연관 경험 및
+성취 사례 기술</div><div class="cp-spacer"></div><div class="cp-desc" data-edit="slides[28].items[2].desc" data-edit-html="1">회사의 비전 ·
+커리어 성장 가능성 검증</div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">29 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="30">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[29].chapter">Template 18 · concept_pill (2요소)</div>
+      <h2 class="slide-title" data-edit="slides[29].title" data-edit-html="1">내 경험과 직무 요건의 <em>매칭</em></h2>
+      <p class="slide-lede" data-edit="slides[29].lede" data-edit-html="1">두 요소만 깊게 매칭해도 충분히 강력합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-2"><div class="cp-circle" data-edit="slides[29].items[0].circle" data-edit-html="1">내 경험</div><div class="cp-op" data-edit="slides[29].op">×</div><div class="cp-circle" data-edit="slides[29].items[1].circle" data-edit-html="1">직무 요건</div></div>
+        <div class="concept-pill-row"><div class="cp-desc" data-edit="slides[29].items[0].desc" data-edit-html="1">프로젝트 · 업무 · 학습
+구체적 성과</div><div class="cp-spacer"></div><div class="cp-desc" data-edit="slides[29].items[1].desc" data-edit-html="1">JD에 명시된
+핵심 역량</div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">30 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="31">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[30].chapter">Template 19 · concept_pill (4요소)</div>
+      <h2 class="slide-title" data-edit="slides[30].title" data-edit-html="1">면접 답변을 구성하는 <em>STAR 4요소</em></h2>
+      <p class="slide-lede" data-edit="slides[30].lede" data-edit-html="1">Situation, Task, Action, Result. 한 답변에 모두 담아야 합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-4"><div class="cp-circle" data-edit="slides[30].items[0].circle" data-edit-html="1">S</div><div class="cp-circle" data-edit="slides[30].items[1].circle" data-edit-html="1">T</div><div class="cp-circle" data-edit="slides[30].items[2].circle" data-edit-html="1">A</div><div class="cp-circle" data-edit="slides[30].items[3].circle" data-edit-html="1">R</div></div>
+        <div class="concept-pill-row"><div class="cp-desc" data-edit="slides[30].items[0].desc" data-edit-html="1">상황
+(Situation)</div><div class="cp-desc" data-edit="slides[30].items[1].desc" data-edit-html="1">과제
+(Task)</div><div class="cp-desc" data-edit="slides[30].items[2].desc" data-edit-html="1">행동
+(Action)</div><div class="cp-desc" data-edit="slides[30].items[3].desc" data-edit-html="1">결과
+(Result)</div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">31 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="32">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[31].chapter">Template 20 · priority_matrix</div>
+      <h2 class="slide-title" data-edit="slides[31].title" data-edit-html="1">채용 방식에 따라 <em>중요한 서류</em>가 달라진다</h2>
+      <p class="slide-lede" data-edit="slides[31].lede" data-edit-html="1">기호 매트릭스 (◎/○/△) + 행 강조 + 둥근 결론 배너. 가중치 비교에 적합.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="priority-matrix-wrap">
+          <div class="priority-legend"><span><b>◎</b> 핵심</span><span><b>○</b> 보조</span><span><b>△</b> 옵션</span></div>
+          <div class="priority-matrix" style="grid-template-columns: 180px 1fr 1fr 1fr 1fr;">
+            <div class="pm-head">구분</div><div class="pm-head">이력서</div><div class="pm-head">자소서</div><div class="pm-head">경력기술서</div><div class="pm-head row-end">포트폴리오</div>
+            <div class="pm-row-label" data-edit="slides[31].rows[0][0]">신입 / 공채</div><div class="pm-symbol" data-edit="slides[31].rows[0][1]">◎</div><div class="pm-symbol" data-edit="slides[31].rows[0][2]">◎</div><div class="pm-symbol muted" data-edit="slides[31].rows[0][3]">△</div><div class="pm-symbol row-end" data-edit="slides[31].rows[0][4]">○</div><div class="pm-row-label" data-edit="slides[31].rows[1][0]">신입 / 수시</div><div class="pm-symbol" data-edit="slides[31].rows[1][1]">◎</div><div class="pm-symbol" data-edit="slides[31].rows[1][2]">○</div><div class="pm-symbol muted" data-edit="slides[31].rows[1][3]">△</div><div class="pm-symbol row-end" data-edit="slides[31].rows[1][4]">◎</div><div class="pm-row-label" data-edit="slides[31].rows[2][0]">경력 / 공채</div><div class="pm-symbol" data-edit="slides[31].rows[2][1]">◎</div><div class="pm-symbol" data-edit="slides[31].rows[2][2]">○</div><div class="pm-symbol" data-edit="slides[31].rows[2][3]">○</div><div class="pm-symbol row-end" data-edit="slides[31].rows[2][4]">○</div><div class="pm-row-label" style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px" data-edit="slides[31].rows[3][0]">경력 / 수시</div><div class="pm-symbol" style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px" data-edit="slides[31].rows[3][1]">◎</div><div class="pm-symbol muted" style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px" data-edit="slides[31].rows[3][2]">△</div><div class="pm-symbol" style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px" data-edit="slides[31].rows[3][3]">◎</div><div class="pm-symbol row-end" style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px" data-edit="slides[31].rows[3][4]">◎</div>
+          </div>
+          <div class="priority-conclusion" data-edit="slides[31].conclusion" data-edit-html="1">수시채용은 <b>경력기술서와 포트폴리오</b>가 중요해진다.</div>
+        </div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">32 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="33">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[32].chapter">Template 21 · step_compare</div>
+      <h2 class="slide-title" data-edit="slides[32].title" data-edit-html="1">공채는 5개, 수시는 <em>3개의 핵심 항목</em>으로 압축된다</h2>
+      <p class="slide-lede" data-edit="slides[32].lede" data-edit-html="1">좌·우 큰 카드, 숫자 뱃지로 단계 비교. 우측 카드에 accent.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="step-compare"><div class="sc-card"><div class="sc-head"><div class="sc-label" data-edit="slides[32].cols[0].label">공채형 (Samsung · SK · Hyundai)</div><div class="sc-sub" data-edit="slides[32].cols[0].sub">5개 항목 명시적 분리</div></div><div class="sc-list"><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[0].items[0].num">01</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[0].items[0].title" data-edit-html="1">지원동기</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[0].items[1].num">02</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[0].items[1].title" data-edit-html="1">직무역량 · 직무경험</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[0].items[2].num">03</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[0].items[2].title" data-edit-html="1">문제해결 사례</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[0].items[3].num">04</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[0].items[3].title" data-edit-html="1">성장과정 · 성장가능성</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[0].items[4].num">05</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[0].items[4].title" data-edit-html="1">협업 · 소통 사례</div></div></div></div></div><div class="sc-card accent"><div class="sc-head"><div class="sc-label" data-edit="slides[32].cols[1].label">수시형 (Toss · Kakao · 중견 IT)</div><div class="sc-sub" data-edit="slides[32].cols[1].sub">3개 압축, 직무 중심</div></div><div class="sc-list"><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[1].items[0].num">01</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[1].items[0].title" data-edit-html="1">지원동기와 회사·직무 fit</div><div class="sc-desc" data-edit="slides[32].cols[1].items[0].desc" data-edit-html="1">왜 우리 회사, 이 직무?</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[1].items[1].num">02</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[1].items[1].title" data-edit-html="1">직무역량과 핵심 프로젝트</div><div class="sc-desc" data-edit="slides[32].cols[1].items[1].desc" data-edit-html="1">구체 사례 1~2개</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[32].cols[1].items[2].num">03</div><div class="sc-text"><div class="sc-title" data-edit="slides[32].cols[1].items[2].title" data-edit-html="1">성장과 미래 제안</div><div class="sc-desc" data-edit="slides[32].cols[1].items[2].desc" data-edit-html="1">입사 후 무엇을 할 것인가</div></div></div></div></div></div>
+        <div class="step-compare-footer" data-edit="slides[32].footer" data-edit-html="1">수시채용은 지원동기, 현재 <b>Status</b>, 미래 <b>Vision</b>을 궁금해한다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">33 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="34">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[33].chapter">Template 22 · before_after</div>
+      <h2 class="slide-title" data-edit="slides[33].title" data-edit-html="1"><em>같은 경험</em>도 작성법에 따라 다른 결과를 만든다</h2>
+      <p class="slide-lede" data-edit="slides[33].lede" data-edit-html="1">Before/After 두 인용 박스 + 가운데 화살표 + Source 캡션.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="before-after">
+          <div class="ba-box before">
+            <div class="ba-label" data-edit="slides[33].before.label">BEFORE · 나열형</div>
+            <div class="ba-quote" data-edit="slides[33].before.quote" data-edit-html="1">“주간 광고 리포트 작성, 광고비 정산, 콘텐츠 업로드 보조”</div>
+          </div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-box after">
+            <div class="ba-label" data-edit="slides[33].after.label">AFTER · XYZ 적용</div>
+            <div class="ba-quote" data-edit="slides[33].after.quote" data-edit-html="1">“광고비 정산 누락 이슈가 지속 발생하여 자동화 템플릿을 통해 Human Error 방지 및 주간 업무 3시간 단축. 확보 시간으로 경쟁사 분석 후 신규 상품 제안.”</div>
+          </div>
+        </div>
+        <div class="before-after-note" data-edit="slides[33].note" data-edit-html="1">예: SK이노베이션 9개 계열사 HR PI — 채용~퇴직 HR Lifecycle 진단 및 표준 프로세스 재설계, <b>Shared Service 인력 30% 감축, HR 업무 효율 20% 개선</b>.</div>
+        <div class="before-after-source" data-edit="slides[33].source">Source: Google Careers</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">34 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="35">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[34].chapter">Template 23 · tagged_rows</div>
+      <h2 class="slide-title" data-edit="slides[34].title" data-edit-html="1">포트폴리오는 <em>직군별로 구성</em>한다</h2>
+      <p class="slide-lede" data-edit="slides[34].lede" data-edit-html="1">좌측 컬러 라벨 + 가로 행 비교 + 둥근 결론 박스.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="tagged-rows"><div class="tagged-row"><div class="tr-tag" data-edit="slides[34].rows[0].tag" data-edit-html="1">UX · 디자인</div><div class="tr-mid" data-edit="slides[34].rows[0].mid" data-edit-html="1">Nielsen Norman Group</div><div class="tr-end" data-edit="slides[34].rows[0].end" data-edit-html="1">프로세스 · 근거 · 결과 3축</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[34].rows[1].tag" data-edit-html="1">개발자 (FE/BE)</div><div class="tr-mid" data-edit="slides[34].rows[1].mid" data-edit-html="1">GitHub + 트러블슈팅 노션</div><div class="tr-end" data-edit="slides[34].rows[1].end" data-edit-html="1">문제 정의, 해결, 회고 흐름</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[34].rows[2].tag" data-edit-html="1">PM · 기획</div><div class="tr-mid" data-edit="slides[34].rows[2].mid" data-edit-html="1">실무 컨센서스 (Why-What-How)</div><div class="tr-end" data-edit="slides[34].rows[2].end" data-edit-html="1">문제 정의와 의사결정 근거</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[34].rows[3].tag" data-edit-html="1">마케팅 · B2B</div><div class="tr-mid" data-edit="slides[34].rows[3].mid" data-edit-html="1">캠페인 · KPI 중심</div><div class="tr-end" data-edit="slides[34].rows[3].end" data-edit-html="1">KPI · 예산 · 결과 3축</div></div></div>
+        <div class="tagged-conclusion" data-edit="slides[34].conclusion" data-edit-html="1">직군별 디테일은 <b>제로베이스 트랙</b>에서 깊게 다룹니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">35 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="36">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[35].chapter">Template 24 · case_profile</div>
+      <h2 class="slide-title" data-edit="slides[35].title" data-edit-html="1"><em>도메인 전환</em>을 노린 4년차 PM의 합격 전략</h2>
+      <p class="slide-lede" data-edit="slides[35].lede" data-edit-html="1">좌 PROFILE 키-값 + 우 번호 findings + 하단 Key Insight 배너.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="case-profile">
+          <div class="cp-profile">
+            <div class="cp-profile-head">PROFILE</div>
+            <div class="cp-kv"><div class="cp-key" data-edit="slides[35].profile.items[0].key">배경</div><div class="cp-val" data-edit="slides[35].profile.items[0].val" data-edit-html="1">4년차 PM, 핀테크</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[35].profile.items[1].key">고민</div><div class="cp-val" data-edit="slides[35].profile.items[1].val" data-edit-html="1">도메인 전환 (핀테크 → SaaS)</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[35].profile.items[2].key">타겟</div><div class="cp-val" data-edit="slides[35].profile.items[2].val" data-edit-html="1">중견 B2B SaaS (Series B)</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[35].profile.items[3].key">연봉</div><div class="cp-val" data-edit="slides[35].profile.items[3].val" data-edit-html="1">8~12% 상향 희망</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[35].profile.items[4].key">결과</div><div class="cp-val" data-edit="slides[35].profile.items[4].val" data-edit-html="1"><b>12% 인상으로 합격</b></div></div>
+          </div>
+          <div class="cp-findings">
+            <div class="cp-findings-head">Key Point</div>
+            <div class="cp-finding"><div class="cp-num">1</div><div><div class="cp-finding-title" data-edit="slides[35].findings[0].title" data-edit-html="1">포트폴리오 1개 프로젝트를 깊게 (Why-What-How)</div><div class="cp-finding-sub" data-edit="slides[35].findings[0].sub" data-edit-html="1">‘문제 정의 능력은 도메인 무관’ 논리를 P2~P3에서 증명</div></div></div><div class="cp-finding"><div class="cp-num">2</div><div><div class="cp-finding-title" data-edit="slides[35].findings[1].title" data-edit-html="1">JD 키워드 5개를 자소서·포폴 모두에 분산 배치</div><div class="cp-finding-sub" data-edit="slides[35].findings[1].sub" data-edit-html="1">한 키워드를 두 문서에 일관되게 노출</div></div></div><div class="cp-finding"><div class="cp-num">3</div><div><div class="cp-finding-title" data-edit="slides[35].findings[2].title" data-edit-html="1">Gap Analysis로 도메인 전환 부담 사전 차단</div><div class="cp-finding-sub" data-edit="slides[35].findings[2].sub" data-edit-html="1">핀테크는 규제 도메인, SaaS는 고객 운영. 공통 역량을 명시</div></div></div>
+          </div>
+        </div>
+        <div class="case-insight" data-edit="slides[35].insight" data-edit-html="1">💡 <b>Key Insight</b> — 경력직은 도메인이 아니라 ‘문제 해결력’으로 평가받는다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">36 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="37">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[36].chapter">Template 25 · 사용 가이드</div>
+      <h2 class="slide-title" data-edit="slides[36].title" data-edit-html="1">신규 5종 + concept_pill을 <em>언제 쓰는가</em></h2>
+      <p class="slide-lede" data-edit="slides[36].lede">각 템플릿은 데이터 형태가 분명할 때 가장 강력합니다. 콘텐츠가 모호하면 단순 card_grid·two_col이 더 안전합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[36].alert" data-edit-html="1"><b>priority_matrix</b> 가중치 비교 · <b>step_compare</b> 단계 비교 · <b>before_after</b> 변화 강조
+<b>tagged_rows</b> 직군·카테고리별 행 비교 · <b>case_profile</b> 케이스 스터디 · <b>concept_pill</b> 공식형</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">37 / 38</div>
+    </div>
+    </section></div><div class="slide-wrap" data-idx="38">
+    <section class="slide" style="justify-content: center; align-items: center; text-align: center;">
+      <div style="margin: auto;">
+        <div class="qa-big">Q&amp;A</div>
+        <div class="qa-sub" data-edit="slides[37].sub">Template 26 · qa_close · 마무리·Q&A 클로징</div>
+        <div class="qa-contact" data-edit="slides[37].contact">design-system@day1company.co.kr</div>
+        <div class="qa-thanks" data-edit="slides[37].thanks">끝까지 함께해 주셔서 감사합니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
+      <div class="right">38 / 38</div>
+    </div>
+    </section></div>
+  </div>
+</div>
+
+<div id="nav-prev" class="nav-zone prev" title="이전"><div class="arrow">‹</div></div>
+<div id="nav-next" class="nav-zone next" title="다음"><div class="arrow">›</div></div>
+
+<button id="edit-toggle" type="button" onclick="document.getElementById('edit-btn').click()">✏️ 편집 (E)</button>
+
+<div id="edit-bar">
+  <button id="edit-btn" type="button">편집 끝내기 (E)</button>
+  <button id="save-btn" type="button" class="primary">💾 JSON 저장</button>
+  <button id="reset-btn" type="button">↺ 되돌리기</button>
+  <span class="hint">텍스트 클릭 → 수정 → JSON 저장</span>
+</div>
+
+<div class="hud">
+  <div class="bar"><div class="fill"></div></div>
+  <div class="bottom">
+    <span class="title">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span>
+    <span class="pager">01 / 38</span>
+  </div>
+</div>
+
+<div id="help" class="help">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 · <kbd>F</kbd> 풀스크린 · <kbd>E</kbd> 편집 모드 · <kbd>Esc</kbd> 종료
+</div>
+
+<div id="toast"></div>
+
+<script type="application/json" id="deck-source" data-name="design_system_v1_4">{&quot;meta&quot;: {&quot;title&quot;: &quot;ZEROBASE&quot;, &quot;title_em&quot;: &quot;Design System v1.4&quot;, &quot;subtitle&quot;: &quot;온라인 설명회 덱 디자인 시스템 — 원칙·컬러·타이포그래피·슬라이드 템플릿 카탈로그.&quot;, &quot;event_label&quot;: &quot;ZEROBASE · 데이원컴퍼니&quot;, &quot;date&quot;: &quot;2026.05.07&quot;, &quot;session&quot;: &quot;v1.4&quot;, &quot;talk_title_in_footer&quot;: &quot;ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;Design System&quot;, &quot;title&quot;: &quot;ZEROBASE 온라인 설명회 덱&quot;, &quot;tags&quot;: [&quot;#디자인 시스템&quot;, &quot;#슬라이드 템플릿&quot;, &quot;#Pretendard&quot;, &quot;#네이비 단톤&quot;], &quot;bio&quot;: [&quot;v1.0 — 디자인 토큰과 기본 6종 템플릿 (cover, chapter, content, card_grid, stage_flow, alert_close)&quot;, &quot;v1.1 — 카드 N개 가변, two_col·toc·speaker·qa_close·compare_table·이미지 3종, 신규 6종 추가&quot;, &quot;v1.2 — 한글까지 Pretendard 통일, color_palette·type_scale 신규로 총 20+ 종 정리&quot;, &quot;v1.4 — concept_pill 신규 + 타이틀 가독성 원칙 반영 (기호 대신 자연스러운 문장)&quot;, &quot;v1.4 추가 — priority_matrix, step_compare, before_after, tagged_rows, case_profile 5종 추가 (총 26종)&quot;]}}, &quot;slides&quot;: [{&quot;type&quot;: &quot;cover&quot;}, {&quot;type&quot;: &quot;toc&quot;, &quot;chapter&quot;: &quot;Contents&quot;, &quot;title&quot;: &quot;v1.4의 4 섹션 구성&quot;, &quot;items&quot;: [&quot;PRINCIPLES · 디자인 원칙 5가지&quot;, &quot;COLORS · 컬러 팔레트 (Brand · Surface · Semantic)&quot;, &quot;TYPOGRAPHY · Pretendard 단일 서체, 두께와 크기로 위계&quot;, &quot;TEMPLATES · 슬라이드 템플릿 26종 카탈로그&quot;]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 01&quot;, &quot;title&quot;: &quot;PRINCIPLES&quot;, &quot;sub&quot;: &quot;매주 연사·주제는 바뀌어도 변하지 않는 4가지 원칙.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 01 PRINCIPLES&quot;, &quot;title&quot;: &quot;디자인 원칙 5가지&quot;, &quot;lede&quot;: &quot;매주 연사·주제는 바뀌어도 이 다섯 가지는 변하지 않습니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;컨설팅 톤, 교육 무게감&quot;, &quot;items&quot;: [&quot;프로모션이 아닌 ‘리포트’에 가까운 인상&quot;, &quot;여백·정렬·표 중심, 장식은 최소화&quot;, &quot;신뢰도가 곧 설득력&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;각진 모서리, 얇은 구분선&quot;, &quot;items&quot;: [&quot;border-radius: 0&quot;, &quot;1px 라인으로 구조를 분명히&quot;, &quot;데이터를 시각적으로 정직하게&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;한 톤의 네이비&quot;, &quot;items&quot;: [&quot;주색 단 1가지: #1C2885&quot;, &quot;파스텔 블루는 강조 블록에만&quot;, &quot;빨강은 리스크·주의 신호용으로 제한&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;Pretendard 단일 서체&quot;, &quot;items&quot;: [&quot;한글·영문·숫자 모두 Pretendard&quot;, &quot;두께·크기로만 위계 형성&quot;, &quot;PPTX는 ea·cs 폰트 슬롯까지 지정&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;타이틀은 자연스러운 문장&quot;, &quot;items&quot;: [&quot;타이틀에 &lt;b&gt;—, →, +, ×&lt;/b&gt; 같은 기호 사용 금지&quot;, &quot;조사·어미로 매끄럽게 읽히게&quot;, &quot;강조는 &lt;b&gt;&amp;lt;em&amp;gt;&lt;/b&gt; 태그로만 처리&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 02&quot;, &quot;title&quot;: &quot;COLORS&quot;, &quot;sub&quot;: &quot;브랜드 네이비를 중심으로, 뉴트럴과 액센트를 최소한으로.&quot;}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Brand &amp; Ink&quot;, &quot;title&quot;: &quot;핵심 톤을 만드는 &lt;em&gt;Brand &amp; Ink&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;본문 텍스트와 강조에 쓰는 네이비 계열.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#0E1430&quot;, &quot;name&quot;: &quot;Ink · Primary&quot;, &quot;role&quot;: &quot;본문 텍스트, 슬라이드 타이틀&quot;, &quot;token&quot;: &quot;--ink&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#1C2885&quot;, &quot;name&quot;: &quot;Navy · Brand&quot;, &quot;role&quot;: &quot;브랜드, 강조, 챕터태그&quot;, &quot;token&quot;: &quot;--ink-2 / --accent&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#3A4499&quot;, &quot;name&quot;: &quot;Navy Light&quot;, &quot;role&quot;: &quot;2차 강조, 아이콘&quot;, &quot;token&quot;: &quot;--ink-3&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#E6E8F5&quot;, &quot;name&quot;: &quot;Navy Soft&quot;, &quot;role&quot;: &quot;강조 블록 배경, 태그&quot;, &quot;token&quot;: &quot;--accent-soft&quot;, &quot;on&quot;: &quot;#1C2885&quot;}]}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Surface &amp; Line&quot;, &quot;title&quot;: &quot;면과 선을 위한 &lt;em&gt;Surface &amp; Line&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;슬라이드 배경, 카드 배경, 구분선 톤.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#FFFFFF&quot;, &quot;name&quot;: &quot;Paper&quot;, &quot;role&quot;: &quot;슬라이드 배경&quot;, &quot;token&quot;: &quot;--paper&quot;, &quot;on&quot;: &quot;#0E1430&quot;}, {&quot;hex&quot;: &quot;#F2F3F8&quot;, &quot;name&quot;: &quot;Paper 2&quot;, &quot;role&quot;: &quot;섹션 배경, 인용문&quot;, &quot;token&quot;: &quot;--paper-2&quot;, &quot;on&quot;: &quot;#0E1430&quot;}, {&quot;hex&quot;: &quot;#EAF1FB&quot;, &quot;name&quot;: &quot;Pastel Blue&quot;, &quot;role&quot;: &quot;정보 카드 배경&quot;, &quot;token&quot;: &quot;--pastel&quot;, &quot;on&quot;: &quot;#1C2885&quot;}, {&quot;hex&quot;: &quot;#FBEAE9&quot;, &quot;name&quot;: &quot;Pastel Red&quot;, &quot;role&quot;: &quot;비교 패널 / 케이스 배경&quot;, &quot;token&quot;: &quot;--pastel-red&quot;, &quot;on&quot;: &quot;#B53232&quot;}]}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Semantic&quot;, &quot;title&quot;: &quot;신호를 표현하는 &lt;em&gt;Semantic&lt;/em&gt; 톤&quot;, &quot;lede&quot;: &quot;통과·탈락·주의 등 시그널성 컬러는 제한적으로.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#0E8A4F&quot;, &quot;name&quot;: &quot;Pass&quot;, &quot;role&quot;: &quot;통과 · 긍정 시그널&quot;, &quot;token&quot;: &quot;--pass&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#B53232&quot;, &quot;name&quot;: &quot;Fail&quot;, &quot;role&quot;: &quot;탈락 · 리스크&quot;, &quot;token&quot;: &quot;--fail&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#D0342C&quot;, &quot;name&quot;: &quot;Alert&quot;, &quot;role&quot;: &quot;강한 주의 · 행동 유도&quot;, &quot;token&quot;: &quot;--alert-red&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#FFF4B8&quot;, &quot;name&quot;: &quot;Highlight&quot;, &quot;role&quot;: &quot;이력서 형광펜 / 결론 박스 배경&quot;, &quot;token&quot;: &quot;--highlight&quot;, &quot;on&quot;: &quot;#0E1430&quot;}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 03&quot;, &quot;title&quot;: &quot;TYPOGRAPHY&quot;, &quot;sub&quot;: &quot;Pretendard 단일 서체. 두께와 크기로만 위계를 만든다.&quot;}, {&quot;type&quot;: &quot;type_scale&quot;, &quot;chapter&quot;: &quot;PART 03 TYPOGRAPHY&quot;, &quot;title&quot;: &quot;&lt;em&gt;Display와 Title&lt;/em&gt; 영역의 타이포그래피&quot;, &quot;lede&quot;: &quot;표지·디바이더·본문 타이틀의 큰 타입.&quot;, &quot;items&quot;: [{&quot;name&quot;: &quot;Cover Title&quot;, &quot;size_px&quot;: 120, &quot;weight&quot;: 800, &quot;leading&quot;: 1.05, &quot;tracking_em&quot;: -0.02, &quot;sample&quot;: &quot;온라인 취업 박람회&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Slide Title&quot;, &quot;size_px&quot;: 88, &quot;weight&quot;: 800, &quot;leading&quot;: 1.08, &quot;tracking_em&quot;: -0.02, &quot;sample&quot;: &quot;상반기 채용은 진행 중&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Chapter Tag&quot;, &quot;size_px&quot;: 28, &quot;weight&quot;: 700, &quot;leading&quot;: 1.2, &quot;tracking_em&quot;: -0.01, &quot;sample&quot;: &quot;면접 프로세스 및 채용 트렌드&quot;, &quot;color_key&quot;: &quot;accent&quot;}]}, {&quot;type&quot;: &quot;type_scale&quot;, &quot;chapter&quot;: &quot;PART 03 TYPOGRAPHY&quot;, &quot;title&quot;: &quot;&lt;em&gt;Body와 Caption&lt;/em&gt; 영역의 타이포그래피&quot;, &quot;lede&quot;: &quot;본문·리드·카드 타이틀·캡션의 사용 영역.&quot;, &quot;items&quot;: [{&quot;name&quot;: &quot;Slide Lede&quot;, &quot;size_px&quot;: 34, &quot;weight&quot;: 500, &quot;leading&quot;: 1.45, &quot;tracking_em&quot;: 0, &quot;sample&quot;: &quot;지원 회사·직무별 체계적 준비&quot;, &quot;color_key&quot;: &quot;muted_2&quot;}, {&quot;name&quot;: &quot;Card Title&quot;, &quot;size_px&quot;: 32, &quot;weight&quot;: 700, &quot;leading&quot;: 1.25, &quot;tracking_em&quot;: -0.01, &quot;sample&quot;: &quot;공채 비중 축소&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Body · Default&quot;, &quot;size_px&quot;: 24, &quot;weight&quot;: 400, &quot;leading&quot;: 1.45, &quot;tracking_em&quot;: 0, &quot;sample&quot;: &quot;준비된 면접의 필요, 검증의 한계&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Micro · Caption&quot;, &quot;size_px&quot;: 20, &quot;weight&quot;: 500, &quot;leading&quot;: 1.4, &quot;tracking_em&quot;: 0.05, &quot;sample&quot;: &quot;© 2026. (주)데이원컴퍼니&quot;, &quot;color_key&quot;: &quot;muted&quot;}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 04&quot;, &quot;title&quot;: &quot;TEMPLATES&quot;, &quot;sub&quot;: &quot;슬라이드 템플릿 26종 카탈로그. 구조·본문·비교·흐름·사람·이미지·공식형·매트릭스.&quot;}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;Template 01 · alert_close&quot;, &quot;title&quot;: &quot;&lt;em&gt;알림형 강조&lt;/em&gt;로 마무리하는 슬라이드&quot;, &quot;lede&quot;: &quot;본문 + 빨간색 강조 멘트로 행동을 촉구하는 마무리.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;오늘 이후, 내가 지금 준비하는 단계가&lt;/b&gt;\n어디인지부터 점검하세요.&quot;}, {&quot;type&quot;: &quot;content&quot;, &quot;chapter&quot;: &quot;Template 02 · content&quot;, &quot;title&quot;: &quot;&lt;em&gt;제목과 리드, 불릿&lt;/em&gt;으로 구성한 기본 본문 슬라이드&quot;, &quot;lede&quot;: &quot;가장 기본 형태. 챕터 태그·제목·리드·불릿 0~5개.&quot;, &quot;bullets&quot;: [&quot;공채 비중은 줄고, 수시·경력 채용은 분기 내내 열려 있음&quot;, &quot;서류·인적성·1차 면접까지 평균 2~3주 안에 진행&quot;, &quot;준비된 지원자만이 다음 단계 기회를 잡습니다&quot;]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;Template 03 · card_grid (3-up)&quot;, &quot;title&quot;: &quot;2~7개로 가변되는 &lt;em&gt;카드 그리드&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;파스텔 블루 카드. cards[]의 개수에 따라 자동 layout.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;공채 비중 축소&quot;, &quot;items&quot;: [&quot;1~2시간 내 검증의 한계&quot;, &quot;준비된 면접의 필요&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;수시·경력 확대&quot;, &quot;items&quot;: [&quot;즉시 투입 가능 여부&quot;, &quot;성과 증빙 요구&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;맞춤형 인재&quot;, &quot;items&quot;: [&quot;직무 이해도&quot;, &quot;조직 적합성&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;Template 04 · two_col&quot;, &quot;title&quot;: &quot;두 항목을 나란히 비교하는 &lt;em&gt;2-컬럼 레이아웃&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;Before/After·Old/New·옵션 A/B 등 두 항목을 나란히 비교할 때.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;PRESENT&quot;, &quot;title&quot;: &quot;핵심 변화: 업무의 본질&quot;, &quot;lede&quot;: &quot;AI를 ‘일하는 방식 자체’로 재정의.&quot;, &quot;items&quot;: [&quot;신입·주니어 채용 급감&quot;, &quot;AI 활용 생산성 차이가 본질적 경쟁력&quot;]}, {&quot;num&quot;: &quot;FUTURE&quot;, &quot;title&quot;: &quot;평가 기준의 변화&quot;, &quot;lede&quot;: &quot;‘무엇을 만들 수 있는가’.&quot;, &quot;items&quot;: [&quot;GitHub·Kaggle·기술블로그 결과물 필수&quot;, &quot;‘포트폴리오 없는 지원자 = 검증 불가’&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;Template 05 · stage_flow&quot;, &quot;title&quot;: &quot;&lt;em&gt;4~5단계 흐름&lt;/em&gt;을 보여주는 스테이지&quot;, &quot;lede&quot;: &quot;프로세스나 단계가 있는 콘텐츠. 마지막 단계는 강조 색으로 구분.&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;STEP 01&quot;, &quot;name&quot;: &quot;서류 전형&quot;, &quot;desc&quot;: &quot;이력서 · 자소서 · 포트폴리오&quot;}, {&quot;num&quot;: &quot;STEP 02&quot;, &quot;name&quot;: &quot;1차 면접&quot;, &quot;desc&quot;: &quot;실무 · 직무 역량&quot;}, {&quot;num&quot;: &quot;STEP 03&quot;, &quot;name&quot;: &quot;2차 면접&quot;, &quot;desc&quot;: &quot;임원 · 인성&quot;}, {&quot;num&quot;: &quot;FINAL&quot;, &quot;name&quot;: &quot;최종 단계&quot;, &quot;desc&quot;: &quot;처우 협의 · 온보딩&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;compare_table&quot;, &quot;chapter&quot;: &quot;Template 06 · compare_table&quot;, &quot;title&quot;: &quot;&lt;em&gt;3-컬럼 비교 표&lt;/em&gt;와 행 라벨 구조&quot;, &quot;lede&quot;: &quot;여러 항목을 일정한 기준으로 비교할 때. 한쪽 컬럼은 강조 색으로.&quot;, &quot;headers&quot;: [&quot;구분&quot;, &quot;신입 (Entry)&quot;, &quot;경력직 (Experienced)&quot;], &quot;rows&quot;: [[&quot;평가 기준&quot;, &quot;성장 잠재력과 가능성&quot;, &quot;검증된 성과&quot;], [&quot;주요 질문&quot;, &quot;‘무엇을 할 수 있는가?’&quot;, &quot;‘무엇을 해봤는가?’&quot;], [&quot;핵심 어필&quot;, &quot;기본기와 학습 태도&quot;, &quot;즉시 투입 가능성&quot;]], &quot;accent_col&quot;: 2, &quot;conclusion&quot;: &quot;경력직 이직은 &lt;b&gt;‘어떤 문제를 해결해봤는지’&lt;/b&gt;를 증명하는 자리입니다.&quot;}, {&quot;type&quot;: &quot;summary_takeaway&quot;, &quot;chapter&quot;: &quot;Template 07 · summary_takeaway&quot;, &quot;title&quot;: &quot;여러 카드와 하단의 &lt;em&gt;takeaway 바&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;여러 변화·요인을 카드로 보여주고 하단 강조 바에 한 줄 결론.&quot;, &quot;cards&quot;: [{&quot;title&quot;: &quot;경쟁 심화 구조&quot;, &quot;items&quot;: [&quot;병목 현상&quot;, &quot;단 5명 채용에 수백명&quot;]}, {&quot;title&quot;: &quot;채용 방식 변화&quot;, &quot;items&quot;: [&quot;공채 축소&quot;, &quot;인턴 → 전환형&quot;]}, {&quot;title&quot;: &quot;AI Impact 본격화&quot;, &quot;items&quot;: [&quot;AI 인력 수요 증가&quot;, &quot;Agent화 가속&quot;]}], &quot;takeaway&quot;: &quot;‘좋은 스펙’이 아니라 ‘바로 쓸 수 있는 사람’을 뽑는다.&quot;}, {&quot;type&quot;: &quot;dual_panel&quot;, &quot;chapter&quot;: &quot;Template 08 · dual_panel&quot;, &quot;title&quot;: &quot;&lt;em&gt;네이비와 레드&lt;/em&gt;로 대비를 만드는 분할 패널&quot;, &quot;lede&quot;: &quot;현실/이상, 문제/해결 등 강한 대비가 필요한 두 관점을 나란히.&quot;, &quot;left&quot;: {&quot;header&quot;: &quot;임원의 현실&quot;, &quot;sections&quot;: [{&quot;title&quot;: &quot;제한된 시간, 넘치는 지원자&quot;, &quot;items&quot;: [&quot;서류 정독 시간 부족&quot;, &quot;핵심만 본다&quot;]}, {&quot;title&quot;: &quot;메시지 중심&quot;, &quot;items&quot;: [&quot;결과·숫자·역할 중심&quot;]}]}, &quot;right&quot;: {&quot;header&quot;: &quot;3대 평가 기준&quot;, &quot;sections&quot;: [{&quot;title&quot;: &quot;1. 바로 일할 수 있는가?&quot;, &quot;items&quot;: [&quot;실무 즉시 투입&quot;]}, {&quot;title&quot;: &quot;2. 리스크 없는 사람인가?&quot;, &quot;items&quot;: [&quot;치명적 단점 / 조기 퇴사&quot;]}, {&quot;title&quot;: &quot;3. 조직에 잘 맞는가?&quot;, &quot;items&quot;: [&quot;Culture Fit&quot;]}]}}, {&quot;type&quot;: &quot;case_grid_4&quot;, &quot;chapter&quot;: &quot;Template 09 · case_grid_4&quot;, &quot;title&quot;: &quot;네 가지 사례를 모은 &lt;em&gt;2 by 2 케이스 카드&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;유형이 다른 4가지 사례를 한눈에. blue↔red 교차로 시각적 변별.&quot;, &quot;cards&quot;: [{&quot;title&quot;: &quot;신입 A — 경험으로 합격&quot;, &quot;items&quot;: [&quot;학벌 스펙 최하&quot;, &quot;스타트업 5개월&quot;], &quot;arrow&quot;: &quot;경험으로부터 배운다는 전형&quot;}, {&quot;title&quot;: &quot;대학원 B — 전문 경험 &gt; 학위&quot;, &quot;items&quot;: [&quot;프로젝트 즉시 적용 가능&quot;, &quot;4명 모두 탁월&quot;], &quot;arrow&quot;: &quot;최고학력 스펙 탈락&quot;}, {&quot;title&quot;: &quot;경력 C — 필요한 시기&quot;, &quot;items&quot;: [&quot;전문 분야 지원자 부족&quot;, &quot;사내 모집 어려움&quot;], &quot;arrow&quot;: &quot;타이밍이 만든 합격&quot;}, {&quot;title&quot;: &quot;경력 D·E — 추천/스카우트&quot;, &quot;items&quot;: [&quot;임원 네트워크 추천&quot;, &quot;중소→대기업&quot;], &quot;arrow&quot;: &quot;사내 추천 채널의 힘&quot;}]}, {&quot;type&quot;: &quot;checklist&quot;, &quot;chapter&quot;: &quot;Template 10 · checklist&quot;, &quot;title&quot;: &quot;외곽 박스 안의 &lt;em&gt;번호 리스트&lt;/em&gt;&quot;, &quot;box_title&quot;: &quot;모든 직무 동일. 반드시 만들어야 하는 &lt;em&gt;눈에 띄는 포트폴리오&lt;/em&gt;&quot;, &quot;subtitle&quot;: &quot;: JD에 있는 요건/우대사항 내용 중심의 impact&quot;, &quot;items&quot;: [&quot;1) 나는 어떤 성과를 낼 수 있는 사람인가?&quot;, &quot;2) 나는 어떻게 차별화된 사람인가?&quot;, {&quot;text&quot;: &quot;3) 나는 어떤 문제를 해결해왔는가?&quot;, &quot;emphasis&quot;: true}, {&quot;text&quot;: &quot;4) 그 문제 해결과정은 어땠고 어떤 임팩트가 있었는가?&quot;, &quot;emphasis&quot;: true}, &quot;5) 소프트 스킬 / 검증 요소가 포함되었는가?&quot;]}, {&quot;type&quot;: &quot;pipeline_matrix&quot;, &quot;chapter&quot;: &quot;Template 11 · pipeline_matrix&quot;, &quot;title&quot;: &quot;&lt;em&gt;3-스테이지 매트릭스&lt;/em&gt;로 그리는 Plan A·B 파이프라인&quot;, &quot;lede&quot;: &quot;직무·산업·기업의 다층 분기를 한 슬라이드로.&quot;, &quot;stages&quot;: [{&quot;header&quot;: &quot;직무/회사 기반의 경험 정리&quot;, &quot;rows&quot;: [&quot;직무 A (Plan A)&quot;, &quot;직무 B (Plan B)&quot;]}, {&quot;header&quot;: &quot;마스터 이력서 / 포트폴리오&quot;, &quot;rows&quot;: [[&quot;서류A&quot;, &quot;서류B&quot;, &quot;서류C&quot;], [&quot;서류A&quot;, &quot;서류B&quot;, &quot;서류C&quot;]]}, {&quot;header&quot;: &quot;산업 / 기업 특화 서류·면접&quot;, &quot;rows&quot;: [[{&quot;label&quot;: &quot;산업 A&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}, {&quot;label&quot;: &quot;산업 B&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}], [{&quot;label&quot;: &quot;산업 A&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}, {&quot;label&quot;: &quot;산업 B&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}]]}], &quot;note&quot;: &quot;직무/산업/기업별\n서류 패키징 필요&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;Template 12 · case_analysis&quot;, &quot;title&quot;: &quot;이력서·포트폴리오 분석과 &lt;em&gt;합격 포인트 3가지&lt;/em&gt;&quot;, &quot;ref_title&quot;: &quot;샘플 이력서 (요약)&quot;, &quot;ref_text&quot;: &quot;개발자의 역할은 결국 문제를 기술로 해결하는 것이라고 생각합니다.\n\n[고객의 입장에 서] 일정 조율 서비스 ‘OneTime’ 직접 개발·운영, 누적 사용자 7,500명+. ‘내 스케줄’ 접근성 문제로 실사용자 5명에 그쳤으나, 에브리타임 시간표 연동 기능 구현 후 80명+ 증가.\n\n[레거시 기반 개선] SKT 기업 프로젝트에서 데보션 마이페이지 개선 — Java 8/JSP/MyBatis 레거시 분석, 신규 기능 추가, 컨벤션 준수.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;일정 조율 서비스 직접 개발·운영하며 실사용 서비스 운영 경험을 보여주고 있음.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;팀 프로젝트에서 반복 업무 효율성·정확도 개선을 이끌어냄.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;SKT 기업 프로젝트 + Java/JS/JSP/MyBatis 등 실무 스택 활용 능력 보유.&quot;}], &quot;conclusion&quot;: &quot;&lt;b&gt;실사용 서비스 운영 경험 + 효율 개선&lt;/b&gt;으로 실무 적용 가능 역량을 보여준 것이 합격의 핵심.&quot;}, {&quot;type&quot;: &quot;speaker&quot;, &quot;chapter&quot;: &quot;Template 13 · speaker&quot;, &quot;title&quot;: &quot;&lt;em&gt;사진과 약력&lt;/em&gt;으로 보여주는 강사 소개&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;샘플 멘토&quot;, &quot;title&quot;: &quot;AI/DX 전문 컨설턴트&quot;, &quot;tags&quot;: [&quot;#임원면접 멘토링&quot;, &quot;#취업 컨설팅&quot;, &quot;#AI/DX&quot;], &quot;bio&quot;: [&quot;speaker.photo 필드에 이미지 경로 → 회색 박스 없이 사진만 노출&quot;, &quot;사진은 3:4 portrait 비율, object-fit: cover로 자동 정렬&quot;, &quot;EXIF 회전 자동 처리, 고해상도 자동 리사이즈&quot;]}}, {&quot;type&quot;: &quot;image_full&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;, &quot;bg&quot;: &quot;light&quot;, &quot;caption&quot;: &quot;Template 14 · &lt;b&gt;image_full&lt;/b&gt;: 풀-블리드 자료 이미지와 선택적 캡션. (어두운·밝은 배경)&quot;}, {&quot;type&quot;: &quot;image_headed&quot;, &quot;chapter&quot;: &quot;Template 15 · image_headed&quot;, &quot;title&quot;: &quot;&lt;em&gt;헤더와 자료 이미지&lt;/em&gt;를 함께 보여주는 슬라이드&quot;, &quot;lede&quot;: &quot;챕터·제목·리드 후 자료 이미지를 프레임 안에 배치.&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;}, {&quot;type&quot;: &quot;image_split&quot;, &quot;chapter&quot;: &quot;Template 16 · image_split&quot;, &quot;title&quot;: &quot;&lt;em&gt;자료를 옆에 두고 분석&lt;/em&gt;하는 분할 슬라이드&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;, &quot;image_position&quot;: &quot;left&quot;, &quot;body_title&quot;: &quot;이 자료가 합격한 이유&quot;, &quot;body_lede&quot;: &quot;좌·우 분할로 자료와 분석을 동시에.&quot;, &quot;items&quot;: [&quot;JD 키워드와 1:1 매칭된 경험&quot;, &quot;정량 성과 + Before/After 비교&quot;, &quot;본인 역할·임팩트 명확히 전달&quot;]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 17 · concept_pill (3요소)&quot;, &quot;title&quot;: &quot;자기소개서를 구성하는 &lt;em&gt;3가지 핵심 요소&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;알약 컨테이너 안에 원형 요소를 배치하는 공식형 템플릿. 2~4요소까지 가변.&quot;, &quot;op&quot;: &quot;+&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;지원동기&quot;, &quot;desc&quot;: &quot;회사 및 직무에 대한\n이해도 · 적합도&quot;}, {&quot;circle&quot;: &quot;직무상 강점\n경험 서술&quot;, &quot;desc&quot;: &quot;구체적인 연관 경험 및\n성취 사례 기술&quot;}, {&quot;circle&quot;: &quot;입사 후 포부&quot;, &quot;desc&quot;: &quot;회사의 비전 ·\n커리어 성장 가능성 검증&quot;}]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 18 · concept_pill (2요소)&quot;, &quot;title&quot;: &quot;내 경험과 직무 요건의 &lt;em&gt;매칭&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;두 요소만 깊게 매칭해도 충분히 강력합니다.&quot;, &quot;op&quot;: &quot;×&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;내 경험&quot;, &quot;desc&quot;: &quot;프로젝트 · 업무 · 학습\n구체적 성과&quot;}, {&quot;circle&quot;: &quot;직무 요건&quot;, &quot;desc&quot;: &quot;JD에 명시된\n핵심 역량&quot;}]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 19 · concept_pill (4요소)&quot;, &quot;title&quot;: &quot;면접 답변을 구성하는 &lt;em&gt;STAR 4요소&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;Situation, Task, Action, Result. 한 답변에 모두 담아야 합니다.&quot;, &quot;op&quot;: &quot;&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;S&quot;, &quot;desc&quot;: &quot;상황\n(Situation)&quot;}, {&quot;circle&quot;: &quot;T&quot;, &quot;desc&quot;: &quot;과제\n(Task)&quot;}, {&quot;circle&quot;: &quot;A&quot;, &quot;desc&quot;: &quot;행동\n(Action)&quot;}, {&quot;circle&quot;: &quot;R&quot;, &quot;desc&quot;: &quot;결과\n(Result)&quot;}]}, {&quot;type&quot;: &quot;priority_matrix&quot;, &quot;chapter&quot;: &quot;Template 20 · priority_matrix&quot;, &quot;title&quot;: &quot;채용 방식에 따라 &lt;em&gt;중요한 서류&lt;/em&gt;가 달라진다&quot;, &quot;lede&quot;: &quot;기호 매트릭스 (◎/○/△) + 행 강조 + 둥근 결론 배너. 가중치 비교에 적합.&quot;, &quot;headers&quot;: [&quot;구분&quot;, &quot;이력서&quot;, &quot;자소서&quot;, &quot;경력기술서&quot;, &quot;포트폴리오&quot;], &quot;rows&quot;: [[&quot;신입 / 공채&quot;, &quot;◎&quot;, &quot;◎&quot;, &quot;△&quot;, &quot;○&quot;], [&quot;신입 / 수시&quot;, &quot;◎&quot;, &quot;○&quot;, &quot;△&quot;, &quot;◎&quot;], [&quot;경력 / 공채&quot;, &quot;◎&quot;, &quot;○&quot;, &quot;○&quot;, &quot;○&quot;], [&quot;경력 / 수시&quot;, &quot;◎&quot;, &quot;△&quot;, &quot;◎&quot;, &quot;◎&quot;]], &quot;highlight_row&quot;: 3, &quot;conclusion&quot;: &quot;수시채용은 &lt;b&gt;경력기술서와 포트폴리오&lt;/b&gt;가 중요해진다.&quot;}, {&quot;type&quot;: &quot;step_compare&quot;, &quot;chapter&quot;: &quot;Template 21 · step_compare&quot;, &quot;title&quot;: &quot;공채는 5개, 수시는 &lt;em&gt;3개의 핵심 항목&lt;/em&gt;으로 압축된다&quot;, &quot;lede&quot;: &quot;좌·우 큰 카드, 숫자 뱃지로 단계 비교. 우측 카드에 accent.&quot;, &quot;cols&quot;: [{&quot;label&quot;: &quot;공채형 (Samsung · SK · Hyundai)&quot;, &quot;sub&quot;: &quot;5개 항목 명시적 분리&quot;, &quot;items&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;지원동기&quot;}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무역량 · 직무경험&quot;}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;문제해결 사례&quot;}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;성장과정 · 성장가능성&quot;}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;협업 · 소통 사례&quot;}]}, {&quot;label&quot;: &quot;수시형 (Toss · Kakao · 중견 IT)&quot;, &quot;sub&quot;: &quot;3개 압축, 직무 중심&quot;, &quot;accent&quot;: true, &quot;items&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;지원동기와 회사·직무 fit&quot;, &quot;desc&quot;: &quot;왜 우리 회사, 이 직무?&quot;}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무역량과 핵심 프로젝트&quot;, &quot;desc&quot;: &quot;구체 사례 1~2개&quot;}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;성장과 미래 제안&quot;, &quot;desc&quot;: &quot;입사 후 무엇을 할 것인가&quot;}]}], &quot;footer&quot;: &quot;수시채용은 지원동기, 현재 &lt;b&gt;Status&lt;/b&gt;, 미래 &lt;b&gt;Vision&lt;/b&gt;을 궁금해한다.&quot;}, {&quot;type&quot;: &quot;before_after&quot;, &quot;chapter&quot;: &quot;Template 22 · before_after&quot;, &quot;title&quot;: &quot;&lt;em&gt;같은 경험&lt;/em&gt;도 작성법에 따라 다른 결과를 만든다&quot;, &quot;lede&quot;: &quot;Before/After 두 인용 박스 + 가운데 화살표 + Source 캡션.&quot;, &quot;before&quot;: {&quot;label&quot;: &quot;BEFORE · 나열형&quot;, &quot;quote&quot;: &quot;“주간 광고 리포트 작성, 광고비 정산, 콘텐츠 업로드 보조”&quot;}, &quot;after&quot;: {&quot;label&quot;: &quot;AFTER · XYZ 적용&quot;, &quot;quote&quot;: &quot;“광고비 정산 누락 이슈가 지속 발생하여 자동화 템플릿을 통해 Human Error 방지 및 주간 업무 3시간 단축. 확보 시간으로 경쟁사 분석 후 신규 상품 제안.”&quot;}, &quot;note&quot;: &quot;예: SK이노베이션 9개 계열사 HR PI — 채용~퇴직 HR Lifecycle 진단 및 표준 프로세스 재설계, &lt;b&gt;Shared Service 인력 30% 감축, HR 업무 효율 20% 개선&lt;/b&gt;.&quot;, &quot;source&quot;: &quot;Source: Google Careers&quot;}, {&quot;type&quot;: &quot;tagged_rows&quot;, &quot;chapter&quot;: &quot;Template 23 · tagged_rows&quot;, &quot;title&quot;: &quot;포트폴리오는 &lt;em&gt;직군별로 구성&lt;/em&gt;한다&quot;, &quot;lede&quot;: &quot;좌측 컬러 라벨 + 가로 행 비교 + 둥근 결론 박스.&quot;, &quot;rows&quot;: [{&quot;tag&quot;: &quot;UX · 디자인&quot;, &quot;mid&quot;: &quot;Nielsen Norman Group&quot;, &quot;end&quot;: &quot;프로세스 · 근거 · 결과 3축&quot;}, {&quot;tag&quot;: &quot;개발자 (FE/BE)&quot;, &quot;mid&quot;: &quot;GitHub + 트러블슈팅 노션&quot;, &quot;end&quot;: &quot;문제 정의, 해결, 회고 흐름&quot;}, {&quot;tag&quot;: &quot;PM · 기획&quot;, &quot;mid&quot;: &quot;실무 컨센서스 (Why-What-How)&quot;, &quot;end&quot;: &quot;문제 정의와 의사결정 근거&quot;}, {&quot;tag&quot;: &quot;마케팅 · B2B&quot;, &quot;mid&quot;: &quot;캠페인 · KPI 중심&quot;, &quot;end&quot;: &quot;KPI · 예산 · 결과 3축&quot;}], &quot;conclusion&quot;: &quot;직군별 디테일은 &lt;b&gt;제로베이스 트랙&lt;/b&gt;에서 깊게 다룹니다.&quot;}, {&quot;type&quot;: &quot;case_profile&quot;, &quot;chapter&quot;: &quot;Template 24 · case_profile&quot;, &quot;title&quot;: &quot;&lt;em&gt;도메인 전환&lt;/em&gt;을 노린 4년차 PM의 합격 전략&quot;, &quot;lede&quot;: &quot;좌 PROFILE 키-값 + 우 번호 findings + 하단 Key Insight 배너.&quot;, &quot;profile&quot;: {&quot;head&quot;: &quot;PROFILE&quot;, &quot;items&quot;: [{&quot;key&quot;: &quot;배경&quot;, &quot;val&quot;: &quot;4년차 PM, 핀테크&quot;}, {&quot;key&quot;: &quot;고민&quot;, &quot;val&quot;: &quot;도메인 전환 (핀테크 → SaaS)&quot;}, {&quot;key&quot;: &quot;타겟&quot;, &quot;val&quot;: &quot;중견 B2B SaaS (Series B)&quot;}, {&quot;key&quot;: &quot;연봉&quot;, &quot;val&quot;: &quot;8~12% 상향 희망&quot;}, {&quot;key&quot;: &quot;결과&quot;, &quot;val&quot;: &quot;&lt;b&gt;12% 인상으로 합격&lt;/b&gt;&quot;}]}, &quot;findings_head&quot;: &quot;Key Point&quot;, &quot;findings&quot;: [{&quot;title&quot;: &quot;포트폴리오 1개 프로젝트를 깊게 (Why-What-How)&quot;, &quot;sub&quot;: &quot;‘문제 정의 능력은 도메인 무관’ 논리를 P2~P3에서 증명&quot;}, {&quot;title&quot;: &quot;JD 키워드 5개를 자소서·포폴 모두에 분산 배치&quot;, &quot;sub&quot;: &quot;한 키워드를 두 문서에 일관되게 노출&quot;}, {&quot;title&quot;: &quot;Gap Analysis로 도메인 전환 부담 사전 차단&quot;, &quot;sub&quot;: &quot;핀테크는 규제 도메인, SaaS는 고객 운영. 공통 역량을 명시&quot;}], &quot;insight&quot;: &quot;💡 &lt;b&gt;Key Insight&lt;/b&gt; — 경력직은 도메인이 아니라 ‘문제 해결력’으로 평가받는다.&quot;}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;Template 25 · 사용 가이드&quot;, &quot;title&quot;: &quot;신규 5종 + concept_pill을 &lt;em&gt;언제 쓰는가&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;각 템플릿은 데이터 형태가 분명할 때 가장 강력합니다. 콘텐츠가 모호하면 단순 card_grid·two_col이 더 안전합니다.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;priority_matrix&lt;/b&gt; 가중치 비교 · &lt;b&gt;step_compare&lt;/b&gt; 단계 비교 · &lt;b&gt;before_after&lt;/b&gt; 변화 강조\n&lt;b&gt;tagged_rows&lt;/b&gt; 직군·카테고리별 행 비교 · &lt;b&gt;case_profile&lt;/b&gt; 케이스 스터디 · &lt;b&gt;concept_pill&lt;/b&gt; 공식형&quot;}, {&quot;type&quot;: &quot;qa_close&quot;, &quot;sub&quot;: &quot;Template 26 · qa_close · 마무리·Q&amp;A 클로징&quot;, &quot;contact&quot;: &quot;design-system@day1company.co.kr&quot;, &quot;thanks&quot;: &quot;끝까지 함께해 주셔서 감사합니다.&quot;}]}</script>
+<script>
+(function(){
+  var SLIDE_W = 1920, SLIDE_H = 1080;
+  var stage = document.getElementById('stage');
+  var wraps = Array.prototype.slice.call(document.querySelectorAll('.slide-wrap'));
+  var fill  = document.querySelector('.hud .fill');
+  var pager = document.querySelector('.hud .pager');
+  var help  = document.getElementById('help');
+  var total = wraps.length;
+  var idx = 0;
+  var editMode = false;
+
+  // Initial slide from URL hash, e.g. #3
+  var h = parseInt((location.hash || '').replace('#',''), 10);
+  if (!isNaN(h) && h >= 1 && h <= total) idx = h - 1;
+
+  function fit(){
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var scaleW = vw / SLIDE_W, scaleH = vh / SLIDE_H;
+    var scale = Math.min(scaleW, scaleH) * 0.94;
+    var w = SLIDE_W * scale, hh = SLIDE_H * scale;
+    stage.style.width  = w + 'px';
+    stage.style.height = hh + 'px';
+    wraps.forEach(function(wr){
+      var s = wr.querySelector('.slide');
+      if(s) s.style.transform = 'scale(' + scale + ')';
+    });
+  }
+
+  function go(n){
+    idx = Math.max(0, Math.min(total - 1, n));
+    wraps.forEach(function(wr, i){
+      wr.classList.toggle('is-active', i === idx);
+    });
+    if (fill)  fill.style.width = ((idx + 1) / total * 100) + '%';
+    if (pager) pager.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    history.replaceState(null, '', '#' + (idx + 1));
+  }
+
+  // ---------- Edit mode ----------
+  function toggleEdit(){
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      if (editMode) el.setAttribute('contenteditable', 'true');
+      else el.removeAttribute('contenteditable');
+    });
+    var btn = document.getElementById('edit-btn');
+    if (btn) btn.textContent = editMode ? '편집 끝내기 (E)' : '✏️ 편집 (E)';
+    var bar = document.getElementById('edit-bar');
+    if (bar) bar.classList.toggle('show', editMode);
+  }
+
+  function getPathSafe(obj, parts){
+    var cur = obj;
+    for (var i = 0; i < parts.length; i++){
+      if (cur == null) return undefined;
+      cur = cur[parts[i]];
+    }
+    return cur;
+  }
+  function setPath(obj, path, value){
+    var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+    var cur = obj;
+    for (var i = 0; i < parts.length - 1; i++){
+      var k = parts[i];
+      // numeric index
+      if (/^\d+$/.test(k)) k = parseInt(k, 10);
+      if (cur[k] == null){
+        // create container
+        var nextK = parts[i+1];
+        cur[k] = (/^\d+$/.test(nextK)) ? [] : {};
+      }
+      cur = cur[k];
+    }
+    var lastK = parts[parts.length - 1];
+    if (/^\d+$/.test(lastK)) lastK = parseInt(lastK, 10);
+    cur[lastK] = value;
+  }
+
+  function buildEditedJSON(){
+    var srcEl = document.getElementById('deck-source');
+    var src = JSON.parse(srcEl.textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var value;
+      if (asHtml){
+        value = el.innerHTML.trim()
+                  .replace(/<br\s*\/?>/gi, '\n')
+                  .replace(/&nbsp;/g, ' ');
+      } else {
+        value = el.textContent.trim();
+      }
+      setPath(src, path, value);
+    });
+    return src;
+  }
+
+  function downloadJSON(){
+    var data = buildEditedJSON();
+    var name = (document.getElementById('deck-source').getAttribute('data-name') || 'edited') + '.json';
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 100);
+    var msg = document.getElementById('toast');
+    if (msg){ msg.textContent = '저장됨: ' + name; msg.classList.add('show');
+      setTimeout(function(){ msg.classList.remove('show'); }, 2500); }
+  }
+
+  function resetEdits(){
+    if (!confirm('모든 편집을 원래대로 되돌릴까요?')) return;
+    var src = JSON.parse(document.getElementById('deck-source').textContent);
+    document.querySelectorAll('[data-edit]').forEach(function(el){
+      var path = el.getAttribute('data-edit');
+      var asHtml = el.getAttribute('data-edit-html') === '1';
+      var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
+      var v = getPathSafe(src, parts.map(function(p){return /^\d+$/.test(p)?parseInt(p,10):p;}));
+      if (v == null) return;
+      if (asHtml) el.innerHTML = String(v).replace(/\n/g,'<br>');
+      else el.textContent = String(v);
+    });
+  }
+
+  // ---------- Keyboard ----------
+  document.addEventListener('keydown', function(e){
+    // If typing inside an editable element, don't navigate
+    var t = e.target;
+    var typing = t && t.isContentEditable;
+    if (typing){
+      // Allow Esc to exit edit on element
+      if (e.key === 'Escape') t.blur();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter')   { e.preventDefault(); go(idx + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace')              { e.preventDefault(); go(idx - 1); }
+    else if (e.key === 'Home')                                                                   { e.preventDefault(); go(0); }
+    else if (e.key === 'End')                                                                    { e.preventDefault(); go(total - 1); }
+    else if (e.key === 'f' || e.key === 'F')                                                      { toggleFullscreen(); }
+    else if (e.key === 'e' || e.key === 'E')                                                      { e.preventDefault(); toggleEdit(); }
+    else if (e.key === 'Escape')                                                                  { if (document.fullscreenElement) document.exitFullscreen(); }
+  });
+
+  function toggleFullscreen(){
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+
+  // ---------- Click zones ----------
+  document.getElementById('nav-prev').addEventListener('click', function(){ if(!editMode) go(idx - 1); });
+  document.getElementById('nav-next').addEventListener('click', function(){ if(!editMode) go(idx + 1); });
+
+  // ---------- Edit bar buttons ----------
+  var btnEdit  = document.getElementById('edit-btn');
+  var btnSave  = document.getElementById('save-btn');
+  var btnReset = document.getElementById('reset-btn');
+  if (btnEdit)  btnEdit.addEventListener('click', toggleEdit);
+  if (btnSave)  btnSave.addEventListener('click', downloadJSON);
+  if (btnReset) btnReset.addEventListener('click', resetEdits);
+
+  // ---------- Touch swipe ----------
+  var tx = 0;
+  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener('touchend',   function(e){
+    if (editMode) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+  }, {passive: true});
+
+  window.addEventListener('resize', fit);
+
+  // Init
+  fit(); go(idx);
+
+  if (help) {
+    help.classList.add('show');
+    setTimeout(function(){ help.classList.remove('show'); }, 4000);
+  }
+})();
+</script>
+</body></html>

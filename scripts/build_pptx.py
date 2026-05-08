@@ -238,9 +238,12 @@ def slide_chapter_divider(prs, meta, s_data, page_no, total):
              s_data.get("title", ""), size_pt=60, weight=800,
              color="ink", tracking_em=-0.02, leading=1.1,
              allow_inline=False)
-    # sub: 타이틀에 더 가깝게 (4.5 → 4.15)
+    # sub: title 줄 수에 따라 동적 위치 (1줄→4.15 / 2줄→5.4 / 3줄→6.0)
     if s_data.get("sub"):
-        add_text(s, EDGE_IN + 0.4, 4.15, SLIDE_W_IN - 2 * EDGE_IN, 1.4,
+        title_text = s_data.get("title", "")
+        n_lines = title_text.count("\n") + 1
+        sub_y = 4.15 if n_lines == 1 else 5.4 if n_lines == 2 else 6.0
+        add_text(s, EDGE_IN + 0.4, sub_y, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
                  s_data["sub"], size_pt=24, weight=500, color="muted_2",
                  leading=1.45, allow_inline=False)
     add_footer(s, meta, page_no, total)
@@ -831,6 +834,549 @@ def slide_image_split(prs, meta, s_data, page_no, total):
     add_footer(s, meta, page_no, total)
 
 
+def slide_priority_matrix(prs, meta, s_data, page_no, total):
+    """기호(◎/○/△) 매트릭스 + 행 강조 + 결론 배너 (PPTX)."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    has_lede = bool(s_data.get("lede"))
+    if has_lede:
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=15, weight=500,
+                 color="muted_2", leading=1.45, allow_inline=True)
+        cy = TOP_IN + 2.4
+    else:
+        cy = TOP_IN + 2.0
+
+    headers = s_data.get("headers", [])
+    rows = s_data.get("rows", [])
+    n_cols = len(headers)
+    highlight_row = s_data.get("highlight_row", -1)
+    avail_w = SLIDE_W_IN - 2 * EDGE_IN
+    avail_h = SLIDE_H_IN - cy - 1.6
+    label_w = 1.7
+    cell_w = (avail_w - label_w) / max(1, n_cols - 1)
+    head_h = 0.55
+    row_h = min(0.7, (avail_h - head_h - 0.9) / max(1, len(rows)))
+
+    # legend (top-right, above matrix)
+    legend = "◎ 핵심   ○ 보조   △ 옵션"
+    add_text(s, EDGE_IN + avail_w - 3.0, cy - 0.35, 3.0, 0.3,
+             legend, size_pt=11, weight=500, color="muted_2",
+             align=PP_ALIGN.RIGHT, allow_inline=False)
+
+    # header row
+    for k, h in enumerate(headers):
+        x = EDGE_IN + (0 if k == 0 else label_w + (k - 1) * cell_w)
+        w = label_w if k == 0 else cell_w
+        rect = add_rect(s, x, cy, w, head_h, fill="ink_2")
+        add_text(s, x, cy, w, head_h, h, size_pt=12, weight=700,
+                 color="paper", align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                 allow_inline=False)
+    # rows
+    for r_idx, row in enumerate(rows):
+        is_hl = r_idx == highlight_row
+        ry = cy + head_h + r_idx * row_h
+        for k, cell in enumerate(row):
+            x = EDGE_IN + (0 if k == 0 else label_w + (k - 1) * cell_w)
+            w = label_w if k == 0 else cell_w
+            fill = "paper_2" if k == 0 else "paper"
+            line_color = "line"
+            rect = add_rect(s, x, ry, w, row_h, fill=fill, line=line_color, line_w_pt=0.5)
+            if is_hl:
+                rect.line.color.rgb = C("ink_2")
+                rect.line.width = Pt(1.5)
+                # PPTX dashed: set dash style
+                from pptx.enum.dml import MSO_LINE_DASH_STYLE
+                try:
+                    rect.line.dash_style = MSO_LINE_DASH_STYLE.DASH
+                except Exception:
+                    pass
+            text = str(cell)
+            font_size = 13 if k == 0 else 16
+            weight = 700 if k == 0 else 600
+            color = "ink" if not (k > 0 and text in ("△",)) else "muted"
+            add_text(s, x, ry, w, row_h, text, size_pt=font_size, weight=weight,
+                     color=color, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                     allow_inline=False)
+
+    # conclusion banner
+    conclusion = s_data.get("conclusion", "")
+    if conclusion:
+        cb_y = cy + head_h + len(rows) * row_h + 0.35
+        cb_w = avail_w * 0.72
+        cb_x = EDGE_IN + (avail_w - cb_w) / 2
+        cb_h = 0.6
+        rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                  Inches(cb_x), Inches(cb_y),
+                                  Inches(cb_w), Inches(cb_h))
+        rect.adjustments[0] = 0.5
+        rect.fill.background()
+        rect.line.color.rgb = C("ink_2")
+        rect.line.width = Pt(2)
+        rect.shadow.inherit = False
+        add_text(s, cb_x, cb_y, cb_w, cb_h, conclusion,
+                 size_pt=14, weight=600, color="accent",
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+    add_footer(s, meta, page_no, total)
+
+
+def slide_step_compare(prs, meta, s_data, page_no, total):
+    """좌우 카드 + 숫자 뱃지 단계 비교 (PPTX)."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=15, weight=500,
+                 color="muted_2", leading=1.45, allow_inline=True)
+        cy = TOP_IN + 2.4
+    else:
+        cy = TOP_IN + 2.0
+
+    cols = s_data.get("cols", [])[:2]
+    avail_w = SLIDE_W_IN - 2 * EDGE_IN
+    gap = 0.32
+    col_w = (avail_w - gap) / 2
+    has_footer = bool(s_data.get("footer"))
+    avail_h = SLIDE_H_IN - cy - (1.4 if has_footer else 1.0)
+    for j, col in enumerate(cols):
+        x = EDGE_IN + j * (col_w + gap)
+        bg = "ink_2" if col.get("accent") else "ink"
+        rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                  Inches(x), Inches(cy),
+                                  Inches(col_w), Inches(avail_h))
+        rect.adjustments[0] = 0.06
+        rect.fill.solid()
+        rect.fill.fore_color.rgb = C(bg)
+        rect.line.fill.background()
+        rect.shadow.inherit = False
+        # head
+        pad = 0.32
+        head_y = cy + pad
+        add_text(s, x + pad, head_y, col_w - 2*pad, 0.4,
+                 col.get("label", ""), size_pt=15, weight=800,
+                 color="paper", allow_inline=False)
+        if col.get("sub"):
+            add_text(s, x + pad, head_y + 0.42, col_w - 2*pad, 0.3,
+                     col.get("sub", ""), size_pt=11, weight=400,
+                     color="paper", allow_inline=False)
+            list_y = head_y + 0.85
+        else:
+            list_y = head_y + 0.55
+        # divider line
+        add_hline(s, x + pad, list_y - 0.12, col_w - 2*pad, color="paper", weight_pt=0.5)
+        # items
+        items = col.get("items", [])
+        item_h = (avail_h - (list_y - cy) - pad) / max(1, len(items))
+        for k, it in enumerate(items):
+            iy = list_y + k * item_h
+            num = it.get("num", f"{k+1:02d}")
+            # num badge
+            badge_size = 0.36
+            badge = add_rect(s, x + pad, iy + 0.05, badge_size, badge_size,
+                             fill="paper")
+            badge.fill.fore_color.rgb = C("paper")
+            badge.fill.transparency = 0  # solid
+            try:
+                from pptx.dml.color import RGBColor
+                # alpha approach not directly supported, use lighter shade
+                badge.fill.fore_color.rgb = C("ink_3")
+            except Exception:
+                pass
+            add_text(s, x + pad, iy + 0.05, badge_size, badge_size, num,
+                     size_pt=10, weight=700, color="paper",
+                     align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                     allow_inline=False)
+            # title + desc
+            add_text(s, x + pad + badge_size + 0.18, iy, col_w - pad*2 - badge_size - 0.18, 0.42,
+                     it.get("title", ""), size_pt=14, weight=700, color="paper",
+                     allow_inline=True)
+            if it.get("desc"):
+                add_text(s, x + pad + badge_size + 0.18, iy + 0.42, col_w - pad*2 - badge_size - 0.18, 0.4,
+                         it.get("desc", ""), size_pt=11, weight=400, color="paper",
+                         allow_inline=True)
+    # footer
+    if has_footer:
+        fy = cy + avail_h + 0.25
+        add_text(s, EDGE_IN, fy, avail_w, 0.5,
+                 s_data.get("footer", ""), size_pt=14, weight=600, color="accent",
+                 align=PP_ALIGN.CENTER, allow_inline=True)
+    add_footer(s, meta, page_no, total)
+
+
+def slide_before_after(prs, meta, s_data, page_no, total):
+    """Before/After + 가운데 화살표 (PPTX)."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=15, weight=500,
+                 color="muted_2", leading=1.45, allow_inline=True)
+        cy = TOP_IN + 2.4
+    else:
+        cy = TOP_IN + 2.0
+
+    avail_w = SLIDE_W_IN - 2 * EDGE_IN
+    arrow_w = 0.55
+    box_w = (avail_w - arrow_w) / 2
+    box_h = 2.4
+    note = s_data.get("note", "")
+    source = s_data.get("source", "")
+
+    # before box
+    before = s_data.get("before", {})
+    bx = EDGE_IN
+    rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                              Inches(bx), Inches(cy),
+                              Inches(box_w), Inches(box_h))
+    rect.adjustments[0] = 0.05
+    rect.fill.background()
+    rect.line.color.rgb = C("fail")
+    rect.line.width = Pt(2)
+    rect.shadow.inherit = False
+    add_text(s, bx + 0.3, cy + 0.25, box_w - 0.6, 0.4,
+             before.get("label", "BEFORE"), size_pt=14, weight=800, color="fail",
+             allow_inline=False)
+    add_text(s, bx + 0.3, cy + 0.7, box_w - 0.6, box_h - 1.0,
+             before.get("quote", ""), size_pt=14, weight=500, color="ink",
+             leading=1.55, allow_inline=True)
+
+    # arrow
+    add_text(s, EDGE_IN + box_w, cy, arrow_w, box_h, "→",
+             size_pt=32, weight=400, color="accent",
+             align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=False)
+
+    # after box
+    after = s_data.get("after", {})
+    ax = EDGE_IN + box_w + arrow_w
+    rect2 = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                               Inches(ax), Inches(cy),
+                               Inches(box_w), Inches(box_h))
+    rect2.adjustments[0] = 0.05
+    rect2.fill.background()
+    rect2.line.color.rgb = C("ink_2")
+    rect2.line.width = Pt(2)
+    rect2.shadow.inherit = False
+    add_text(s, ax + 0.3, cy + 0.25, box_w - 0.6, 0.4,
+             after.get("label", "AFTER"), size_pt=14, weight=800, color="accent",
+             allow_inline=False)
+    add_text(s, ax + 0.3, cy + 0.7, box_w - 0.6, box_h - 1.0,
+             after.get("quote", ""), size_pt=14, weight=500, color="ink",
+             leading=1.55, allow_inline=True)
+
+    # note + source
+    if note:
+        ny = cy + box_h + 0.3
+        add_text(s, EDGE_IN, ny, avail_w, 0.8,
+                 note, size_pt=13, weight=500, color="muted_2",
+                 align=PP_ALIGN.CENTER, leading=1.5, allow_inline=True)
+    if source:
+        sy = SLIDE_H_IN - 0.95
+        add_text(s, EDGE_IN, sy, avail_w, 0.3,
+                 source, size_pt=10, weight=400, color="muted",
+                 align=PP_ALIGN.RIGHT, allow_inline=False)
+    add_footer(s, meta, page_no, total)
+
+
+def slide_tagged_rows(prs, meta, s_data, page_no, total):
+    """좌측 컬러 라벨 + 가로 행 비교 + 결론 (PPTX)."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=15, weight=500,
+                 color="muted_2", leading=1.45, allow_inline=True)
+        cy = TOP_IN + 2.4
+    else:
+        cy = TOP_IN + 2.0
+
+    rows = s_data.get("rows", [])
+    avail_w = SLIDE_W_IN - 2 * EDGE_IN
+    tag_w = 2.4
+    mid_w = (avail_w - tag_w - 0.4) * 0.55
+    end_w = (avail_w - tag_w - 0.4) - mid_w
+    avail_h = SLIDE_H_IN - cy - 1.7
+    row_h = min(0.95, avail_h / max(1, len(rows)))
+    for k, r in enumerate(rows):
+        ry = cy + k * row_h
+        # tag
+        rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                  Inches(EDGE_IN), Inches(ry + 0.12),
+                                  Inches(tag_w), Inches(row_h - 0.24))
+        rect.adjustments[0] = 0.18
+        rect.fill.solid()
+        rect.fill.fore_color.rgb = C("accent_soft")
+        rect.line.fill.background()
+        rect.shadow.inherit = False
+        add_text(s, EDGE_IN, ry + 0.12, tag_w, row_h - 0.24,
+                 r.get("tag", ""), size_pt=14, weight=800, color="accent",
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+        # mid text
+        add_text(s, EDGE_IN + tag_w + 0.2, ry, mid_w, row_h,
+                 r.get("mid", ""), size_pt=14, weight=500, color="ink",
+                 anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+        # end text
+        add_text(s, EDGE_IN + tag_w + 0.2 + mid_w + 0.2, ry, end_w, row_h,
+                 r.get("end", ""), size_pt=14, weight=500, color="muted_2",
+                 anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+        # divider line below row
+        if k < len(rows) - 1:
+            add_hline(s, EDGE_IN, ry + row_h, avail_w, color="line", weight_pt=0.5)
+
+    # conclusion
+    conclusion = s_data.get("conclusion", "")
+    if conclusion:
+        cb_y = cy + len(rows) * row_h + 0.3
+        cb_w = avail_w
+        cb_x = EDGE_IN
+        cb_h = 0.55
+        rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                  Inches(cb_x), Inches(cb_y),
+                                  Inches(cb_w), Inches(cb_h))
+        rect.adjustments[0] = 0.18
+        rect.fill.background()
+        rect.line.color.rgb = C("ink_2")
+        rect.line.width = Pt(2)
+        rect.shadow.inherit = False
+        add_text(s, cb_x, cb_y, cb_w, cb_h, conclusion,
+                 size_pt=13, weight=600, color="accent",
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+    add_footer(s, meta, page_no, total)
+
+
+def slide_case_profile(prs, meta, s_data, page_no, total):
+    """좌 PROFILE 키-값 + 우 번호 findings + Key Insight (PPTX)."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    if s_data.get("lede"):
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=15, weight=500,
+                 color="muted_2", leading=1.45, allow_inline=True)
+        cy = TOP_IN + 2.4
+    else:
+        cy = TOP_IN + 2.0
+
+    avail_w = SLIDE_W_IN - 2 * EDGE_IN
+    profile_w = 4.2
+    gap = 0.3
+    findings_w = avail_w - profile_w - gap
+    avail_h = SLIDE_H_IN - cy - 1.7
+    box_h = avail_h * 0.78  # leave space for insight
+
+    # PROFILE box (left)
+    profile = s_data.get("profile", {})
+    pf_rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                 Inches(EDGE_IN), Inches(cy),
+                                 Inches(profile_w), Inches(box_h))
+    pf_rect.adjustments[0] = 0.04
+    pf_rect.fill.solid()
+    pf_rect.fill.fore_color.rgb = C("paper_2")
+    pf_rect.line.fill.background()
+    pf_rect.shadow.inherit = False
+    pad = 0.34
+    add_text(s, EDGE_IN + pad, cy + pad, profile_w - 2*pad, 0.35,
+             profile.get("head", "PROFILE"), size_pt=14, weight=800, color="accent",
+             tracking_em=0.18, allow_inline=False)
+    add_hline(s, EDGE_IN + pad, cy + pad + 0.42, profile_w - 2*pad,
+              color="line", weight_pt=0.5)
+    # items
+    items = profile.get("items", [])
+    list_y = cy + pad + 0.55
+    item_h = (box_h - (list_y - cy) - pad) / max(1, len(items))
+    key_w = 0.7
+    for k, it in enumerate(items):
+        iy = list_y + k * item_h
+        add_text(s, EDGE_IN + pad, iy, key_w, item_h,
+                 it.get("key", ""), size_pt=12, weight=600, color="muted",
+                 anchor=MSO_ANCHOR.MIDDLE, allow_inline=False)
+        add_text(s, EDGE_IN + pad + key_w + 0.18, iy, profile_w - pad*2 - key_w - 0.18, item_h,
+                 it.get("val", ""), size_pt=15, weight=700, color="ink",
+                 anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+
+    # Findings box (right)
+    fx = EDGE_IN + profile_w + gap
+    f_rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                Inches(fx), Inches(cy),
+                                Inches(findings_w), Inches(box_h))
+    f_rect.adjustments[0] = 0.04
+    f_rect.fill.solid()
+    f_rect.fill.fore_color.rgb = C("paper")
+    f_rect.line.color.rgb = C("line")
+    f_rect.line.width = Pt(0.75)
+    f_rect.shadow.inherit = False
+    add_text(s, fx + pad, cy + pad, findings_w - 2*pad, 0.35,
+             s_data.get("findings_head", "KEY POINT"), size_pt=14, weight=800, color="accent",
+             tracking_em=0.18, allow_inline=False)
+    add_hline(s, fx + pad, cy + pad + 0.42, findings_w - 2*pad,
+              color="line", weight_pt=0.5)
+    findings = s_data.get("findings", [])
+    f_list_y = cy + pad + 0.55
+    f_item_h = (box_h - (f_list_y - cy) - pad) / max(1, len(findings))
+    for k, f in enumerate(findings):
+        fy = f_list_y + k * f_item_h
+        # circle number badge
+        circle_d = 0.36
+        oval = s.shapes.add_shape(MSO_SHAPE.OVAL,
+                                  Inches(fx + pad), Inches(fy + 0.05),
+                                  Inches(circle_d), Inches(circle_d))
+        oval.fill.solid()
+        oval.fill.fore_color.rgb = C("ink_2")
+        oval.line.fill.background()
+        oval.shadow.inherit = False
+        add_text(s, fx + pad, fy + 0.05, circle_d, circle_d, str(k + 1),
+                 size_pt=11, weight=700, color="paper",
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=False)
+        # title
+        add_text(s, fx + pad + circle_d + 0.22, fy, findings_w - pad*2 - circle_d - 0.22, 0.4,
+                 f.get("title", ""), size_pt=14, weight=700, color="ink",
+                 allow_inline=True)
+        # sub
+        if f.get("sub"):
+            add_text(s, fx + pad + circle_d + 0.22, fy + 0.42, findings_w - pad*2 - circle_d - 0.22, 0.45,
+                     f.get("sub", ""), size_pt=11, weight=400, color="muted_2",
+                     leading=1.5, allow_inline=True)
+
+    # Key Insight banner
+    insight = s_data.get("insight", "")
+    if insight:
+        in_y = cy + box_h + 0.35
+        in_h = 0.6
+        rect = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                                  Inches(EDGE_IN), Inches(in_y),
+                                  Inches(avail_w), Inches(in_h))
+        rect.adjustments[0] = 0.18
+        rect.fill.solid()
+        rect.fill.fore_color.rgb = C("highlight_yellow")
+        rect.line.fill.background()
+        rect.shadow.inherit = False
+        add_text(s, EDGE_IN, in_y, avail_w, in_h, insight,
+                 size_pt=14, weight=600, color="ink",
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, allow_inline=True)
+    add_footer(s, meta, page_no, total)
+
+
+def slide_concept_pill(prs, meta, s_data, page_no, total):
+    """알약(pill) 컨테이너 + 원형 요소. A + B + C 형식의 '구성 공식' 슬라이드."""
+    blank = prs.slide_layouts[6]
+    s = prs.slides.add_slide(blank)
+    add_chapter_tag(s, EDGE_IN, TOP_IN, s_data.get("chapter", ""), small=True)
+
+    # Title
+    add_text(s, EDGE_IN, TOP_IN + 0.4, SLIDE_W_IN - 2 * EDGE_IN, 1.2,
+             s_data.get("title", ""), size_pt=36, weight=800,
+             color="ink", tracking_em=-0.02, leading=1.08)
+    # Lede
+    has_lede = bool(s_data.get("lede"))
+    if has_lede:
+        add_text(s, EDGE_IN, TOP_IN + 1.55, SLIDE_W_IN - 2 * EDGE_IN, 1.0,
+                 s_data.get("lede", ""), size_pt=18, weight=500,
+                 color="muted_2", leading=1.5,
+                 align=PP_ALIGN.CENTER, allow_inline=True)
+        body_y = TOP_IN + 2.85
+    else:
+        body_y = TOP_IN + 2.2
+
+    items = (s_data.get("items") or [])[:4]
+    n = max(2, min(4, len(items)))
+    op = s_data.get("op", "+")
+    show_op = bool(op and str(op).strip())
+
+    # 사용 가능 가로 — n별 차등 (2요소: 가장 작게 / 3요소: 컴팩트 / 4요소: 적정)
+    if n == 2:
+        pill_w_ratio = 0.42
+    elif n == 4:
+        pill_w_ratio = 0.66
+    else:  # n == 3
+        pill_w_ratio = 0.52
+    pill_w = (SLIDE_W_IN - 2 * EDGE_IN) * pill_w_ratio
+    pill_x = (SLIDE_W_IN - pill_w) / 2
+
+    # Pill 높이 — 원 지름 + 상하 padding (전반적으로 축소)
+    avail_h = SLIDE_H_IN - body_y - 1.5  # 아래 description 영역 여유
+    pill_h = min(2.2, avail_h * 0.50)
+    pill_pad_x = 0.4
+    circle_d = pill_h - 0.6   # 원 지름 (상하 여유)
+    if circle_d < 1.0:
+        circle_d = 1.0
+
+    # n개 원 + (n-1)개 + 연산자 가로 배치
+    op_w = 0.4 if show_op else 0.18
+    inner_w = pill_w - 2 * pill_pad_x
+    circles_total = inner_w - (n - 1) * op_w
+    if circles_total < n * 1.3:
+        # 사이즈 부족하면 원 지름 줄이기
+        circle_d = min(circle_d, circles_total / n)
+    circle_w = circles_total / n  # 원 너비 (가로 점유)
+
+    # Pill 배경 (둥근 사각형)
+    pill = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE,
+                              Inches(pill_x), Inches(body_y),
+                              Inches(pill_w), Inches(pill_h))
+    pill.adjustments[0] = 0.5  # 가장 둥글게 (= stadium)
+    pill.fill.solid()
+    pill.fill.fore_color.rgb = C("ink_2")
+    pill.line.fill.background()
+    pill.shadow.inherit = False
+
+    # Circles + operators
+    cx = pill_x + pill_pad_x
+    cy = body_y + (pill_h - circle_d) / 2
+    desc_y = body_y + pill_h + 0.25
+    desc_h = 1.0
+    for j, it in enumerate(items):
+        # circle x: centered within its width slot
+        slot_x = cx + j * (circle_w + op_w)
+        circle_x = slot_x + (circle_w - circle_d) / 2
+        oval = s.shapes.add_shape(MSO_SHAPE.OVAL,
+                                  Inches(circle_x), Inches(cy),
+                                  Inches(circle_d), Inches(circle_d))
+        oval.fill.solid()
+        oval.fill.fore_color.rgb = C("paper_2")
+        oval.line.fill.background()
+        oval.shadow.inherit = False
+        # circle text
+        font_size = 18 if n == 3 else (16 if n == 4 else 22)
+        add_text(s, circle_x + 0.1, cy + 0.1,
+                 circle_d - 0.2, circle_d - 0.2,
+                 it.get("circle", ""), size_pt=font_size, weight=800,
+                 color="ink", leading=1.2, tracking_em=-0.02,
+                 align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                 allow_inline=True)
+        # operator (between circles) — op이 비어있으면 생략
+        if j < n - 1 and show_op:
+            op_x = slot_x + circle_w
+            add_text(s, op_x, cy, op_w, circle_d,
+                     op, size_pt=20, weight=700, color="paper",
+                     align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
+                     allow_inline=False)
+        # description below circle (서브 텍스트 키움 14 → 17)
+        add_text(s, slot_x, desc_y, circle_w, desc_h,
+                 it.get("desc", ""), size_pt=17, weight=500,
+                 color="muted_2", leading=1.45,
+                 align=PP_ALIGN.CENTER, allow_inline=True)
+
+    add_footer(s, meta, page_no, total)
+
+
 def slide_alert_close(prs, meta, s_data, page_no, total):
     blank = prs.slide_layouts[6]
     s = prs.slides.add_slide(blank)
@@ -1222,9 +1768,9 @@ def slide_case_analysis(prs, meta, s_data, page_no, total):
              color="ink", tracking_em=-0.02, leading=1.08)
     cy = TOP_IN + 1.9
     avail_w = SLIDE_W_IN - 2 * EDGE_IN
-    avail_h = SLIDE_H_IN - cy - 0.85
+    avail_h = SLIDE_H_IN - cy - 1.0   # footer 영역 더 여유롭게 (0.85→1.0)
     gap = 0.4
-    ref_w = avail_w * 0.55
+    ref_w = avail_w * 0.5             # 우측 영역 더 넓게 (0.55→0.5)
     pts_x = EDGE_IN + ref_w + gap
     pts_w = avail_w - ref_w - gap
     # Reference panel
@@ -1232,25 +1778,24 @@ def slide_case_analysis(prs, meta, s_data, page_no, total):
     ref_bg.line.fill.background()
     if s_data.get("ref_title"):
         add_text(s, EDGE_IN + 0.3, cy + 0.2, ref_w - 0.6, 0.5,
-                 s_data["ref_title"], size_pt=15, weight=700, color="ink",
+                 s_data["ref_title"], size_pt=14, weight=700, color="ink",
                  tracking_em=-0.01)
     if s_data.get("ref_image"):
         img_p = _resolve_image(s_data["ref_image"])
         _add_picture_fit(s, img_p, EDGE_IN + 0.3, cy + 0.85,
                          ref_w - 0.6, avail_h - 1.05)
     elif s_data.get("ref_text"):
+        # 글자 더 작게 + auto-shrink 효과 위해 size 9로
         add_text(s, EDGE_IN + 0.3, cy + 0.85, ref_w - 0.6, avail_h - 1.05,
-                 s_data["ref_text"], size_pt=10, weight=400, color="ink",
-                 leading=1.5, allow_inline=False)
-    # Findings panel
+                 s_data["ref_text"], size_pt=9, weight=400, color="ink",
+                 leading=1.45, allow_inline=False)
+    # Findings panel — conclusion 영역을 충분히 확보 (1.2 inch)
     findings = s_data.get("findings", [])
     iy = cy + 0.1
-    # Allocate height per finding
-    concl_h = 0.7 if s_data.get("conclusion") else 0
-    avail_for_findings = avail_h - concl_h - 0.15
+    concl_h = 1.2 if s_data.get("conclusion") else 0   # 0.7 → 1.2 (텍스트 2줄 여유)
+    avail_for_findings = avail_h - concl_h - 0.3       # 마진 0.15 → 0.3
     f_h = avail_for_findings / max(1, len(findings))
     for j, f in enumerate(findings):
-        # Label badge
         label = f.get("label", f"합격 포인트 {j+1}")
         label_w = max(1.1, len(label) * 0.13 + 0.4)
         bg_label = add_rect(s, pts_x, iy, label_w, 0.35, fill="accent")
@@ -1259,22 +1804,21 @@ def slide_case_analysis(prs, meta, s_data, page_no, total):
                  size_pt=11, weight=700, color="paper",
                  align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE,
                  tracking_em=-0.01, allow_inline=False)
-        # Text below label
         add_text(s, pts_x, iy + 0.45, pts_w, f_h - 0.5,
-                 f.get("text", ""), size_pt=15, weight=500, color="ink",
+                 f.get("text", ""), size_pt=14, weight=500, color="ink",
                  leading=1.5)
         iy += f_h
-    # Conclusion: 노란 배경 제거 → 네이비 텍스트 + 위 라인 + 글씨 키움
+    # Conclusion: 위쪽 강조 라인 + 네이비 굵은 텍스트
     if s_data.get("conclusion"):
         cb_y = cy + avail_h - concl_h
-        # 위쪽 강조 라인
         ln = s.shapes.add_connector(1, Inches(pts_x), Inches(cb_y),
                                     Inches(pts_x + pts_w), Inches(cb_y))
         ln.line.color.rgb = C("accent")
         ln.line.width = Pt(2.0)
-        add_text(s, pts_x, cb_y + 0.15, pts_w, concl_h - 0.15,
-                 s_data["conclusion"], size_pt=20, weight=700, color="accent",
-                 anchor=MSO_ANCHOR.TOP, leading=1.45, tracking_em=-0.01)
+        # 텍스트 size 18 + height 1.0 → 2줄까지 안전하게 들어감
+        add_text(s, pts_x, cb_y + 0.15, pts_w, concl_h - 0.2,
+                 s_data["conclusion"], size_pt=18, weight=700, color="accent",
+                 anchor=MSO_ANCHOR.TOP, leading=1.4, tracking_em=-0.01)
     add_footer(s, meta, page_no, total)
 
 
@@ -1424,6 +1968,12 @@ BUILDERS = {
     "pipeline_matrix":  slide_pipeline_matrix,
     "color_palette":    slide_color_palette,
     "type_scale":       slide_type_scale,
+    "concept_pill":     slide_concept_pill,
+    "priority_matrix":  slide_priority_matrix,
+    "step_compare":     slide_step_compare,
+    "before_after":     slide_before_after,
+    "tagged_rows":      slide_tagged_rows,
+    "case_profile":     slide_case_profile,
 }
 
 

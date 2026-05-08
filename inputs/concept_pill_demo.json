@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "title": "자기소개서의",
+    "title_em": "구성",
+    "subtitle": "공식형 알약(pill) 컨테이너 — concept_pill 템플릿 데모.",
+    "event_label": "ZEROBASE 디자인 시스템",
+    "date": "2026 v1.4",
+    "session": "concept_pill 신규 템플릿",
+    "talk_title_in_footer": "ZEROBASE — 자기소개서의 구성",
+    "speaker": {
+      "name": "ZEROBASE",
+      "title": "디자인 시스템",
+      "tags": ["#concept_pill", "#A+B+C", "#알약형"],
+      "bio": []
+    }
+  },
+  "slides": [
+    { "type": "cover" },
+
+    {
+      "type": "concept_pill",
+      "chapter": "자기소개서의 구성",
+      "title": "자기소개서를 구성하는 <em>3가지 핵심 요소</em>",
+      "lede": "모집공고의 수행업무, 우대사항, 필요역량을 기억하며 <b>나의 경험과 회사에서의 요구경력의 교집합</b>을 찾아가보자.",
+      "op": "+",
+      "items": [
+        { "circle": "지원동기",            "desc": "회사 및 직무에 대한\n이해도 · 적합도" },
+        { "circle": "직무상 강점\n경험 서술",    "desc": "구체적인 연관 경험 및\n성취 사례 기술" },
+        { "circle": "입사 후 포부",          "desc": "회사의 비전 ·\n커리어 성장 가능성 검증" }
+      ]
+    },
+
+    {
+      "type": "concept_pill",
+      "chapter": "응용 — 2요소",
+      "title": "내 경험과 직무 요건의 <em>매칭</em>",
+      "lede": "두 가지 요소만 깊게 매칭해도 충분히 강력한 자소서가 됩니다.",
+      "op": "×",
+      "items": [
+        { "circle": "내 경험",  "desc": "프로젝트 · 업무 · 학습\n구체적 성과" },
+        { "circle": "직무 요건",  "desc": "JD에 명시된\n핵심 역량" }
+      ]
+    },
+
+    {
+      "type": "concept_pill",
+      "chapter": "응용 4요소",
+      "title": "면접 답변을 구성하는 <em>STAR 4요소</em>",
+      "lede": "Situation, Task, Action, Result — 한 답변에 모두 담아야 합니다.",
+      "op": "",
+      "items": [
+        { "circle": "S",  "desc": "상황\n(Situation)" },
+        { "circle": "T",  "desc": "과제\n(Task)" },
+        { "circle": "A",  "desc": "행동\n(Action)" },
+        { "circle": "R",  "desc": "결과\n(Result)" }
+      ]
+    },
+
+    {
+      "type": "qa_close",
+      "sub": "concept_pill — 알약형 공식 컨테이너 (v1.4 신규 템플릿)",
+      "thanks": "감사합니다."
+    }
+  ]
+}

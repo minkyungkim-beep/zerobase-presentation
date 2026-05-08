@@ -15,7 +15,8 @@
         "v1.0 — 디자인 토큰과 기본 6종 템플릿 (cover, chapter, content, card_grid, stage_flow, alert_close)",
         "v1.1 — 카드 N개 가변, two_col·toc·speaker·qa_close·compare_table·이미지 3종, 신규 6종 추가",
         "v1.2 — 한글까지 Pretendard 통일, color_palette·type_scale 신규로 총 20+ 종 정리",
-        "v1.4 — concept_pill 신규 + 타이틀 가독성 원칙 반영 (기호 대신 자연스러운 문장)"
+        "v1.4 — concept_pill 신규 + 타이틀 가독성 원칙 반영 (기호 대신 자연스러운 문장)",
+        "v1.4 추가 — priority_matrix, step_compare, before_after, tagged_rows, case_profile 5종 추가 (총 26종)"
       ]
     }
   },
@@ -30,7 +31,7 @@
         "PRINCIPLES · 디자인 원칙 5가지",
         "COLORS · 컬러 팔레트 (Brand · Surface · Semantic)",
         "TYPOGRAPHY · Pretendard 단일 서체, 두께와 크기로 위계",
-        "TEMPLATES · 슬라이드 템플릿 21종 카탈로그"
+        "TEMPLATES · 슬라이드 템플릿 26종 카탈로그"
       ]
     },
 
@@ -169,7 +170,7 @@
       "type": "chapter_divider",
       "ch": "PART 04",
       "title": "TEMPLATES",
-      "sub": "슬라이드 템플릿 21종 카탈로그. 구조·본문·비교·흐름·사람·이미지·공식형."
+      "sub": "슬라이드 템플릿 26종 카탈로그. 구조·본문·비교·흐름·사람·이미지·공식형·매트릭스."
     },
 
     {
@@ -437,16 +438,118 @@
     },
 
     {
+      "type": "priority_matrix",
+      "chapter": "Template 20 · priority_matrix",
+      "title": "채용 방식에 따라 <em>중요한 서류</em>가 달라진다",
+      "lede": "기호 매트릭스 (◎/○/△) + 행 강조 + 둥근 결론 배너. 가중치 비교에 적합.",
+      "headers": ["구분", "이력서", "자소서", "경력기술서", "포트폴리오"],
+      "rows": [
+        ["신입 / 공채", "◎", "◎", "△", "○"],
+        ["신입 / 수시", "◎", "○", "△", "◎"],
+        ["경력 / 공채", "◎", "○", "○", "○"],
+        ["경력 / 수시", "◎", "△", "◎", "◎"]
+      ],
+      "highlight_row": 3,
+      "conclusion": "수시채용은 <b>경력기술서와 포트폴리오</b>가 중요해진다."
+    },
+
+    {
+      "type": "step_compare",
+      "chapter": "Template 21 · step_compare",
+      "title": "공채는 5개, 수시는 <em>3개의 핵심 항목</em>으로 압축된다",
+      "lede": "좌·우 큰 카드, 숫자 뱃지로 단계 비교. 우측 카드에 accent.",
+      "cols": [
+        {
+          "label": "공채형 (Samsung · SK · Hyundai)",
+          "sub": "5개 항목 명시적 분리",
+          "items": [
+            { "num": "01", "title": "지원동기" },
+            { "num": "02", "title": "직무역량 · 직무경험" },
+            { "num": "03", "title": "문제해결 사례" },
+            { "num": "04", "title": "성장과정 · 성장가능성" },
+            { "num": "05", "title": "협업 · 소통 사례" }
+          ]
+        },
+        {
+          "label": "수시형 (Toss · Kakao · 중견 IT)",
+          "sub": "3개 압축, 직무 중심",
+          "accent": true,
+          "items": [
+            { "num": "01", "title": "지원동기와 회사·직무 fit", "desc": "왜 우리 회사, 이 직무?" },
+            { "num": "02", "title": "직무역량과 핵심 프로젝트", "desc": "구체 사례 1~2개" },
+            { "num": "03", "title": "성장과 미래 제안", "desc": "입사 후 무엇을 할 것인가" }
+          ]
+        }
+      ],
+      "footer": "수시채용은 지원동기, 현재 <b>Status</b>, 미래 <b>Vision</b>을 궁금해한다."
+    },
+
+    {
+      "type": "before_after",
+      "chapter": "Template 22 · before_after",
+      "title": "<em>같은 경험</em>도 작성법에 따라 다른 결과를 만든다",
+      "lede": "Before/After 두 인용 박스 + 가운데 화살표 + Source 캡션.",
+      "before": {
+        "label": "BEFORE · 나열형",
+        "quote": "“주간 광고 리포트 작성, 광고비 정산, 콘텐츠 업로드 보조”"
+      },
+      "after": {
+        "label": "AFTER · XYZ 적용",
+        "quote": "“광고비 정산 누락 이슈가 지속 발생하여 자동화 템플릿을 통해 Human Error 방지 및 주간 업무 3시간 단축. 확보 시간으로 경쟁사 분석 후 신규 상품 제안.”"
+      },
+      "note": "예: SK이노베이션 9개 계열사 HR PI — 채용~퇴직 HR Lifecycle 진단 및 표준 프로세스 재설계, <b>Shared Service 인력 30% 감축, HR 업무 효율 20% 개선</b>.",
+      "source": "Source: Google Careers"
+    },
+
+    {
+      "type": "tagged_rows",
+      "chapter": "Template 23 · tagged_rows",
+      "title": "포트폴리오는 <em>직군별로 구성</em>한다",
+      "lede": "좌측 컬러 라벨 + 가로 행 비교 + 둥근 결론 박스.",
+      "rows": [
+        { "tag": "UX · 디자인",      "mid": "Nielsen Norman Group",        "end": "프로세스 · 근거 · 결과 3축" },
+        { "tag": "개발자 (FE/BE)",   "mid": "GitHub + 트러블슈팅 노션",     "end": "문제 정의, 해결, 회고 흐름" },
+        { "tag": "PM · 기획",        "mid": "실무 컨센서스 (Why-What-How)", "end": "문제 정의와 의사결정 근거" },
+        { "tag": "마케팅 · B2B",      "mid": "캠페인 · KPI 중심",            "end": "KPI · 예산 · 결과 3축" }
+      ],
+      "conclusion": "직군별 디테일은 <b>제로베이스 트랙</b>에서 깊게 다룹니다."
+    },
+
+    {
+      "type": "case_profile",
+      "chapter": "Template 24 · case_profile",
+      "title": "<em>도메인 전환</em>을 노린 4년차 PM의 합격 전략",
+      "lede": "좌 PROFILE 키-값 + 우 번호 findings + 하단 Key Insight 배너.",
+      "profile": {
+        "head": "PROFILE",
+        "items": [
+          { "key": "배경", "val": "4년차 PM, 핀테크" },
+          { "key": "고민", "val": "도메인 전환 (핀테크 → SaaS)" },
+          { "key": "타겟", "val": "중견 B2B SaaS (Series B)" },
+          { "key": "연봉", "val": "8~12% 상향 희망" },
+          { "key": "결과", "val": "<b>12% 인상으로 합격</b>" }
+        ]
+      },
+      "findings_head": "Key Point",
+      "findings": [
+        { "title": "포트폴리오 1개 프로젝트를 깊게 (Why-What-How)", "sub": "‘문제 정의 능력은 도메인 무관’ 논리를 P2~P3에서 증명" },
+        { "title": "JD 키워드 5개를 자소서·포폴 모두에 분산 배치",   "sub": "한 키워드를 두 문서에 일관되게 노출" },
+        { "title": "Gap Analysis로 도메인 전환 부담 사전 차단",      "sub": "핀테크는 규제 도메인, SaaS는 고객 운영. 공통 역량을 명시" }
+      ],
+      "insight": "💡 <b>Key Insight</b> — 경력직은 도메인이 아니라 ‘문제 해결력’으로 평가받는다."
+    },
+
+    {
       "type": "alert_close",
-      "chapter": "Template 20 · concept_pill 사용 가이드",
-      "title": "concept_pill을 <em>언제 쓰는가</em>",
-      "lede": "공식형 구성을 한눈에 보여줘야 할 때. 2~4개 요소를 ‘하나의 결과’로 감싸는 의미가 있을 때.",
-      "alert": "<b>op는 + · × · → · ·</b> 등 자유롭게.\n비워두면 (\"\") 기호 없이 원만 나란히 배치됩니다."
+      "chapter": "Template 25 · 사용 가이드",
+      "title": "신규 5종 + concept_pill을 <em>언제 쓰는가</em>",
+      "lede": "각 템플릿은 데이터 형태가 분명할 때 가장 강력합니다. 콘텐츠가 모호하면 단순 card_grid·two_col이 더 안전합니다.",
+      "alert": "<b>priority_matrix</b> 가중치 비교 · <b>step_compare</b> 단계 비교 · <b>before_after</b> 변화 강조\n<b>tagged_rows</b> 직군·카테고리별 행 비교 · <b>case_profile</b> 케이스 스터디 · <b>concept_pill</b> 공식형"
     },
 
     {
       "type": "qa_close",
-      "sub": "Template 21 · qa_close · 마무리·Q&A 클로징",
+      "sub": "Template 26 · qa_close · 마무리·Q&A 클로징",
       "contact": "design-system@day1company.co.kr",
       "thanks": "끝까지 함께해 주셔서 감사합니다."
     }

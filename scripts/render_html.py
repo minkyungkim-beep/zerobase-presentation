@@ -752,6 +752,309 @@ def render_image_split(s: dict, meta: dict, page_no: int, total: int) -> str:
     </section>'''
 
 
+def render_priority_matrix(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """기호(◎/○/△) 매트릭스 + 행 강조 + 결론 배너."""
+    i = page_no - 1
+    headers = s.get("headers", [])
+    rows = s.get("rows", [])
+    n_cols = len(headers)
+    highlight_row = s.get("highlight_row", -1)
+    legend = s.get("legend", "<span><b>◎</b> 핵심</span><span><b>○</b> 보조</span><span><b>△</b> 옵션</span>")
+    # header
+    head_html = "".join(
+        f'<div class="pm-head{(" row-end" if k == n_cols - 1 else "")}">{_esc(h)}</div>'
+        for k, h in enumerate(headers)
+    )
+    # rows
+    rows_html = ""
+    for r_idx, row in enumerate(rows):
+        is_hl = r_idx == highlight_row
+        for k, cell in enumerate(row):
+            is_label = (k == 0)
+            cls = "pm-row-label" if is_label else "pm-symbol"
+            text = str(cell)
+            if not is_label and text in ("△", "."):
+                cls += " muted"
+            extra = " row-end" if k == n_cols - 1 else ""
+            rows_html += (
+                f'<div class="{cls}{extra}{ " pm-row" if False else "" }"'
+                f'{_e(f"slides[{i}].rows[{r_idx}][{k}]")}>{_esc(text)}</div>'
+            )
+    # We can't easily add row-level wrappers in pure grid; rely on outline via cell bg
+    grid_cols = "180px " + " ".join(["1fr"] * (n_cols - 1))
+    if highlight_row >= 0:
+        # add highlight via inline style on row cells
+        cells = []
+        # rebuild rows_html with highlight
+        rows_html = ""
+        for r_idx, row in enumerate(rows):
+            is_hl = r_idx == highlight_row
+            for k, cell in enumerate(row):
+                is_label = (k == 0)
+                cls = "pm-row-label" if is_label else "pm-symbol"
+                text = str(cell)
+                if not is_label and text in ("△",):
+                    cls += " muted"
+                extra = " row-end" if k == n_cols - 1 else ""
+                style = ""
+                if is_hl:
+                    style = ' style="background:rgba(28,40,133,0.06);outline:2px dashed var(--accent);outline-offset:-3px"'
+                rows_html += (
+                    f'<div class="{cls}{extra}"{style}'
+                    f'{_e(f"slides[{i}].rows[{r_idx}][{k}]")}>{_esc(text)}</div>'
+                )
+    conclusion = s.get("conclusion", "")
+    conclusion_html = f'<div class="priority-conclusion"{_e(f"slides[{i}].conclusion", True)}>{conclusion}</div>' if conclusion else ""
+    legend_html = f'<div class="priority-legend">{legend}</div>'
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="priority-matrix-wrap">
+          {legend_html}
+          <div class="priority-matrix" style="grid-template-columns: {grid_cols};">
+            {head_html}
+            {rows_html}
+          </div>
+          {conclusion_html}
+        </div>
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
+def render_step_compare(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """두 큰 카드 + 숫자 뱃지 단계 비교."""
+    i = page_no - 1
+    cols = s.get("cols", [])[:2]
+    cols_html = ""
+    for j, col in enumerate(cols):
+        accent = " accent" if col.get("accent") else ""
+        items = col.get("items", [])
+        items_html = ""
+        for k, it in enumerate(items):
+            num = it.get("num", f"{k+1:02d}")
+            title = it.get("title", "")
+            desc = it.get("desc", "")
+            desc_html = f'<div class="sc-desc"{_e(f"slides[{i}].cols[{j}].items[{k}].desc", True)}>{desc}</div>' if desc else ""
+            items_html += (
+                f'<div class="sc-item">'
+                f'<div class="sc-num"{_e(f"slides[{i}].cols[{j}].items[{k}].num")}>{_esc(num)}</div>'
+                f'<div class="sc-text"><div class="sc-title"{_e(f"slides[{i}].cols[{j}].items[{k}].title", True)}>{title}</div>{desc_html}</div>'
+                f'</div>'
+            )
+        sub_html = f'<div class="sc-sub"{_e(f"slides[{i}].cols[{j}].sub")}>{_esc(col.get("sub",""))}</div>' if col.get("sub") else ""
+        cols_html += (
+            f'<div class="sc-card{accent}">'
+            f'<div class="sc-head">'
+            f'<div class="sc-label"{_e(f"slides[{i}].cols[{j}].label")}>{_esc(col.get("label",""))}</div>'
+            f'{sub_html}'
+            f'</div>'
+            f'<div class="sc-list">{items_html}</div>'
+            f'</div>'
+        )
+    footer_html = (
+        f'<div class="step-compare-footer"{_e(f"slides[{i}].footer", True)}>{s.get("footer","")}</div>'
+        if s.get("footer") else ""
+    )
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="step-compare">{cols_html}</div>
+        {footer_html}
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
+def render_before_after(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """Before / After + 가운데 화살표 + Source."""
+    i = page_no - 1
+    before = s.get("before", {})
+    after = s.get("after", {})
+    note = s.get("note", "")
+    source = s.get("source", "")
+    note_html = f'<div class="before-after-note"{_e(f"slides[{i}].note", True)}>{note}</div>' if note else ""
+    source_html = f'<div class="before-after-source"{_e(f"slides[{i}].source")}>{_esc(source)}</div>' if source else ""
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="before-after">
+          <div class="ba-box before">
+            <div class="ba-label"{_e(f"slides[{i}].before.label")}>{_esc(before.get("label","BEFORE"))}</div>
+            <div class="ba-quote"{_e(f"slides[{i}].before.quote", True)}>{before.get("quote","")}</div>
+          </div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-box after">
+            <div class="ba-label"{_e(f"slides[{i}].after.label")}>{_esc(after.get("label","AFTER"))}</div>
+            <div class="ba-quote"{_e(f"slides[{i}].after.quote", True)}>{after.get("quote","")}</div>
+          </div>
+        </div>
+        {note_html}
+        {source_html}
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
+def render_tagged_rows(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """좌측 컬러 라벨 + 가로 행 비교 + 결론."""
+    i = page_no - 1
+    rows = s.get("rows", [])
+    rows_html = ""
+    for k, r in enumerate(rows):
+        rows_html += (
+            f'<div class="tagged-row">'
+            f'<div class="tr-tag"{_e(f"slides[{i}].rows[{k}].tag", True)}>{r.get("tag","")}</div>'
+            f'<div class="tr-mid"{_e(f"slides[{i}].rows[{k}].mid", True)}>{r.get("mid","")}</div>'
+            f'<div class="tr-end"{_e(f"slides[{i}].rows[{k}].end", True)}>{r.get("end","")}</div>'
+            f'</div>'
+        )
+    conclusion = s.get("conclusion", "")
+    conclusion_html = f'<div class="tagged-conclusion"{_e(f"slides[{i}].conclusion", True)}>{conclusion}</div>' if conclusion else ""
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="tagged-rows">{rows_html}</div>
+        {conclusion_html}
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
+def render_case_profile(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """좌 PROFILE 키-값 + 우 번호 findings + 하단 Key Insight."""
+    i = page_no - 1
+    profile = s.get("profile", {})
+    profile_head = profile.get("head", "PROFILE")
+    profile_items = profile.get("items", [])
+    kv_html = "".join(
+        f'<div class="cp-kv">'
+        f'<div class="cp-key"{_e(f"slides[{i}].profile.items[{k}].key")}>{_esc(it.get("key",""))}</div>'
+        f'<div class="cp-val"{_e(f"slides[{i}].profile.items[{k}].val", True)}>{it.get("val","")}</div>'
+        f'</div>'
+        for k, it in enumerate(profile_items)
+    )
+    findings = s.get("findings", [])
+    findings_head = s.get("findings_head", "합격 포인트")
+    findings_html = ""
+    for k, f in enumerate(findings):
+        sub = f.get("sub", "")
+        sub_html = f'<div class="cp-finding-sub"{_e(f"slides[{i}].findings[{k}].sub", True)}>{sub}</div>' if sub else ""
+        findings_html += (
+            f'<div class="cp-finding">'
+            f'<div class="cp-num">{k+1}</div>'
+            f'<div>'
+            f'<div class="cp-finding-title"{_e(f"slides[{i}].findings[{k}].title", True)}>{f.get("title","")}</div>'
+            f'{sub_html}'
+            f'</div>'
+            f'</div>'
+        )
+    insight = s.get("insight", "")
+    insight_html = f'<div class="case-insight"{_e(f"slides[{i}].insight", True)}>{insight}</div>' if insight else ""
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="case-profile">
+          <div class="cp-profile">
+            <div class="cp-profile-head">{_esc(profile_head)}</div>
+            {kv_html}
+          </div>
+          <div class="cp-findings">
+            <div class="cp-findings-head">{_esc(findings_head)}</div>
+            {findings_html}
+          </div>
+        </div>
+        {insight_html}
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
+def render_concept_pill(s: dict, meta: dict, page_no: int, total: int) -> str:
+    """알약(pill) 컨테이너 + 원형 요소. A + B + C 형식의 '구성 공식'."""
+    i = page_no - 1
+    items = s.get("items", [])[:4]
+    n = max(2, min(4, len(items)))
+    op = s.get("op", "+")  # 연산자 — 기본 '+'. 빈 문자열이면 생략
+    show_op = bool(op and op.strip())
+    # circles + operators
+    circle_html = ""
+    for j, it in enumerate(items):
+        if j > 0 and show_op:
+            circle_html += f'<div class="cp-op"{_e(f"slides[{i}].op")}>{_esc(op)}</div>'
+        circle_html += (
+            f'<div class="cp-circle"{_e(f"slides[{i}].items[{j}].circle", True)}>'
+            f'{it.get("circle","")}'
+            f'</div>'
+        )
+    # descriptions row (with spacer slots between when op present)
+    desc_html = ""
+    for j, it in enumerate(items):
+        if j > 0 and show_op:
+            desc_html += '<div class="cp-spacer"></div>'
+        desc_html += (
+            f'<div class="cp-desc"{_e(f"slides[{i}].items[{j}].desc", True)}>'
+            f'{it.get("desc","")}'
+            f'</div>'
+        )
+    lede = (
+        f'<p class="slide-lede"{_e(f"slides[{i}].lede", True)}>{s.get("lede","")}</p>'
+        if s.get("lede") else ""
+    )
+    return f'''
+    <section class="slide">
+      <div class="chapter-tag small"{_e(f'slides[{i}].chapter')}>{_esc(s.get("chapter",""))}</div>
+      <h2 class="slide-title"{_e(f'slides[{i}].title', True)}>{s.get("title","")}</h2>
+      {lede}
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-{n}">{circle_html}</div>
+        <div class="concept-pill-row">{desc_html}</div>
+      </div>
+      {_footer(meta, page_no, total)}
+    </section>'''
+
+
 def render_alert_close(s: dict, meta: dict, page_no: int, total: int) -> str:
     i = page_no - 1
     return f'''
@@ -789,6 +1092,12 @@ RENDERERS = {
     "pipeline_matrix":  render_pipeline_matrix,
     "color_palette":    render_color_palette,
     "type_scale":       render_type_scale,
+    "concept_pill":     render_concept_pill,
+    "priority_matrix":  render_priority_matrix,
+    "step_compare":     render_step_compare,
+    "before_after":     render_before_after,
+    "tagged_rows":      render_tagged_rows,
+    "case_profile":     render_case_profile,
 }
 
 

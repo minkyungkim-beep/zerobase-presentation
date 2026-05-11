@@ -13,34 +13,71 @@ import sys
 from pathlib import Path
 
 FIGMA_INJECT_CSS = """
-/* ===== Figma export mode (all slides visible vertically) ===== */
-html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
-.viewer { position: static !important; display: block !important; padding: 0 !important; }
+/* ===== Figma export mode (all slides visible vertically, no JS) ===== */
+html, body {
+  background: #fff !important;
+  height: auto !important;
+  width: 1920px !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.viewer {
+  position: static !important;
+  display: block !important;
+  padding: 0 !important;
+  inset: auto !important;
+  width: 1920px !important;
+  height: auto !important;
+}
 .stage {
   box-shadow: none !important;
-  width: 1920px !important; height: auto !important;
+  width: 1920px !important;
+  height: auto !important;
   transform: none !important;
   margin: 0 !important;
+  position: static !important;
 }
-.slide-wrap {
+.slide-wrap, .slide-wrap.is-active {
   position: relative !important;
   inset: auto !important;
-  opacity: 1 !important; visibility: visible !important;
-  width: 1920px !important; height: 1080px !important;
+  top: auto !important; left: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: 1920px !important;
+  height: 1080px !important;
   display: block !important;
   margin: 0 0 40px 0 !important;
+  transition: none !important;
 }
 .slide {
-  position: absolute !important; top: 0 !important; left: 0 !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 1920px !important;
+  height: 1080px !important;
   transform: none !important;
 }
 /* hide UI chrome */
-.nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+.nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast,
+.viewer > .controls, .footer-bar { display: none !important; }
 """
 
 
 def html_to_figma(html_path: Path, out_path: Path) -> None:
+    import re
     text = html_path.read_text(encoding="utf-8")
+
+    # 1) 모든 <script> 블록 제거 (슬라이드쇼 JS·polyfill 등 모두)
+    text = re.sub(r"<script[\s\S]*?</script>", "", text)
+
+    # 2) 모든 .slide-wrap에 is-active 클래스 강제 부여 (CSS만으로 안정성 ↑)
+    text = re.sub(
+        r'<div class="slide-wrap"',
+        '<div class="slide-wrap is-active"',
+        text,
+    )
+
+    # 3) Figma 모드 CSS 주입
     inject = f"<style id=\"figma-export\">{FIGMA_INJECT_CSS}</style>"
     if "</head>" in text:
         text = text.replace("</head>", inject + "\n</head>", 1)

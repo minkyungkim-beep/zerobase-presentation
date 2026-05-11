@@ -1299,34 +1299,58 @@ body.edit-mode .nav-zone { display: none !important; }
 }
 </style>
 <style id="figma-export">
-/* ===== Figma export mode (all slides visible vertically) ===== */
-html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
-.viewer { position: static !important; display: block !important; padding: 0 !important; }
+/* ===== Figma export mode (all slides visible vertically, no JS) ===== */
+html, body {
+  background: #fff !important;
+  height: auto !important;
+  width: 1920px !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.viewer {
+  position: static !important;
+  display: block !important;
+  padding: 0 !important;
+  inset: auto !important;
+  width: 1920px !important;
+  height: auto !important;
+}
 .stage {
   box-shadow: none !important;
-  width: 1920px !important; height: auto !important;
+  width: 1920px !important;
+  height: auto !important;
   transform: none !important;
   margin: 0 !important;
+  position: static !important;
 }
-.slide-wrap {
+.slide-wrap, .slide-wrap.is-active {
   position: relative !important;
   inset: auto !important;
-  opacity: 1 !important; visibility: visible !important;
-  width: 1920px !important; height: 1080px !important;
+  top: auto !important; left: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: 1920px !important;
+  height: 1080px !important;
   display: block !important;
   margin: 0 0 40px 0 !important;
+  transition: none !important;
 }
 .slide {
-  position: absolute !important; top: 0 !important; left: 0 !important;
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 1920px !important;
+  height: 1080px !important;
   transform: none !important;
 }
 /* hide UI chrome */
-.nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+.nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast,
+.viewer > .controls, .footer-bar { display: none !important; }
 </style>
 </head><body>
 <div class="viewer">
   <div id="stage" class="stage">
-    <div class="slide-wrap" data-idx="1">
+    <div class="slide-wrap is-active" data-idx="1">
     <section class="slide cover">
       <div class="cover-kicker" data-edit="meta.event_label">ZEROBASE · 데이원컴퍼니</div>
       <div class="cover-title">
@@ -1341,7 +1365,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
         </div>
         <div><span data-edit="meta.date">2026.05.07</span> · <span data-edit="meta.session">v1.4</span></div>
       </div>
-    </section></div><div class="slide-wrap" data-idx="2">
+    </section></div><div class="slide-wrap is-active" data-idx="2">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[1].chapter">Contents</div>
       <h2 class="slide-title" data-edit="slides[1].title" data-edit-html="1">v1.4의 4 섹션 구성</h2>
@@ -1368,7 +1392,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">02 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="3">
+    </section></div><div class="slide-wrap is-active" data-idx="3">
     <section class="slide chapter-divider">
       <div class="divider-num" data-edit="slides[2].ch">PART 01</div>
       <h1 class="divider-title" data-edit="slides[2].title" data-edit-html="1">PRINCIPLES</h1>
@@ -1378,7 +1402,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">03 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="4">
+    </section></div><div class="slide-wrap is-active" data-idx="4">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[3].chapter">PART 01 PRINCIPLES</div>
       <h2 class="slide-title" data-edit="slides[3].title" data-edit-html="1">디자인 원칙 5가지</h2>
@@ -1415,7 +1439,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">04 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="5">
+    </section></div><div class="slide-wrap is-active" data-idx="5">
     <section class="slide chapter-divider">
       <div class="divider-num" data-edit="slides[4].ch">PART 02</div>
       <h1 class="divider-title" data-edit="slides[4].title" data-edit-html="1">COLORS</h1>
@@ -1425,7 +1449,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">05 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="6">
+    </section></div><div class="slide-wrap is-active" data-idx="6">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[5].chapter">PART 02 COLORS · Brand & Ink</div>
       <h2 class="slide-title" data-edit="slides[5].title" data-edit-html="1">핵심 톤을 만드는 <em>Brand & Ink</em></h2>
@@ -1473,7 +1497,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">06 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="7">
+    </section></div><div class="slide-wrap is-active" data-idx="7">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[6].chapter">PART 02 COLORS · Surface & Line</div>
       <h2 class="slide-title" data-edit="slides[6].title" data-edit-html="1">면과 선을 위한 <em>Surface & Line</em></h2>
@@ -1521,7 +1545,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">07 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="8">
+    </section></div><div class="slide-wrap is-active" data-idx="8">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[7].chapter">PART 02 COLORS · Semantic</div>
       <h2 class="slide-title" data-edit="slides[7].title" data-edit-html="1">신호를 표현하는 <em>Semantic</em> 톤</h2>
@@ -1569,7 +1593,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">08 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="9">
+    </section></div><div class="slide-wrap is-active" data-idx="9">
     <section class="slide chapter-divider">
       <div class="divider-num" data-edit="slides[8].ch">PART 03</div>
       <h1 class="divider-title" data-edit="slides[8].title" data-edit-html="1">TYPOGRAPHY</h1>
@@ -1579,7 +1603,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">09 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="10">
+    </section></div><div class="slide-wrap is-active" data-idx="10">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[9].chapter">PART 03 TYPOGRAPHY</div>
       <h2 class="slide-title" data-edit="slides[9].title" data-edit-html="1"><em>Display와 Title</em> 영역의 타이포그래피</h2>
@@ -1603,7 +1627,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">10 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="11">
+    </section></div><div class="slide-wrap is-active" data-idx="11">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[10].chapter">PART 03 TYPOGRAPHY</div>
       <h2 class="slide-title" data-edit="slides[10].title" data-edit-html="1"><em>Body와 Caption</em> 영역의 타이포그래피</h2>
@@ -1631,7 +1655,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">11 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="12">
+    </section></div><div class="slide-wrap is-active" data-idx="12">
     <section class="slide chapter-divider">
       <div class="divider-num" data-edit="slides[11].ch">PART 04</div>
       <h1 class="divider-title" data-edit="slides[11].title" data-edit-html="1">TEMPLATES</h1>
@@ -1641,7 +1665,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">12 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="13">
+    </section></div><div class="slide-wrap is-active" data-idx="13">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[12].chapter">Template 01 · alert_close</div>
       <h2 class="slide-title" data-edit="slides[12].title" data-edit-html="1"><em>알림형 강조</em>로 마무리하는 슬라이드</h2>
@@ -1654,7 +1678,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">13 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="14">
+    </section></div><div class="slide-wrap is-active" data-idx="14">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[13].chapter">Template 02 · content</div>
       <h2 class="slide-title" data-edit="slides[13].title" data-edit-html="1"><em>제목과 리드, 불릿</em>으로 구성한 기본 본문 슬라이드</h2>
@@ -1666,7 +1690,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">14 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="15">
+    </section></div><div class="slide-wrap is-active" data-idx="15">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[14].chapter">Template 03 · card_grid (3-up)</div>
       <h2 class="slide-title" data-edit="slides[14].title" data-edit-html="1">2~7개로 가변되는 <em>카드 그리드</em></h2>
@@ -1693,7 +1717,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">15 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="16">
+    </section></div><div class="slide-wrap is-active" data-idx="16">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[15].chapter">Template 04 · two_col</div>
       <h2 class="slide-title" data-edit="slides[15].title" data-edit-html="1">두 항목을 나란히 비교하는 <em>2-컬럼 레이아웃</em></h2>
@@ -1717,7 +1741,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">16 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="17">
+    </section></div><div class="slide-wrap is-active" data-idx="17">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[16].chapter">Template 05 · stage_flow</div>
       <h2 class="slide-title" data-edit="slides[16].title" data-edit-html="1"><em>4~5단계 흐름</em>을 보여주는 스테이지</h2>
@@ -1749,7 +1773,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">17 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="18">
+    </section></div><div class="slide-wrap is-active" data-idx="18">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[17].chapter">Template 06 · compare_table</div>
       <h2 class="slide-title" data-edit="slides[17].title" data-edit-html="1"><em>3-컬럼 비교 표</em>와 행 라벨 구조</h2>
@@ -1784,7 +1808,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">18 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="19">
+    </section></div><div class="slide-wrap is-active" data-idx="19">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[18].chapter">Template 07 · summary_takeaway</div>
       <h2 class="slide-title" data-edit="slides[18].title" data-edit-html="1">여러 카드와 하단의 <em>takeaway 바</em></h2>
@@ -1811,7 +1835,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">19 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="20">
+    </section></div><div class="slide-wrap is-active" data-idx="20">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[19].chapter">Template 08 · dual_panel</div>
       <h2 class="slide-title" data-edit="slides[19].title" data-edit-html="1"><em>네이비와 레드</em>로 대비를 만드는 분할 패널</h2>
@@ -1853,7 +1877,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">20 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="21">
+    </section></div><div class="slide-wrap is-active" data-idx="21">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[20].chapter">Template 09 · case_grid_4</div>
       <h2 class="slide-title" data-edit="slides[20].title" data-edit-html="1">네 가지 사례를 모은 <em>2 by 2 케이스 카드</em></h2>
@@ -1885,7 +1909,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">21 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="22">
+    </section></div><div class="slide-wrap is-active" data-idx="22">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[21].chapter">Template 10 · checklist</div>
       <h2 class="slide-title" data-edit="slides[21].title" data-edit-html="1">외곽 박스 안의 <em>번호 리스트</em></h2>
@@ -1900,7 +1924,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">22 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="23">
+    </section></div><div class="slide-wrap is-active" data-idx="23">
     <section class="slide" style="position:relative;">
       <div class="chapter-tag small" data-edit="slides[22].chapter">Template 11 · pipeline_matrix</div>
       <h2 class="slide-title" data-edit="slides[22].title" data-edit-html="1"><em>3-스테이지 매트릭스</em>로 그리는 Plan A·B 파이프라인</h2>
@@ -1915,7 +1939,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">23 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="24">
+    </section></div><div class="slide-wrap is-active" data-idx="24">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[23].chapter">Template 12 · case_analysis</div>
       <h2 class="slide-title" data-edit="slides[23].title" data-edit-html="1">이력서·포트폴리오 분석과 <em>합격 포인트 3가지</em></h2>
@@ -1945,7 +1969,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">24 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="25">
+    </section></div><div class="slide-wrap is-active" data-idx="25">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[24].chapter">Template 13 · speaker</div>
       <h2 class="slide-title" data-edit="slides[24].title"><em>사진과 약력</em>으로 보여주는 강사 소개</h2>
@@ -1964,7 +1988,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">25 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="26">
+    </section></div><div class="slide-wrap is-active" data-idx="26">
     <section class="slide image-full bg-light">
       <div class="img-wrap"><img src="../assets/sample_resume.png" alt=""></div>
       <div class="image-caption" data-edit="slides[25].caption" data-edit-html="1">Template 14 · <b>image_full</b>: 풀-블리드 자료 이미지와 선택적 캡션. (어두운·밝은 배경)</div>
@@ -1973,7 +1997,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">26 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="27">
+    </section></div><div class="slide-wrap is-active" data-idx="27">
     <section class="slide image-headed">
       <div class="chapter-tag small" data-edit="slides[26].chapter">Template 15 · image_headed</div>
       <h2 class="slide-title" data-edit="slides[26].title" data-edit-html="1"><em>헤더와 자료 이미지</em>를 함께 보여주는 슬라이드</h2>
@@ -1984,7 +2008,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">27 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="28">
+    </section></div><div class="slide-wrap is-active" data-idx="28">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[27].chapter">Template 16 · image_split</div>
       <h2 class="slide-title" data-edit="slides[27].title" data-edit-html="1"><em>자료를 옆에 두고 분석</em>하는 분할 슬라이드</h2>
@@ -1998,7 +2022,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">28 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="29">
+    </section></div><div class="slide-wrap is-active" data-idx="29">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[28].chapter">Template 17 · concept_pill (3요소)</div>
       <h2 class="slide-title" data-edit="slides[28].title" data-edit-html="1">자기소개서를 구성하는 <em>3가지 핵심 요소</em></h2>
@@ -2017,7 +2041,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">29 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="30">
+    </section></div><div class="slide-wrap is-active" data-idx="30">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[29].chapter">Template 18 · concept_pill (2요소)</div>
       <h2 class="slide-title" data-edit="slides[29].title" data-edit-html="1">내 경험과 직무 요건의 <em>매칭</em></h2>
@@ -2034,7 +2058,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">30 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="31">
+    </section></div><div class="slide-wrap is-active" data-idx="31">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[30].chapter">Template 19 · concept_pill (4요소)</div>
       <h2 class="slide-title" data-edit="slides[30].title" data-edit-html="1">면접 답변을 구성하는 <em>STAR 4요소</em></h2>
@@ -2053,7 +2077,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">31 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="32">
+    </section></div><div class="slide-wrap is-active" data-idx="32">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[31].chapter">Template 20 · priority_matrix</div>
       <h2 class="slide-title" data-edit="slides[31].title" data-edit-html="1">채용 방식에 따라 <em>중요한 서류</em>가 달라진다</h2>
@@ -2074,7 +2098,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">32 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="33">
+    </section></div><div class="slide-wrap is-active" data-idx="33">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[32].chapter">Template 21 · step_compare</div>
       <h2 class="slide-title" data-edit="slides[32].title" data-edit-html="1">공채는 5개, 수시는 <em>3개의 핵심 항목</em>으로 압축된다</h2>
@@ -2089,7 +2113,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">33 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="34">
+    </section></div><div class="slide-wrap is-active" data-idx="34">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[33].chapter">Template 22 · before_after</div>
       <h2 class="slide-title" data-edit="slides[33].title" data-edit-html="1"><em>같은 경험</em>도 작성법에 따라 다른 결과를 만든다</h2>
@@ -2115,7 +2139,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">34 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="35">
+    </section></div><div class="slide-wrap is-active" data-idx="35">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[34].chapter">Template 23 · tagged_rows</div>
       <h2 class="slide-title" data-edit="slides[34].title" data-edit-html="1">포트폴리오는 <em>직군별로 구성</em>한다</h2>
@@ -2130,7 +2154,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">35 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="36">
+    </section></div><div class="slide-wrap is-active" data-idx="36">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[35].chapter">Template 24 · case_profile</div>
       <h2 class="slide-title" data-edit="slides[35].title" data-edit-html="1"><em>도메인 전환</em>을 노린 4년차 PM의 합격 전략</h2>
@@ -2154,7 +2178,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">36 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="37">
+    </section></div><div class="slide-wrap is-active" data-idx="37">
     <section class="slide">
       <div class="chapter-tag small" data-edit="slides[36].chapter">Template 25 · 사용 가이드</div>
       <h2 class="slide-title" data-edit="slides[36].title" data-edit-html="1">신규 5종 + concept_pill을 <em>언제 쓰는가</em></h2>
@@ -2167,7 +2191,7 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
       <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그</span></div>
       <div class="right">37 / 38</div>
     </div>
-    </section></div><div class="slide-wrap" data-idx="38">
+    </section></div><div class="slide-wrap is-active" data-idx="38">
     <section class="slide" style="justify-content: center; align-items: center; text-align: center;">
       <div style="margin: auto;">
         <div class="qa-big">Q&amp;A</div>
@@ -2210,188 +2234,6 @@ html, body { background: #fff !important; height: auto !important; overflow: vis
 
 <div id="toast"></div>
 
-<script type="application/json" id="deck-source" data-name="design_system_v1_4">{&quot;meta&quot;: {&quot;title&quot;: &quot;ZEROBASE&quot;, &quot;title_em&quot;: &quot;Design System v1.4&quot;, &quot;subtitle&quot;: &quot;온라인 설명회 덱 디자인 시스템 — 원칙·컬러·타이포그래피·슬라이드 템플릿 카탈로그.&quot;, &quot;event_label&quot;: &quot;ZEROBASE · 데이원컴퍼니&quot;, &quot;date&quot;: &quot;2026.05.07&quot;, &quot;session&quot;: &quot;v1.4&quot;, &quot;talk_title_in_footer&quot;: &quot;ZEROBASE Design System v1.4 — 슬라이드 템플릿 카탈로그&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;Design System&quot;, &quot;title&quot;: &quot;ZEROBASE 온라인 설명회 덱&quot;, &quot;tags&quot;: [&quot;#디자인 시스템&quot;, &quot;#슬라이드 템플릿&quot;, &quot;#Pretendard&quot;, &quot;#네이비 단톤&quot;], &quot;bio&quot;: [&quot;v1.0 — 디자인 토큰과 기본 6종 템플릿 (cover, chapter, content, card_grid, stage_flow, alert_close)&quot;, &quot;v1.1 — 카드 N개 가변, two_col·toc·speaker·qa_close·compare_table·이미지 3종, 신규 6종 추가&quot;, &quot;v1.2 — 한글까지 Pretendard 통일, color_palette·type_scale 신규로 총 20+ 종 정리&quot;, &quot;v1.4 — concept_pill 신규 + 타이틀 가독성 원칙 반영 (기호 대신 자연스러운 문장)&quot;, &quot;v1.4 추가 — priority_matrix, step_compare, before_after, tagged_rows, case_profile 5종 추가 (총 26종)&quot;]}}, &quot;slides&quot;: [{&quot;type&quot;: &quot;cover&quot;}, {&quot;type&quot;: &quot;toc&quot;, &quot;chapter&quot;: &quot;Contents&quot;, &quot;title&quot;: &quot;v1.4의 4 섹션 구성&quot;, &quot;items&quot;: [&quot;PRINCIPLES · 디자인 원칙 5가지&quot;, &quot;COLORS · 컬러 팔레트 (Brand · Surface · Semantic)&quot;, &quot;TYPOGRAPHY · Pretendard 단일 서체, 두께와 크기로 위계&quot;, &quot;TEMPLATES · 슬라이드 템플릿 26종 카탈로그&quot;]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 01&quot;, &quot;title&quot;: &quot;PRINCIPLES&quot;, &quot;sub&quot;: &quot;매주 연사·주제는 바뀌어도 변하지 않는 4가지 원칙.&quot;}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;PART 01 PRINCIPLES&quot;, &quot;title&quot;: &quot;디자인 원칙 5가지&quot;, &quot;lede&quot;: &quot;매주 연사·주제는 바뀌어도 이 다섯 가지는 변하지 않습니다.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;컨설팅 톤, 교육 무게감&quot;, &quot;items&quot;: [&quot;프로모션이 아닌 ‘리포트’에 가까운 인상&quot;, &quot;여백·정렬·표 중심, 장식은 최소화&quot;, &quot;신뢰도가 곧 설득력&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;각진 모서리, 얇은 구분선&quot;, &quot;items&quot;: [&quot;border-radius: 0&quot;, &quot;1px 라인으로 구조를 분명히&quot;, &quot;데이터를 시각적으로 정직하게&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;한 톤의 네이비&quot;, &quot;items&quot;: [&quot;주색 단 1가지: #1C2885&quot;, &quot;파스텔 블루는 강조 블록에만&quot;, &quot;빨강은 리스크·주의 신호용으로 제한&quot;]}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;Pretendard 단일 서체&quot;, &quot;items&quot;: [&quot;한글·영문·숫자 모두 Pretendard&quot;, &quot;두께·크기로만 위계 형성&quot;, &quot;PPTX는 ea·cs 폰트 슬롯까지 지정&quot;]}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;타이틀은 자연스러운 문장&quot;, &quot;items&quot;: [&quot;타이틀에 &lt;b&gt;—, →, +, ×&lt;/b&gt; 같은 기호 사용 금지&quot;, &quot;조사·어미로 매끄럽게 읽히게&quot;, &quot;강조는 &lt;b&gt;&amp;lt;em&amp;gt;&lt;/b&gt; 태그로만 처리&quot;]}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 02&quot;, &quot;title&quot;: &quot;COLORS&quot;, &quot;sub&quot;: &quot;브랜드 네이비를 중심으로, 뉴트럴과 액센트를 최소한으로.&quot;}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Brand &amp; Ink&quot;, &quot;title&quot;: &quot;핵심 톤을 만드는 &lt;em&gt;Brand &amp; Ink&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;본문 텍스트와 강조에 쓰는 네이비 계열.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#0E1430&quot;, &quot;name&quot;: &quot;Ink · Primary&quot;, &quot;role&quot;: &quot;본문 텍스트, 슬라이드 타이틀&quot;, &quot;token&quot;: &quot;--ink&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#1C2885&quot;, &quot;name&quot;: &quot;Navy · Brand&quot;, &quot;role&quot;: &quot;브랜드, 강조, 챕터태그&quot;, &quot;token&quot;: &quot;--ink-2 / --accent&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#3A4499&quot;, &quot;name&quot;: &quot;Navy Light&quot;, &quot;role&quot;: &quot;2차 강조, 아이콘&quot;, &quot;token&quot;: &quot;--ink-3&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#E6E8F5&quot;, &quot;name&quot;: &quot;Navy Soft&quot;, &quot;role&quot;: &quot;강조 블록 배경, 태그&quot;, &quot;token&quot;: &quot;--accent-soft&quot;, &quot;on&quot;: &quot;#1C2885&quot;}]}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Surface &amp; Line&quot;, &quot;title&quot;: &quot;면과 선을 위한 &lt;em&gt;Surface &amp; Line&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;슬라이드 배경, 카드 배경, 구분선 톤.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#FFFFFF&quot;, &quot;name&quot;: &quot;Paper&quot;, &quot;role&quot;: &quot;슬라이드 배경&quot;, &quot;token&quot;: &quot;--paper&quot;, &quot;on&quot;: &quot;#0E1430&quot;}, {&quot;hex&quot;: &quot;#F2F3F8&quot;, &quot;name&quot;: &quot;Paper 2&quot;, &quot;role&quot;: &quot;섹션 배경, 인용문&quot;, &quot;token&quot;: &quot;--paper-2&quot;, &quot;on&quot;: &quot;#0E1430&quot;}, {&quot;hex&quot;: &quot;#EAF1FB&quot;, &quot;name&quot;: &quot;Pastel Blue&quot;, &quot;role&quot;: &quot;정보 카드 배경&quot;, &quot;token&quot;: &quot;--pastel&quot;, &quot;on&quot;: &quot;#1C2885&quot;}, {&quot;hex&quot;: &quot;#FBEAE9&quot;, &quot;name&quot;: &quot;Pastel Red&quot;, &quot;role&quot;: &quot;비교 패널 / 케이스 배경&quot;, &quot;token&quot;: &quot;--pastel-red&quot;, &quot;on&quot;: &quot;#B53232&quot;}]}, {&quot;type&quot;: &quot;color_palette&quot;, &quot;chapter&quot;: &quot;PART 02 COLORS · Semantic&quot;, &quot;title&quot;: &quot;신호를 표현하는 &lt;em&gt;Semantic&lt;/em&gt; 톤&quot;, &quot;lede&quot;: &quot;통과·탈락·주의 등 시그널성 컬러는 제한적으로.&quot;, &quot;cols&quot;: 4, &quot;swatches&quot;: [{&quot;hex&quot;: &quot;#0E8A4F&quot;, &quot;name&quot;: &quot;Pass&quot;, &quot;role&quot;: &quot;통과 · 긍정 시그널&quot;, &quot;token&quot;: &quot;--pass&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#B53232&quot;, &quot;name&quot;: &quot;Fail&quot;, &quot;role&quot;: &quot;탈락 · 리스크&quot;, &quot;token&quot;: &quot;--fail&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#D0342C&quot;, &quot;name&quot;: &quot;Alert&quot;, &quot;role&quot;: &quot;강한 주의 · 행동 유도&quot;, &quot;token&quot;: &quot;--alert-red&quot;, &quot;on&quot;: &quot;#FFFFFF&quot;}, {&quot;hex&quot;: &quot;#FFF4B8&quot;, &quot;name&quot;: &quot;Highlight&quot;, &quot;role&quot;: &quot;이력서 형광펜 / 결론 박스 배경&quot;, &quot;token&quot;: &quot;--highlight&quot;, &quot;on&quot;: &quot;#0E1430&quot;}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 03&quot;, &quot;title&quot;: &quot;TYPOGRAPHY&quot;, &quot;sub&quot;: &quot;Pretendard 단일 서체. 두께와 크기로만 위계를 만든다.&quot;}, {&quot;type&quot;: &quot;type_scale&quot;, &quot;chapter&quot;: &quot;PART 03 TYPOGRAPHY&quot;, &quot;title&quot;: &quot;&lt;em&gt;Display와 Title&lt;/em&gt; 영역의 타이포그래피&quot;, &quot;lede&quot;: &quot;표지·디바이더·본문 타이틀의 큰 타입.&quot;, &quot;items&quot;: [{&quot;name&quot;: &quot;Cover Title&quot;, &quot;size_px&quot;: 120, &quot;weight&quot;: 800, &quot;leading&quot;: 1.05, &quot;tracking_em&quot;: -0.02, &quot;sample&quot;: &quot;온라인 취업 박람회&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Slide Title&quot;, &quot;size_px&quot;: 88, &quot;weight&quot;: 800, &quot;leading&quot;: 1.08, &quot;tracking_em&quot;: -0.02, &quot;sample&quot;: &quot;상반기 채용은 진행 중&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Chapter Tag&quot;, &quot;size_px&quot;: 28, &quot;weight&quot;: 700, &quot;leading&quot;: 1.2, &quot;tracking_em&quot;: -0.01, &quot;sample&quot;: &quot;면접 프로세스 및 채용 트렌드&quot;, &quot;color_key&quot;: &quot;accent&quot;}]}, {&quot;type&quot;: &quot;type_scale&quot;, &quot;chapter&quot;: &quot;PART 03 TYPOGRAPHY&quot;, &quot;title&quot;: &quot;&lt;em&gt;Body와 Caption&lt;/em&gt; 영역의 타이포그래피&quot;, &quot;lede&quot;: &quot;본문·리드·카드 타이틀·캡션의 사용 영역.&quot;, &quot;items&quot;: [{&quot;name&quot;: &quot;Slide Lede&quot;, &quot;size_px&quot;: 34, &quot;weight&quot;: 500, &quot;leading&quot;: 1.45, &quot;tracking_em&quot;: 0, &quot;sample&quot;: &quot;지원 회사·직무별 체계적 준비&quot;, &quot;color_key&quot;: &quot;muted_2&quot;}, {&quot;name&quot;: &quot;Card Title&quot;, &quot;size_px&quot;: 32, &quot;weight&quot;: 700, &quot;leading&quot;: 1.25, &quot;tracking_em&quot;: -0.01, &quot;sample&quot;: &quot;공채 비중 축소&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Body · Default&quot;, &quot;size_px&quot;: 24, &quot;weight&quot;: 400, &quot;leading&quot;: 1.45, &quot;tracking_em&quot;: 0, &quot;sample&quot;: &quot;준비된 면접의 필요, 검증의 한계&quot;, &quot;color_key&quot;: &quot;ink&quot;}, {&quot;name&quot;: &quot;Micro · Caption&quot;, &quot;size_px&quot;: 20, &quot;weight&quot;: 500, &quot;leading&quot;: 1.4, &quot;tracking_em&quot;: 0.05, &quot;sample&quot;: &quot;© 2026. (주)데이원컴퍼니&quot;, &quot;color_key&quot;: &quot;muted&quot;}]}, {&quot;type&quot;: &quot;chapter_divider&quot;, &quot;ch&quot;: &quot;PART 04&quot;, &quot;title&quot;: &quot;TEMPLATES&quot;, &quot;sub&quot;: &quot;슬라이드 템플릿 26종 카탈로그. 구조·본문·비교·흐름·사람·이미지·공식형·매트릭스.&quot;}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;Template 01 · alert_close&quot;, &quot;title&quot;: &quot;&lt;em&gt;알림형 강조&lt;/em&gt;로 마무리하는 슬라이드&quot;, &quot;lede&quot;: &quot;본문 + 빨간색 강조 멘트로 행동을 촉구하는 마무리.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;오늘 이후, 내가 지금 준비하는 단계가&lt;/b&gt;\n어디인지부터 점검하세요.&quot;}, {&quot;type&quot;: &quot;content&quot;, &quot;chapter&quot;: &quot;Template 02 · content&quot;, &quot;title&quot;: &quot;&lt;em&gt;제목과 리드, 불릿&lt;/em&gt;으로 구성한 기본 본문 슬라이드&quot;, &quot;lede&quot;: &quot;가장 기본 형태. 챕터 태그·제목·리드·불릿 0~5개.&quot;, &quot;bullets&quot;: [&quot;공채 비중은 줄고, 수시·경력 채용은 분기 내내 열려 있음&quot;, &quot;서류·인적성·1차 면접까지 평균 2~3주 안에 진행&quot;, &quot;준비된 지원자만이 다음 단계 기회를 잡습니다&quot;]}, {&quot;type&quot;: &quot;card_grid&quot;, &quot;chapter&quot;: &quot;Template 03 · card_grid (3-up)&quot;, &quot;title&quot;: &quot;2~7개로 가변되는 &lt;em&gt;카드 그리드&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;파스텔 블루 카드. cards[]의 개수에 따라 자동 layout.&quot;, &quot;cards&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;공채 비중 축소&quot;, &quot;items&quot;: [&quot;1~2시간 내 검증의 한계&quot;, &quot;준비된 면접의 필요&quot;]}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;수시·경력 확대&quot;, &quot;items&quot;: [&quot;즉시 투입 가능 여부&quot;, &quot;성과 증빙 요구&quot;]}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;맞춤형 인재&quot;, &quot;items&quot;: [&quot;직무 이해도&quot;, &quot;조직 적합성&quot;]}]}, {&quot;type&quot;: &quot;two_col&quot;, &quot;chapter&quot;: &quot;Template 04 · two_col&quot;, &quot;title&quot;: &quot;두 항목을 나란히 비교하는 &lt;em&gt;2-컬럼 레이아웃&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;Before/After·Old/New·옵션 A/B 등 두 항목을 나란히 비교할 때.&quot;, &quot;cols&quot;: [{&quot;num&quot;: &quot;PRESENT&quot;, &quot;title&quot;: &quot;핵심 변화: 업무의 본질&quot;, &quot;lede&quot;: &quot;AI를 ‘일하는 방식 자체’로 재정의.&quot;, &quot;items&quot;: [&quot;신입·주니어 채용 급감&quot;, &quot;AI 활용 생산성 차이가 본질적 경쟁력&quot;]}, {&quot;num&quot;: &quot;FUTURE&quot;, &quot;title&quot;: &quot;평가 기준의 변화&quot;, &quot;lede&quot;: &quot;‘무엇을 만들 수 있는가’.&quot;, &quot;items&quot;: [&quot;GitHub·Kaggle·기술블로그 결과물 필수&quot;, &quot;‘포트폴리오 없는 지원자 = 검증 불가’&quot;], &quot;accent&quot;: true}]}, {&quot;type&quot;: &quot;stage_flow&quot;, &quot;chapter&quot;: &quot;Template 05 · stage_flow&quot;, &quot;title&quot;: &quot;&lt;em&gt;4~5단계 흐름&lt;/em&gt;을 보여주는 스테이지&quot;, &quot;lede&quot;: &quot;프로세스나 단계가 있는 콘텐츠. 마지막 단계는 강조 색으로 구분.&quot;, &quot;steps&quot;: [{&quot;num&quot;: &quot;STEP 01&quot;, &quot;name&quot;: &quot;서류 전형&quot;, &quot;desc&quot;: &quot;이력서 · 자소서 · 포트폴리오&quot;}, {&quot;num&quot;: &quot;STEP 02&quot;, &quot;name&quot;: &quot;1차 면접&quot;, &quot;desc&quot;: &quot;실무 · 직무 역량&quot;}, {&quot;num&quot;: &quot;STEP 03&quot;, &quot;name&quot;: &quot;2차 면접&quot;, &quot;desc&quot;: &quot;임원 · 인성&quot;}, {&quot;num&quot;: &quot;FINAL&quot;, &quot;name&quot;: &quot;최종 단계&quot;, &quot;desc&quot;: &quot;처우 협의 · 온보딩&quot;}], &quot;highlight_index&quot;: 3}, {&quot;type&quot;: &quot;compare_table&quot;, &quot;chapter&quot;: &quot;Template 06 · compare_table&quot;, &quot;title&quot;: &quot;&lt;em&gt;3-컬럼 비교 표&lt;/em&gt;와 행 라벨 구조&quot;, &quot;lede&quot;: &quot;여러 항목을 일정한 기준으로 비교할 때. 한쪽 컬럼은 강조 색으로.&quot;, &quot;headers&quot;: [&quot;구분&quot;, &quot;신입 (Entry)&quot;, &quot;경력직 (Experienced)&quot;], &quot;rows&quot;: [[&quot;평가 기준&quot;, &quot;성장 잠재력과 가능성&quot;, &quot;검증된 성과&quot;], [&quot;주요 질문&quot;, &quot;‘무엇을 할 수 있는가?’&quot;, &quot;‘무엇을 해봤는가?’&quot;], [&quot;핵심 어필&quot;, &quot;기본기와 학습 태도&quot;, &quot;즉시 투입 가능성&quot;]], &quot;accent_col&quot;: 2, &quot;conclusion&quot;: &quot;경력직 이직은 &lt;b&gt;‘어떤 문제를 해결해봤는지’&lt;/b&gt;를 증명하는 자리입니다.&quot;}, {&quot;type&quot;: &quot;summary_takeaway&quot;, &quot;chapter&quot;: &quot;Template 07 · summary_takeaway&quot;, &quot;title&quot;: &quot;여러 카드와 하단의 &lt;em&gt;takeaway 바&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;여러 변화·요인을 카드로 보여주고 하단 강조 바에 한 줄 결론.&quot;, &quot;cards&quot;: [{&quot;title&quot;: &quot;경쟁 심화 구조&quot;, &quot;items&quot;: [&quot;병목 현상&quot;, &quot;단 5명 채용에 수백명&quot;]}, {&quot;title&quot;: &quot;채용 방식 변화&quot;, &quot;items&quot;: [&quot;공채 축소&quot;, &quot;인턴 → 전환형&quot;]}, {&quot;title&quot;: &quot;AI Impact 본격화&quot;, &quot;items&quot;: [&quot;AI 인력 수요 증가&quot;, &quot;Agent화 가속&quot;]}], &quot;takeaway&quot;: &quot;‘좋은 스펙’이 아니라 ‘바로 쓸 수 있는 사람’을 뽑는다.&quot;}, {&quot;type&quot;: &quot;dual_panel&quot;, &quot;chapter&quot;: &quot;Template 08 · dual_panel&quot;, &quot;title&quot;: &quot;&lt;em&gt;네이비와 레드&lt;/em&gt;로 대비를 만드는 분할 패널&quot;, &quot;lede&quot;: &quot;현실/이상, 문제/해결 등 강한 대비가 필요한 두 관점을 나란히.&quot;, &quot;left&quot;: {&quot;header&quot;: &quot;임원의 현실&quot;, &quot;sections&quot;: [{&quot;title&quot;: &quot;제한된 시간, 넘치는 지원자&quot;, &quot;items&quot;: [&quot;서류 정독 시간 부족&quot;, &quot;핵심만 본다&quot;]}, {&quot;title&quot;: &quot;메시지 중심&quot;, &quot;items&quot;: [&quot;결과·숫자·역할 중심&quot;]}]}, &quot;right&quot;: {&quot;header&quot;: &quot;3대 평가 기준&quot;, &quot;sections&quot;: [{&quot;title&quot;: &quot;1. 바로 일할 수 있는가?&quot;, &quot;items&quot;: [&quot;실무 즉시 투입&quot;]}, {&quot;title&quot;: &quot;2. 리스크 없는 사람인가?&quot;, &quot;items&quot;: [&quot;치명적 단점 / 조기 퇴사&quot;]}, {&quot;title&quot;: &quot;3. 조직에 잘 맞는가?&quot;, &quot;items&quot;: [&quot;Culture Fit&quot;]}]}}, {&quot;type&quot;: &quot;case_grid_4&quot;, &quot;chapter&quot;: &quot;Template 09 · case_grid_4&quot;, &quot;title&quot;: &quot;네 가지 사례를 모은 &lt;em&gt;2 by 2 케이스 카드&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;유형이 다른 4가지 사례를 한눈에. blue↔red 교차로 시각적 변별.&quot;, &quot;cards&quot;: [{&quot;title&quot;: &quot;신입 A — 경험으로 합격&quot;, &quot;items&quot;: [&quot;학벌 스펙 최하&quot;, &quot;스타트업 5개월&quot;], &quot;arrow&quot;: &quot;경험으로부터 배운다는 전형&quot;}, {&quot;title&quot;: &quot;대학원 B — 전문 경험 &gt; 학위&quot;, &quot;items&quot;: [&quot;프로젝트 즉시 적용 가능&quot;, &quot;4명 모두 탁월&quot;], &quot;arrow&quot;: &quot;최고학력 스펙 탈락&quot;}, {&quot;title&quot;: &quot;경력 C — 필요한 시기&quot;, &quot;items&quot;: [&quot;전문 분야 지원자 부족&quot;, &quot;사내 모집 어려움&quot;], &quot;arrow&quot;: &quot;타이밍이 만든 합격&quot;}, {&quot;title&quot;: &quot;경력 D·E — 추천/스카우트&quot;, &quot;items&quot;: [&quot;임원 네트워크 추천&quot;, &quot;중소→대기업&quot;], &quot;arrow&quot;: &quot;사내 추천 채널의 힘&quot;}]}, {&quot;type&quot;: &quot;checklist&quot;, &quot;chapter&quot;: &quot;Template 10 · checklist&quot;, &quot;title&quot;: &quot;외곽 박스 안의 &lt;em&gt;번호 리스트&lt;/em&gt;&quot;, &quot;box_title&quot;: &quot;모든 직무 동일. 반드시 만들어야 하는 &lt;em&gt;눈에 띄는 포트폴리오&lt;/em&gt;&quot;, &quot;subtitle&quot;: &quot;: JD에 있는 요건/우대사항 내용 중심의 impact&quot;, &quot;items&quot;: [&quot;1) 나는 어떤 성과를 낼 수 있는 사람인가?&quot;, &quot;2) 나는 어떻게 차별화된 사람인가?&quot;, {&quot;text&quot;: &quot;3) 나는 어떤 문제를 해결해왔는가?&quot;, &quot;emphasis&quot;: true}, {&quot;text&quot;: &quot;4) 그 문제 해결과정은 어땠고 어떤 임팩트가 있었는가?&quot;, &quot;emphasis&quot;: true}, &quot;5) 소프트 스킬 / 검증 요소가 포함되었는가?&quot;]}, {&quot;type&quot;: &quot;pipeline_matrix&quot;, &quot;chapter&quot;: &quot;Template 11 · pipeline_matrix&quot;, &quot;title&quot;: &quot;&lt;em&gt;3-스테이지 매트릭스&lt;/em&gt;로 그리는 Plan A·B 파이프라인&quot;, &quot;lede&quot;: &quot;직무·산업·기업의 다층 분기를 한 슬라이드로.&quot;, &quot;stages&quot;: [{&quot;header&quot;: &quot;직무/회사 기반의 경험 정리&quot;, &quot;rows&quot;: [&quot;직무 A (Plan A)&quot;, &quot;직무 B (Plan B)&quot;]}, {&quot;header&quot;: &quot;마스터 이력서 / 포트폴리오&quot;, &quot;rows&quot;: [[&quot;서류A&quot;, &quot;서류B&quot;, &quot;서류C&quot;], [&quot;서류A&quot;, &quot;서류B&quot;, &quot;서류C&quot;]]}, {&quot;header&quot;: &quot;산업 / 기업 특화 서류·면접&quot;, &quot;rows&quot;: [[{&quot;label&quot;: &quot;산업 A&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}, {&quot;label&quot;: &quot;산업 B&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}], [{&quot;label&quot;: &quot;산업 A&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}, {&quot;label&quot;: &quot;산업 B&quot;, &quot;sub&quot;: [&quot;기업A&quot;, &quot;기업B&quot;]}]]}], &quot;note&quot;: &quot;직무/산업/기업별\n서류 패키징 필요&quot;}, {&quot;type&quot;: &quot;case_analysis&quot;, &quot;chapter&quot;: &quot;Template 12 · case_analysis&quot;, &quot;title&quot;: &quot;이력서·포트폴리오 분석과 &lt;em&gt;합격 포인트 3가지&lt;/em&gt;&quot;, &quot;ref_title&quot;: &quot;샘플 이력서 (요약)&quot;, &quot;ref_text&quot;: &quot;개발자의 역할은 결국 문제를 기술로 해결하는 것이라고 생각합니다.\n\n[고객의 입장에 서] 일정 조율 서비스 ‘OneTime’ 직접 개발·운영, 누적 사용자 7,500명+. ‘내 스케줄’ 접근성 문제로 실사용자 5명에 그쳤으나, 에브리타임 시간표 연동 기능 구현 후 80명+ 증가.\n\n[레거시 기반 개선] SKT 기업 프로젝트에서 데보션 마이페이지 개선 — Java 8/JSP/MyBatis 레거시 분석, 신규 기능 추가, 컨벤션 준수.&quot;, &quot;findings&quot;: [{&quot;label&quot;: &quot;합격 포인트 ①&quot;, &quot;text&quot;: &quot;일정 조율 서비스 직접 개발·운영하며 실사용 서비스 운영 경험을 보여주고 있음.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ②&quot;, &quot;text&quot;: &quot;팀 프로젝트에서 반복 업무 효율성·정확도 개선을 이끌어냄.&quot;}, {&quot;label&quot;: &quot;합격 포인트 ③&quot;, &quot;text&quot;: &quot;SKT 기업 프로젝트 + Java/JS/JSP/MyBatis 등 실무 스택 활용 능력 보유.&quot;}], &quot;conclusion&quot;: &quot;&lt;b&gt;실사용 서비스 운영 경험 + 효율 개선&lt;/b&gt;으로 실무 적용 가능 역량을 보여준 것이 합격의 핵심.&quot;}, {&quot;type&quot;: &quot;speaker&quot;, &quot;chapter&quot;: &quot;Template 13 · speaker&quot;, &quot;title&quot;: &quot;&lt;em&gt;사진과 약력&lt;/em&gt;으로 보여주는 강사 소개&quot;, &quot;speaker&quot;: {&quot;name&quot;: &quot;샘플 멘토&quot;, &quot;title&quot;: &quot;AI/DX 전문 컨설턴트&quot;, &quot;tags&quot;: [&quot;#임원면접 멘토링&quot;, &quot;#취업 컨설팅&quot;, &quot;#AI/DX&quot;], &quot;bio&quot;: [&quot;speaker.photo 필드에 이미지 경로 → 회색 박스 없이 사진만 노출&quot;, &quot;사진은 3:4 portrait 비율, object-fit: cover로 자동 정렬&quot;, &quot;EXIF 회전 자동 처리, 고해상도 자동 리사이즈&quot;]}}, {&quot;type&quot;: &quot;image_full&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;, &quot;bg&quot;: &quot;light&quot;, &quot;caption&quot;: &quot;Template 14 · &lt;b&gt;image_full&lt;/b&gt;: 풀-블리드 자료 이미지와 선택적 캡션. (어두운·밝은 배경)&quot;}, {&quot;type&quot;: &quot;image_headed&quot;, &quot;chapter&quot;: &quot;Template 15 · image_headed&quot;, &quot;title&quot;: &quot;&lt;em&gt;헤더와 자료 이미지&lt;/em&gt;를 함께 보여주는 슬라이드&quot;, &quot;lede&quot;: &quot;챕터·제목·리드 후 자료 이미지를 프레임 안에 배치.&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;}, {&quot;type&quot;: &quot;image_split&quot;, &quot;chapter&quot;: &quot;Template 16 · image_split&quot;, &quot;title&quot;: &quot;&lt;em&gt;자료를 옆에 두고 분석&lt;/em&gt;하는 분할 슬라이드&quot;, &quot;image&quot;: &quot;assets/sample_resume.png&quot;, &quot;image_position&quot;: &quot;left&quot;, &quot;body_title&quot;: &quot;이 자료가 합격한 이유&quot;, &quot;body_lede&quot;: &quot;좌·우 분할로 자료와 분석을 동시에.&quot;, &quot;items&quot;: [&quot;JD 키워드와 1:1 매칭된 경험&quot;, &quot;정량 성과 + Before/After 비교&quot;, &quot;본인 역할·임팩트 명확히 전달&quot;]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 17 · concept_pill (3요소)&quot;, &quot;title&quot;: &quot;자기소개서를 구성하는 &lt;em&gt;3가지 핵심 요소&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;알약 컨테이너 안에 원형 요소를 배치하는 공식형 템플릿. 2~4요소까지 가변.&quot;, &quot;op&quot;: &quot;+&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;지원동기&quot;, &quot;desc&quot;: &quot;회사 및 직무에 대한\n이해도 · 적합도&quot;}, {&quot;circle&quot;: &quot;직무상 강점\n경험 서술&quot;, &quot;desc&quot;: &quot;구체적인 연관 경험 및\n성취 사례 기술&quot;}, {&quot;circle&quot;: &quot;입사 후 포부&quot;, &quot;desc&quot;: &quot;회사의 비전 ·\n커리어 성장 가능성 검증&quot;}]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 18 · concept_pill (2요소)&quot;, &quot;title&quot;: &quot;내 경험과 직무 요건의 &lt;em&gt;매칭&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;두 요소만 깊게 매칭해도 충분히 강력합니다.&quot;, &quot;op&quot;: &quot;×&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;내 경험&quot;, &quot;desc&quot;: &quot;프로젝트 · 업무 · 학습\n구체적 성과&quot;}, {&quot;circle&quot;: &quot;직무 요건&quot;, &quot;desc&quot;: &quot;JD에 명시된\n핵심 역량&quot;}]}, {&quot;type&quot;: &quot;concept_pill&quot;, &quot;chapter&quot;: &quot;Template 19 · concept_pill (4요소)&quot;, &quot;title&quot;: &quot;면접 답변을 구성하는 &lt;em&gt;STAR 4요소&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;Situation, Task, Action, Result. 한 답변에 모두 담아야 합니다.&quot;, &quot;op&quot;: &quot;&quot;, &quot;items&quot;: [{&quot;circle&quot;: &quot;S&quot;, &quot;desc&quot;: &quot;상황\n(Situation)&quot;}, {&quot;circle&quot;: &quot;T&quot;, &quot;desc&quot;: &quot;과제\n(Task)&quot;}, {&quot;circle&quot;: &quot;A&quot;, &quot;desc&quot;: &quot;행동\n(Action)&quot;}, {&quot;circle&quot;: &quot;R&quot;, &quot;desc&quot;: &quot;결과\n(Result)&quot;}]}, {&quot;type&quot;: &quot;priority_matrix&quot;, &quot;chapter&quot;: &quot;Template 20 · priority_matrix&quot;, &quot;title&quot;: &quot;채용 방식에 따라 &lt;em&gt;중요한 서류&lt;/em&gt;가 달라진다&quot;, &quot;lede&quot;: &quot;기호 매트릭스 (◎/○/△) + 행 강조 + 둥근 결론 배너. 가중치 비교에 적합.&quot;, &quot;headers&quot;: [&quot;구분&quot;, &quot;이력서&quot;, &quot;자소서&quot;, &quot;경력기술서&quot;, &quot;포트폴리오&quot;], &quot;rows&quot;: [[&quot;신입 / 공채&quot;, &quot;◎&quot;, &quot;◎&quot;, &quot;△&quot;, &quot;○&quot;], [&quot;신입 / 수시&quot;, &quot;◎&quot;, &quot;○&quot;, &quot;△&quot;, &quot;◎&quot;], [&quot;경력 / 공채&quot;, &quot;◎&quot;, &quot;○&quot;, &quot;○&quot;, &quot;○&quot;], [&quot;경력 / 수시&quot;, &quot;◎&quot;, &quot;△&quot;, &quot;◎&quot;, &quot;◎&quot;]], &quot;highlight_row&quot;: 3, &quot;conclusion&quot;: &quot;수시채용은 &lt;b&gt;경력기술서와 포트폴리오&lt;/b&gt;가 중요해진다.&quot;}, {&quot;type&quot;: &quot;step_compare&quot;, &quot;chapter&quot;: &quot;Template 21 · step_compare&quot;, &quot;title&quot;: &quot;공채는 5개, 수시는 &lt;em&gt;3개의 핵심 항목&lt;/em&gt;으로 압축된다&quot;, &quot;lede&quot;: &quot;좌·우 큰 카드, 숫자 뱃지로 단계 비교. 우측 카드에 accent.&quot;, &quot;cols&quot;: [{&quot;label&quot;: &quot;공채형 (Samsung · SK · Hyundai)&quot;, &quot;sub&quot;: &quot;5개 항목 명시적 분리&quot;, &quot;items&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;지원동기&quot;}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무역량 · 직무경험&quot;}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;문제해결 사례&quot;}, {&quot;num&quot;: &quot;04&quot;, &quot;title&quot;: &quot;성장과정 · 성장가능성&quot;}, {&quot;num&quot;: &quot;05&quot;, &quot;title&quot;: &quot;협업 · 소통 사례&quot;}]}, {&quot;label&quot;: &quot;수시형 (Toss · Kakao · 중견 IT)&quot;, &quot;sub&quot;: &quot;3개 압축, 직무 중심&quot;, &quot;accent&quot;: true, &quot;items&quot;: [{&quot;num&quot;: &quot;01&quot;, &quot;title&quot;: &quot;지원동기와 회사·직무 fit&quot;, &quot;desc&quot;: &quot;왜 우리 회사, 이 직무?&quot;}, {&quot;num&quot;: &quot;02&quot;, &quot;title&quot;: &quot;직무역량과 핵심 프로젝트&quot;, &quot;desc&quot;: &quot;구체 사례 1~2개&quot;}, {&quot;num&quot;: &quot;03&quot;, &quot;title&quot;: &quot;성장과 미래 제안&quot;, &quot;desc&quot;: &quot;입사 후 무엇을 할 것인가&quot;}]}], &quot;footer&quot;: &quot;수시채용은 지원동기, 현재 &lt;b&gt;Status&lt;/b&gt;, 미래 &lt;b&gt;Vision&lt;/b&gt;을 궁금해한다.&quot;}, {&quot;type&quot;: &quot;before_after&quot;, &quot;chapter&quot;: &quot;Template 22 · before_after&quot;, &quot;title&quot;: &quot;&lt;em&gt;같은 경험&lt;/em&gt;도 작성법에 따라 다른 결과를 만든다&quot;, &quot;lede&quot;: &quot;Before/After 두 인용 박스 + 가운데 화살표 + Source 캡션.&quot;, &quot;before&quot;: {&quot;label&quot;: &quot;BEFORE · 나열형&quot;, &quot;quote&quot;: &quot;“주간 광고 리포트 작성, 광고비 정산, 콘텐츠 업로드 보조”&quot;}, &quot;after&quot;: {&quot;label&quot;: &quot;AFTER · XYZ 적용&quot;, &quot;quote&quot;: &quot;“광고비 정산 누락 이슈가 지속 발생하여 자동화 템플릿을 통해 Human Error 방지 및 주간 업무 3시간 단축. 확보 시간으로 경쟁사 분석 후 신규 상품 제안.”&quot;}, &quot;note&quot;: &quot;예: SK이노베이션 9개 계열사 HR PI — 채용~퇴직 HR Lifecycle 진단 및 표준 프로세스 재설계, &lt;b&gt;Shared Service 인력 30% 감축, HR 업무 효율 20% 개선&lt;/b&gt;.&quot;, &quot;source&quot;: &quot;Source: Google Careers&quot;}, {&quot;type&quot;: &quot;tagged_rows&quot;, &quot;chapter&quot;: &quot;Template 23 · tagged_rows&quot;, &quot;title&quot;: &quot;포트폴리오는 &lt;em&gt;직군별로 구성&lt;/em&gt;한다&quot;, &quot;lede&quot;: &quot;좌측 컬러 라벨 + 가로 행 비교 + 둥근 결론 박스.&quot;, &quot;rows&quot;: [{&quot;tag&quot;: &quot;UX · 디자인&quot;, &quot;mid&quot;: &quot;Nielsen Norman Group&quot;, &quot;end&quot;: &quot;프로세스 · 근거 · 결과 3축&quot;}, {&quot;tag&quot;: &quot;개발자 (FE/BE)&quot;, &quot;mid&quot;: &quot;GitHub + 트러블슈팅 노션&quot;, &quot;end&quot;: &quot;문제 정의, 해결, 회고 흐름&quot;}, {&quot;tag&quot;: &quot;PM · 기획&quot;, &quot;mid&quot;: &quot;실무 컨센서스 (Why-What-How)&quot;, &quot;end&quot;: &quot;문제 정의와 의사결정 근거&quot;}, {&quot;tag&quot;: &quot;마케팅 · B2B&quot;, &quot;mid&quot;: &quot;캠페인 · KPI 중심&quot;, &quot;end&quot;: &quot;KPI · 예산 · 결과 3축&quot;}], &quot;conclusion&quot;: &quot;직군별 디테일은 &lt;b&gt;제로베이스 트랙&lt;/b&gt;에서 깊게 다룹니다.&quot;}, {&quot;type&quot;: &quot;case_profile&quot;, &quot;chapter&quot;: &quot;Template 24 · case_profile&quot;, &quot;title&quot;: &quot;&lt;em&gt;도메인 전환&lt;/em&gt;을 노린 4년차 PM의 합격 전략&quot;, &quot;lede&quot;: &quot;좌 PROFILE 키-값 + 우 번호 findings + 하단 Key Insight 배너.&quot;, &quot;profile&quot;: {&quot;head&quot;: &quot;PROFILE&quot;, &quot;items&quot;: [{&quot;key&quot;: &quot;배경&quot;, &quot;val&quot;: &quot;4년차 PM, 핀테크&quot;}, {&quot;key&quot;: &quot;고민&quot;, &quot;val&quot;: &quot;도메인 전환 (핀테크 → SaaS)&quot;}, {&quot;key&quot;: &quot;타겟&quot;, &quot;val&quot;: &quot;중견 B2B SaaS (Series B)&quot;}, {&quot;key&quot;: &quot;연봉&quot;, &quot;val&quot;: &quot;8~12% 상향 희망&quot;}, {&quot;key&quot;: &quot;결과&quot;, &quot;val&quot;: &quot;&lt;b&gt;12% 인상으로 합격&lt;/b&gt;&quot;}]}, &quot;findings_head&quot;: &quot;Key Point&quot;, &quot;findings&quot;: [{&quot;title&quot;: &quot;포트폴리오 1개 프로젝트를 깊게 (Why-What-How)&quot;, &quot;sub&quot;: &quot;‘문제 정의 능력은 도메인 무관’ 논리를 P2~P3에서 증명&quot;}, {&quot;title&quot;: &quot;JD 키워드 5개를 자소서·포폴 모두에 분산 배치&quot;, &quot;sub&quot;: &quot;한 키워드를 두 문서에 일관되게 노출&quot;}, {&quot;title&quot;: &quot;Gap Analysis로 도메인 전환 부담 사전 차단&quot;, &quot;sub&quot;: &quot;핀테크는 규제 도메인, SaaS는 고객 운영. 공통 역량을 명시&quot;}], &quot;insight&quot;: &quot;💡 &lt;b&gt;Key Insight&lt;/b&gt; — 경력직은 도메인이 아니라 ‘문제 해결력’으로 평가받는다.&quot;}, {&quot;type&quot;: &quot;alert_close&quot;, &quot;chapter&quot;: &quot;Template 25 · 사용 가이드&quot;, &quot;title&quot;: &quot;신규 5종 + concept_pill을 &lt;em&gt;언제 쓰는가&lt;/em&gt;&quot;, &quot;lede&quot;: &quot;각 템플릿은 데이터 형태가 분명할 때 가장 강력합니다. 콘텐츠가 모호하면 단순 card_grid·two_col이 더 안전합니다.&quot;, &quot;alert&quot;: &quot;&lt;b&gt;priority_matrix&lt;/b&gt; 가중치 비교 · &lt;b&gt;step_compare&lt;/b&gt; 단계 비교 · &lt;b&gt;before_after&lt;/b&gt; 변화 강조\n&lt;b&gt;tagged_rows&lt;/b&gt; 직군·카테고리별 행 비교 · &lt;b&gt;case_profile&lt;/b&gt; 케이스 스터디 · &lt;b&gt;concept_pill&lt;/b&gt; 공식형&quot;}, {&quot;type&quot;: &quot;qa_close&quot;, &quot;sub&quot;: &quot;Template 26 · qa_close · 마무리·Q&amp;A 클로징&quot;, &quot;contact&quot;: &quot;design-system@day1company.co.kr&quot;, &quot;thanks&quot;: &quot;끝까지 함께해 주셔서 감사합니다.&quot;}]}</script>
-<script>
-(function(){
-  var SLIDE_W = 1920, SLIDE_H = 1080;
-  var stage = document.getElementById('stage');
-  var wraps = Array.prototype.slice.call(document.querySelectorAll('.slide-wrap'));
-  var fill  = document.querySelector('.hud .fill');
-  var pager = document.querySelector('.hud .pager');
-  var help  = document.getElementById('help');
-  var total = wraps.length;
-  var idx = 0;
-  var editMode = false;
 
-  // Initial slide from URL hash, e.g. #3
-  var h = parseInt((location.hash || '').replace('#',''), 10);
-  if (!isNaN(h) && h >= 1 && h <= total) idx = h - 1;
 
-  function fit(){
-    var vw = window.innerWidth, vh = window.innerHeight;
-    var scaleW = vw / SLIDE_W, scaleH = vh / SLIDE_H;
-    var scale = Math.min(scaleW, scaleH) * 0.94;
-    var w = SLIDE_W * scale, hh = SLIDE_H * scale;
-    stage.style.width  = w + 'px';
-    stage.style.height = hh + 'px';
-    wraps.forEach(function(wr){
-      var s = wr.querySelector('.slide');
-      if(s) s.style.transform = 'scale(' + scale + ')';
-    });
-  }
-
-  function go(n){
-    idx = Math.max(0, Math.min(total - 1, n));
-    wraps.forEach(function(wr, i){
-      wr.classList.toggle('is-active', i === idx);
-    });
-    if (fill)  fill.style.width = ((idx + 1) / total * 100) + '%';
-    if (pager) pager.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
-    history.replaceState(null, '', '#' + (idx + 1));
-  }
-
-  // ---------- Edit mode ----------
-  function toggleEdit(){
-    editMode = !editMode;
-    document.body.classList.toggle('edit-mode', editMode);
-    document.querySelectorAll('[data-edit]').forEach(function(el){
-      if (editMode) el.setAttribute('contenteditable', 'true');
-      else el.removeAttribute('contenteditable');
-    });
-    var btn = document.getElementById('edit-btn');
-    if (btn) btn.textContent = editMode ? '편집 끝내기 (E)' : '✏️ 편집 (E)';
-    var bar = document.getElementById('edit-bar');
-    if (bar) bar.classList.toggle('show', editMode);
-  }
-
-  function getPathSafe(obj, parts){
-    var cur = obj;
-    for (var i = 0; i < parts.length; i++){
-      if (cur == null) return undefined;
-      cur = cur[parts[i]];
-    }
-    return cur;
-  }
-  function setPath(obj, path, value){
-    var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
-    var cur = obj;
-    for (var i = 0; i < parts.length - 1; i++){
-      var k = parts[i];
-      // numeric index
-      if (/^\d+$/.test(k)) k = parseInt(k, 10);
-      if (cur[k] == null){
-        // create container
-        var nextK = parts[i+1];
-        cur[k] = (/^\d+$/.test(nextK)) ? [] : {};
-      }
-      cur = cur[k];
-    }
-    var lastK = parts[parts.length - 1];
-    if (/^\d+$/.test(lastK)) lastK = parseInt(lastK, 10);
-    cur[lastK] = value;
-  }
-
-  function buildEditedJSON(){
-    var srcEl = document.getElementById('deck-source');
-    var src = JSON.parse(srcEl.textContent);
-    document.querySelectorAll('[data-edit]').forEach(function(el){
-      var path = el.getAttribute('data-edit');
-      var asHtml = el.getAttribute('data-edit-html') === '1';
-      var value;
-      if (asHtml){
-        value = el.innerHTML.trim()
-                  .replace(/<br\s*\/?>/gi, '\n')
-                  .replace(/&nbsp;/g, ' ');
-      } else {
-        value = el.textContent.trim();
-      }
-      setPath(src, path, value);
-    });
-    return src;
-  }
-
-  function downloadJSON(){
-    var data = buildEditedJSON();
-    var name = (document.getElementById('deck-source').getAttribute('data-name') || 'edited') + '.json';
-    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 100);
-    var msg = document.getElementById('toast');
-    if (msg){ msg.textContent = '저장됨: ' + name; msg.classList.add('show');
-      setTimeout(function(){ msg.classList.remove('show'); }, 2500); }
-  }
-
-  function resetEdits(){
-    if (!confirm('모든 편집을 원래대로 되돌릴까요?')) return;
-    var src = JSON.parse(document.getElementById('deck-source').textContent);
-    document.querySelectorAll('[data-edit]').forEach(function(el){
-      var path = el.getAttribute('data-edit');
-      var asHtml = el.getAttribute('data-edit-html') === '1';
-      var parts = path.replace(/\[(\d+)\]/g, '.$1').split('.').filter(Boolean);
-      var v = getPathSafe(src, parts.map(function(p){return /^\d+$/.test(p)?parseInt(p,10):p;}));
-      if (v == null) return;
-      if (asHtml) el.innerHTML = String(v).replace(/\n/g,'<br>');
-      else el.textContent = String(v);
-    });
-  }
-
-  // ---------- Keyboard ----------
-  document.addEventListener('keydown', function(e){
-    // If typing inside an editable element, don't navigate
-    var t = e.target;
-    var typing = t && t.isContentEditable;
-    if (typing){
-      // Allow Esc to exit edit on element
-      if (e.key === 'Escape') t.blur();
-      return;
-    }
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ' || e.key === 'Enter')   { e.preventDefault(); go(idx + 1); }
-    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace')              { e.preventDefault(); go(idx - 1); }
-    else if (e.key === 'Home')                                                                   { e.preventDefault(); go(0); }
-    else if (e.key === 'End')                                                                    { e.preventDefault(); go(total - 1); }
-    else if (e.key === 'f' || e.key === 'F')                                                      { toggleFullscreen(); }
-    else if (e.key === 'e' || e.key === 'E')                                                      { e.preventDefault(); toggleEdit(); }
-    else if (e.key === 'Escape')                                                                  { if (document.fullscreenElement) document.exitFullscreen(); }
-  });
-
-  function toggleFullscreen(){
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
-  }
-
-  // ---------- Click zones ----------
-  document.getElementById('nav-prev').addEventListener('click', function(){ if(!editMode) go(idx - 1); });
-  document.getElementById('nav-next').addEventListener('click', function(){ if(!editMode) go(idx + 1); });
-
-  // ---------- Edit bar buttons ----------
-  var btnEdit  = document.getElementById('edit-btn');
-  var btnSave  = document.getElementById('save-btn');
-  var btnReset = document.getElementById('reset-btn');
-  if (btnEdit)  btnEdit.addEventListener('click', toggleEdit);
-  if (btnSave)  btnSave.addEventListener('click', downloadJSON);
-  if (btnReset) btnReset.addEventListener('click', resetEdits);
-
-  // ---------- Touch swipe ----------
-  var tx = 0;
-  document.addEventListener('touchstart', function(e){ tx = e.touches[0].clientX; }, {passive: true});
-  document.addEventListener('touchend',   function(e){
-    if (editMode) return;
-    var dx = e.changedTouches[0].clientX - tx;
-    if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
-  }, {passive: true});
-
-  window.addEventListener('resize', fit);
-
-  // Init
-  fit(); go(idx);
-
-  if (help) {
-    help.classList.add('show');
-    setTimeout(function(){ help.classList.remove('show'); }, 4000);
-  }
-})();
-</script>
 </body></html>

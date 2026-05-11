@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<title>대기업 인사팀이 알려주는</title>
+<style>/* ZeroBase Online Briefing — Slide Base CSS
+ * 토큰은 design_system/tokens.json 기준. 변경 시 함께 동기화.
+ */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+
+:root {
+  --ink:        #0E1430;
+  --ink-2:      #1C2885;
+  --ink-3:      #3A4499;
+  --paper:      #FFFFFF;
+  --paper-2:    #F2F3F8;
+  --paper-3:    #E6E8F2;
+  --line:       rgba(28,40,133,0.14);
+  --line-2:     rgba(28,40,133,0.28);
+  --muted:      rgba(14,20,48,0.55);
+  --muted-2:    rgba(14,20,48,0.72);
+  --accent:     #1C2885;
+  --accent-soft:#E6E8F5;
+  --pastel:     #EAF1FB;
+  --pastel-red: #FBEAE9;
+  --alert:      #D0342C;
+  --pass:       #0E8A4F;
+  --fail:       #B53232;
+  --highlight:  #FFF4B8;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: #0a0d1a;
+  height: 100%; overflow: hidden;
+}
+body {
+  font-family: "Pretendard Variable","Pretendard",-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* ----- Slideshow viewer ----- */
+.viewer {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.stage {
+  position: relative;
+  background: var(--paper);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+  overflow: hidden;
+  /* width/height set inline by JS to maintain 16:9 fit */
+}
+/* Each slide is absolutely positioned inside .stage; only the active one is visible */
+.slide-wrap {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.18s ease;
+  overflow: hidden;
+}
+.slide-wrap.is-active { opacity: 1; visibility: visible; }
+
+/* ----- Slide canvas: 1920 × 1080 (fixed; scaled by JS) ----- */
+.slide {
+  width: 1920px; height: 1080px;
+  background: var(--paper);
+  position: absolute; top: 0; left: 0;
+  transform-origin: top left;
+  display: flex; flex-direction: column;
+  padding: 100px;
+  overflow: hidden;
+}
+
+/* ----- Navigation hit areas ----- */
+.nav-zone {
+  position: fixed; top: 0; bottom: 0;
+  width: 22%; cursor: pointer;
+  z-index: 10;
+  display: flex; align-items: center;
+  opacity: 0; transition: opacity 0.18s ease;
+}
+.nav-zone:hover { opacity: 1; }
+.nav-zone.prev { left: 0; justify-content: flex-start; padding-left: 24px; }
+.nav-zone.next { right: 0; justify-content: flex-end; padding-right: 24px; }
+.nav-zone .arrow {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #0e1430;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ----- HUD: bottom progress + counter ----- */
+.hud {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+.hud .bar {
+  height: 3px; background: rgba(255,255,255,0.12);
+  position: relative;
+}
+.hud .bar .fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: #1c2885;
+  transition: width 0.2s ease;
+}
+.hud .bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.08em;
+}
+.hud .bottom .title { font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: -0.005em; }
+.hud .bottom .pager { font-variant-numeric: tabular-nums; font-weight: 600; color: rgba(255,255,255,0.95); }
+
+/* ----- Help overlay (shown briefly on load) ----- */
+.help {
+  position: fixed; top: 18px; right: 24px; z-index: 13;
+  background: rgba(255,255,255,0.92);
+  padding: 8px 14px; font-size: 12px; color: #0e1430;
+  border-radius: 4px;
+  font-weight: 500; letter-spacing: 0.02em;
+  opacity: 0; transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.help.show { opacity: 1; }
+.help kbd {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  background: #f2f3f8; border: 1px solid rgba(0,0,0,0.1);
+  padding: 1px 6px; border-radius: 3px; font-size: 11px;
+}
+.slide.chapter-divider { padding: 120px; background: var(--paper-2); }
+.slide.cover           { padding: 120px; }
+
+/* ----- Head block ----- */
+.chapter-tag {
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+.chapter-tag .ch { margin-right: 10px; }
+.chapter-tag.small { font-size: 22px; }
+
+.slide-title {
+  font-size: 88px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.08;
+  margin: 24px 0 0;
+}
+.slide-title em { font-style: normal; color: var(--accent); }
+
+.slide-lede {
+  font-size: 34px; font-weight: 500; line-height: 1.45;
+  color: var(--muted-2); margin-top: 8px; max-width: 1500px;
+}
+
+.head-gap { height: 64px; flex-shrink: 0; }
+
+/* ----- Body region ----- */
+/* 기본: 컨텐츠는 head 바로 아래에 (위 정렬) */
+.body { flex: 1; display: flex; flex-direction: column; gap: 32px; min-height: 0; }
+.body.body-top    { justify-content: flex-start; }
+/* 명시적으로 아래 정렬이 필요한 슬라이드용 (현재는 사용 안 함) */
+.body.body-bottom { justify-content: flex-end; }
+/* alert/qa 슬라이드: 컨텐츠 가운데 정렬 (살짝 위로 보이도록 padding-bottom) */
+.body.body-center { justify-content: center; align-items: center; text-align: center; padding-bottom: 140px; }
+
+/* ----- Footer bar ----- */
+.footer {
+  position: absolute; left: 100px; right: 100px; bottom: 56px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 18px; color: var(--muted);
+}
+.footer .left { display: flex; gap: 16px; }
+.footer .brand { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+
+/* ----- Cover slide ----- */
+.cover .cover-kicker {
+  font-size: 22px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--accent); text-transform: uppercase;
+}
+.cover .cover-title {
+  font-size: 120px; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin: 32px 0 0;
+}
+.cover .cover-title em { color: var(--accent); font-style: normal; }
+.cover .cover-sub {
+  font-size: 36px; font-weight: 500; color: var(--muted-2);
+  margin-top: 36px; line-height: 1.4; max-width: 1400px;
+}
+.cover .cover-meta {
+  position: absolute; left: 120px; right: 120px; bottom: 120px;
+  border-top: 1px solid var(--line); padding-top: 28px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-size: 22px; color: var(--muted-2);
+}
+.cover .cover-meta .speaker b { color: var(--ink); font-weight: 700; font-size: 26px; display: block; margin-bottom: 6px; }
+
+/* ----- Chapter Divider ----- */
+.chapter-divider .divider-num {
+  font-size: 32px; font-weight: 700; letter-spacing: 0.2em; color: var(--accent);
+}
+.chapter-divider .divider-title {
+  font-size: 104px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+  margin-top: 28px; max-width: 1700px;
+}
+.chapter-divider .divider-sub {
+  font-size: 36px; color: var(--muted-2); margin-top: 4px; max-width: 1500px;
+  font-weight: 500; line-height: 1.45;
+}
+
+/* ----- Pastel Card Grid (N-up) ----- */
+.card-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.card-grid    { display: grid; gap: 20px; }
+.card-grid.cols-2 { grid-template-columns: repeat(2,1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.card-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.card-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.card-grid.cols-6 { grid-template-columns: repeat(6,1fr); gap: 14px; }
+.card-grid.cols-7 { grid-template-columns: repeat(7,1fr); gap: 12px; }
+/* 6/7-up은 카드 안 글자도 작게 */
+.card-grid.cols-6 .card-pastel,
+.card-grid.cols-7 .card-pastel { padding: 22px 18px; }
+.card-grid.cols-6 .card-pastel .card-title,
+.card-grid.cols-7 .card-pastel .card-title { font-size: 22px; }
+.card-grid.cols-6 .card-pastel ul li,
+.card-grid.cols-7 .card-pastel ul li { font-size: 16px; }
+.card-pastel {
+  background: var(--pastel); padding: 32px; display: flex; flex-direction: column;
+}
+.card-pastel .num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em; color: var(--accent);
+  margin-bottom: 18px;
+}
+.card-pastel .card-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 22px;
+}
+.card-pastel ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.card-pastel ul li {
+  font-size: 22px; color: var(--muted-2); line-height: 1.45;
+  padding-left: 20px; position: relative;
+}
+.card-pastel ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+
+/* ----- Stage Flow ----- */
+.stage-row { display: flex; gap: 16px; align-items: stretch; }
+.stage-step {
+  flex: 1; padding: 32px 28px;
+  border: 1px solid var(--line); background: var(--paper);
+  display: flex; flex-direction: column;
+}
+.stage-step .step-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+  margin-bottom: 16px;
+}
+.stage-step .step-name { font-size: 32px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.stage-step .step-desc { font-size: 20px; color: var(--muted-2); line-height: 1.45; }
+.stage-step.highlight {
+  background: var(--ink-2); color: var(--paper); border-color: var(--ink-2);
+}
+.stage-step.highlight .step-num { color: var(--paper); }
+.stage-step.highlight .step-desc { color: rgba(255,255,255,0.78); }
+.stage-arrow {
+  display: flex; align-items: center; font-size: 32px; color: var(--line-2);
+}
+
+/* ----- Alert / Closing ----- */
+.alert-note {
+  font-size: 64px; line-height: 1.35; color: var(--alert);
+  font-weight: 700; letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 1500px;
+}
+.alert-note b { font-weight: 800; }
+
+/* ----- Bullets (text-heavy slide) ----- */
+.bullets {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 22px;
+}
+.bullets li {
+  font-size: 28px; line-height: 1.5; color: var(--ink);
+  padding-left: 28px; position: relative;
+}
+.bullets li::before {
+  content: ""; position: absolute; left: 0; top: 18px;
+  width: 16px; height: 2px; background: var(--accent);
+}
+
+/* ----- Two-column comparison ----- */
+.two-col {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px;
+  height: 100%;
+}
+.two-col .col {
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 36px 32px;
+  display: flex; flex-direction: column;
+}
+.two-col .col.accent {
+  background: var(--pastel); border-color: transparent;
+}
+.two-col .col-num {
+  font-size: 18px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); margin-bottom: 14px;
+}
+.two-col .col-title {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin-bottom: 18px;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.two-col .col-lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 22px;
+}
+.two-col .col ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.two-col .col ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.two-col .col ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* ----- Table of Contents ----- */
+/* column-major: 왼쪽 열을 먼저 채우고 오른쪽 열로 (1,2,3,4 / 5,6,7,8) */
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, auto);
+  gap: 18px 48px;
+}
+.toc-item {
+  display: flex; align-items: baseline; gap: 22px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.toc-num {
+  font-size: 22px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+  min-width: 56px;
+}
+.toc-text {
+  font-size: 28px; font-weight: 500; color: var(--ink);
+  line-height: 1.3; letter-spacing: -0.01em;
+}
+
+/* ----- Speaker profile ----- */
+.speaker-card {
+  display: grid; grid-template-columns: 280px 1fr; gap: 48px;
+  height: 100%;
+}
+.speaker-photo {
+  /* fallback 모드 (사진 없을 때): 이름 첫 글자 표시 */
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 24px; font-weight: 600;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-info .speaker-name {
+  font-size: 56px; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.05; margin-bottom: 12px;
+}
+.speaker-info .speaker-title {
+  font-size: 26px; color: var(--accent); font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 28px;
+}
+.speaker-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;
+}
+.speaker-tag {
+  background: var(--accent-soft); color: var(--accent);
+  padding: 6px 14px; font-size: 18px; font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.speaker-bio {
+  list-style: none; padding: 0; margin: 0; display: grid; gap: 16px;
+}
+.speaker-bio li {
+  font-size: 20px; color: var(--ink); line-height: 1.5;
+  padding-left: 20px; position: relative;
+}
+.speaker-bio li::before {
+  content: ""; position: absolute; left: 0; top: 14px;
+  width: 12px; height: 2px; background: var(--accent);
+}
+.speaker-bio li b { font-weight: 700; color: var(--ink); }
+
+/* ----- Closing / Q&A ----- */
+.qa-big {
+  font-size: 240px; font-weight: 800; letter-spacing: -0.04em;
+  color: var(--accent); line-height: 1;
+}
+.qa-sub {
+  font-size: 32px; color: var(--muted-2); margin-top: 32px;
+  font-weight: 500; line-height: 1.4;
+}
+.qa-contact {
+  font-size: 26px; color: var(--ink); margin-top: 36px;
+  font-weight: 700; letter-spacing: -0.01em;
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--line);
+  background: var(--paper);
+}
+.qa-thanks {
+  font-size: 24px; color: var(--muted-2); margin-top: 28px;
+  font-weight: 500;
+}
+
+/* ============================================================
+ *  Design system meta — color_palette / type_scale
+ * ============================================================ */
+
+/* ----- color_palette — 컬러 스와치 그리드 ----- */
+.cp-grid { display: grid; gap: 18px; flex: 1; }
+.cp-grid.cols-3 { grid-template-columns: repeat(3,1fr); }
+.cp-grid.cols-4 { grid-template-columns: repeat(4,1fr); }
+.cp-grid.cols-5 { grid-template-columns: repeat(5,1fr); }
+.cp-swatch {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.cp-chip {
+  height: 180px;
+  display: flex; align-items: flex-end; padding: 18px;
+  font-size: 18px; font-weight: 700; letter-spacing: 0.05em;
+}
+.cp-body {
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 14px;
+}
+.cp-body .role { color: var(--ink); font-weight: 600; }
+.cp-body .hex {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted-2); font-size: 13px;
+}
+.cp-body .token {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: var(--muted); font-size: 12px;
+}
+
+/* ----- type_scale — 타이포그래피 위계 테이블 ----- */
+.ts-table {
+  display: grid; grid-template-columns: 1fr 2fr;
+  border-top: 1px solid var(--line);
+  flex: 1;
+}
+.ts-row { display: contents; }
+.ts-row > div {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.ts-meta {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px; color: var(--muted-2); line-height: 1.7;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ts-meta b {
+  color: var(--ink);
+  font-family: "Pretendard Variable","Pretendard",sans-serif;
+  display: block; font-size: 16px; margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.ts-sample { display: flex; align-items: center; }
+.ts-sample > span { width: 100%; }
+
+/* ============================================================
+ *  새 추가 6종 템플릿 (디자인 다양화)
+ * ============================================================ */
+
+/* ----- 1. checklist — 번호 리스트 + 박스 테두리 ----- */
+.checklist-frame {
+  border: 1px solid var(--ink);
+  padding: 56px 64px;
+  display: flex; flex-direction: column;
+  height: 100%;
+}
+.checklist-frame .ck-title {
+  font-size: 40px; font-weight: 800; letter-spacing: -0.01em;
+  line-height: 1.2; margin: 0 0 14px;
+}
+.checklist-frame .ck-title em { font-style: normal; color: var(--accent); }
+.checklist-frame .ck-sub {
+  font-size: 24px; color: var(--ink); font-weight: 400;
+  margin: 0 0 38px;
+}
+.checklist-frame ol {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 18px;
+}
+.checklist-frame ol li {
+  font-size: 26px; line-height: 1.5; color: var(--ink); font-weight: 400;
+}
+.checklist-frame ol li.emphasis {
+  font-weight: 700; text-decoration: underline; text-underline-offset: 4px;
+  color: var(--ink);
+}
+
+/* ----- 2. summary_takeaway — 3 카드 + 하단 takeaway 바 ----- */
+.summary-head {
+  display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: baseline;
+  margin-bottom: 36px;
+}
+.summary-head .num {
+  font-size: 24px; font-weight: 700; color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.summary-head .lead {
+  font-size: 32px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.summary-cards { display: grid; gap: 28px; grid-template-columns: repeat(3,1fr); flex: 1; }
+.summary-cards.cols-2 { grid-template-columns: repeat(2,1fr); }
+.summary-cards.cols-4 { grid-template-columns: repeat(4,1fr); }
+.summary-card {
+  display: flex; flex-direction: column;
+  border-bottom: 1px solid var(--ink);
+}
+.summary-card .head {
+  background: var(--pastel);
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 700; line-height: 1.25;
+  color: var(--ink); letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+.summary-card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; flex: 1; }
+.summary-card ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.summary-card ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--accent);
+}
+.summary-card ul li b { font-weight: 700; color: var(--accent); }
+.summary-takeaway {
+  margin-top: 28px;
+  background: var(--accent); color: var(--paper);
+  padding: 28px 32px;
+  font-size: 28px; font-weight: 700; text-align: center;
+  letter-spacing: -0.01em; line-height: 1.4;
+}
+
+/* ----- 3. dual_panel — 두 색 헤더 + 분할 패널 (navy + red) ----- */
+.dp-head {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 32px;
+  align-items: baseline;
+}
+.dp-head .num {
+  font-size: 26px; font-weight: 700; color: var(--accent);
+}
+.dp-head .lead {
+  font-size: 30px; font-weight: 700; color: var(--ink); text-align: center;
+  letter-spacing: -0.01em;
+}
+.dp-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid var(--line);
+  flex: 1;
+}
+.dp-pane { display: flex; flex-direction: column; }
+.dp-pane.left { border-right: 1px solid var(--line); }
+.dp-header {
+  padding: 22px 16px;
+  text-align: center;
+  font-size: 28px; font-weight: 800;
+  color: var(--paper); letter-spacing: -0.01em;
+}
+.dp-header.navy { background: var(--accent); }
+.dp-header.red  { background: var(--alert); }
+.dp-body {
+  padding: 32px 36px;
+  flex: 1; display: flex; flex-direction: column; gap: 22px;
+}
+.dp-body.tint-blue { background: rgba(234,241,251,0.45); }
+.dp-body.tint-red  { background: rgba(251,234,233,0.55); }
+.dp-section {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-bottom: 18px;
+}
+.dp-section + .dp-section { border-top: 1px solid var(--line); padding-top: 18px; }
+.dp-section .sec-title {
+  font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0;
+}
+.dp-section .sec-title.navy { color: var(--accent); }
+.dp-section .sec-title.red  { color: var(--alert); }
+.dp-section ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.dp-section ul li {
+  font-size: 20px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.dp-section ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.dp-section ul li b { font-weight: 700; }
+.dp-foot {
+  margin-top: auto;
+  font-size: 16px; color: var(--muted-2); line-height: 1.5;
+  padding-top: 14px;
+}
+.dp-foot::before { content: "* "; }
+
+/* ----- 4. case_grid_4 — 2x2 카드 격자 (blue/red 교차) ----- */
+.cg4 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--ink);
+  flex: 1;
+}
+.cg4 .cell {
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 14px;
+  border-bottom: 1px solid var(--ink);
+  position: relative;
+}
+.cg4 .cell:nth-child(odd)  { border-right: 1px solid var(--ink); background: var(--pastel); }
+.cg4 .cell:nth-child(even) { background: var(--pastel-red); }
+.cg4 .cell .ct {
+  font-size: 26px; font-weight: 700; line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.cg4 .cell:nth-child(odd) .ct  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .ct { color: var(--alert); }
+.cg4 .cell ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.cg4 .cell ul li {
+  font-size: 19px; line-height: 1.5; color: var(--ink);
+  padding-left: 18px; position: relative;
+}
+.cg4 .cell ul li::before {
+  content: "•"; position: absolute; left: 0; top: 0; color: var(--ink);
+}
+.cg4 .cell .arrow {
+  font-size: 20px; font-weight: 700; line-height: 1.4;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+.cg4 .cell:nth-child(odd) .arrow  { color: var(--accent); }
+.cg4 .cell:nth-child(even) .arrow { color: var(--alert); }
+.cg4 .cell .arrow::before { content: "→ "; font-weight: 700; }
+
+/* ----- 5. case_analysis — 자료 + 합격 포인트 + 결론 박스 ----- */
+.ca-grid {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 48px;
+  flex: 1; min-height: 0;
+}
+.ca-ref {
+  background: var(--paper-2);
+  padding: 32px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.ca-ref .ref-title {
+  font-size: 22px; font-weight: 700; margin: 0 0 18px;
+  letter-spacing: -0.01em;
+}
+.ca-ref .ref-image { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ca-ref .ref-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ca-ref .ref-text {
+  font-size: 14px; color: var(--ink); line-height: 1.6;
+  white-space: pre-wrap; flex: 1; overflow: hidden;
+}
+.ca-ref .ref-text mark {
+  background: var(--highlight); padding: 1px 2px;
+  color: var(--ink);
+}
+.ca-points {
+  display: flex; flex-direction: column; gap: 22px;
+}
+.ca-point {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ca-point .pt-label {
+  display: inline-block;
+  background: var(--accent); color: var(--paper);
+  padding: 4px 14px;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.01em;
+  width: fit-content;
+}
+.ca-point .pt-text {
+  font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;
+}
+.ca-conclusion {
+  background: transparent;
+  padding: 22px 0 8px;
+  font-size: 30px; font-weight: 700; line-height: 1.45;
+  color: var(--accent);
+  margin-top: auto;
+  border-top: 2px solid var(--accent);
+  letter-spacing: -0.01em;
+}
+.ca-conclusion b { font-weight: 800; color: var(--ink); }
+
+/* ----- 6. pipeline_matrix — 3-stage horizontal 파이프라인 ----- */
+.pm-row {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr 50px 1fr;
+  gap: 0;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+.pm-row + .pm-row { margin-top: 4px; }
+.pm-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; font-weight: 700; color: var(--ink);
+}
+.pm-cell {
+  background: var(--ink); color: var(--paper);
+  padding: 20px 18px;
+  text-align: center;
+  font-size: 22px; font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; justify-content: center;
+}
+.pm-cell.empty { background: transparent; }
+.pm-cell-row {
+  display: grid; gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+.pm-multi {
+  display: grid; gap: 6px;
+}
+.pm-sub-group {
+  display: grid; grid-template-columns: 1fr; gap: 4px;
+}
+.pm-sub-group .pm-cell { padding: 14px 12px; font-size: 18px; }
+.pm-sub-cells {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.pm-sub-cells .pm-cell { padding: 10px 8px; font-size: 16px; font-weight: 600; }
+.pm-note {
+  position: absolute; right: 100px; top: 50%; transform: translateY(-65%);
+  font-size: 22px; font-weight: 700; color: var(--ink); font-style: italic;
+  text-align: center; max-width: 240px; line-height: 1.4;
+}
+
+/* ----- Image slides ----- */
+.slide.image-full {
+  padding: 0;
+  background: #0e1430;
+}
+.slide.image-full .img-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 60px;
+}
+.slide.image-full .img-wrap img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.slide.image-full.bg-light { background: var(--paper-2); }
+.slide.image-full.bg-light .img-wrap img { box-shadow: 0 6px 24px rgba(28,40,133,0.18); }
+.slide.image-full .image-caption {
+  background: var(--paper);
+  padding: 24px 100px;
+  border-top: 1px solid var(--line);
+  font-size: 22px; color: var(--muted-2);
+  line-height: 1.45;
+}
+.slide.image-full .image-caption b { color: var(--ink); font-weight: 700; }
+
+/* image with header (chapter + title above image) */
+.slide.image-headed { padding: 80px 100px 100px; }
+.slide.image-headed .img-zone {
+  flex: 1;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 32px;
+  margin-top: 28px;
+}
+.slide.image-headed .img-zone img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+.image-split {
+  display: grid; gap: 48px; height: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.image-split.left  { grid-template-areas: 'img text'; }
+.image-split.right { grid-template-areas: 'text img'; }
+.image-split .img-pane {
+  grid-area: img;
+  background: var(--paper-2); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; padding: 24px;
+}
+.image-split .img-pane img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.image-split .text-pane {
+  grid-area: text;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.image-split .text-pane h3 {
+  font-size: 32px; font-weight: 700; line-height: 1.25;
+  margin: 0 0 18px; letter-spacing: -0.01em;
+}
+.image-split .text-pane .lede {
+  font-size: 22px; color: var(--muted-2); line-height: 1.5;
+  margin-bottom: 24px;
+}
+.image-split .text-pane ul {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 14px;
+}
+.image-split .text-pane ul li {
+  font-size: 22px; color: var(--ink); line-height: 1.45;
+  padding-left: 22px; position: relative;
+}
+.image-split .text-pane ul li::before {
+  content: ""; position: absolute; left: 0; top: 16px;
+  width: 13px; height: 2px; background: var(--accent);
+}
+
+/* Speaker photo with image: 박스/프레임 없이 사진만 깔끔하게 */
+.speaker-photo.has-image {
+  background: transparent;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  width: 280px; aspect-ratio: 3/4;
+}
+.speaker-photo.has-image img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;  /* 인물 사진은 위쪽 비중 — 얼굴이 잘 보이도록 */
+  display: block;
+}
+
+/* ----- Compare table (3-col with row labels) ----- */
+.compare-table {
+  display: grid; gap: 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.compare-row {
+  display: grid; grid-template-columns: 280px 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row > div {
+  padding: 26px 28px;
+  border-right: 1px solid var(--line);
+  font-size: 22px; line-height: 1.45; color: var(--ink);
+}
+.compare-row > div:last-child { border-right: none; }
+.compare-row.head > div {
+  background: var(--paper-2);
+  font-weight: 700; font-size: 22px;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.compare-row.head > div:first-child {
+  font-size: 14px; font-weight: 700; letter-spacing: 0.16em;
+  color: var(--accent); text-transform: uppercase;
+}
+.compare-row > div.label {
+  background: var(--paper-2);
+  font-size: 14px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.compare-row > div.cell {
+  font-size: 22px; color: var(--ink); font-weight: 500; line-height: 1.45;
+}
+.compare-row > div.cell.accent {
+  background: var(--pastel); color: var(--ink);
+}
+.compare-conclusion {
+  margin-top: 28px;
+  padding: 20px 28px;
+  background: var(--accent); color: var(--paper);
+  font-size: 24px; font-weight: 600; letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.compare-conclusion b { font-weight: 800; }
+
+/* ===== concept_pill — 알약 컨테이너 + 원형 요소 (A + B + C 공식형) ===== */
+.concept-pill {
+  position: relative;
+  width: 58%;                       /* 기본(3요소): 더 컴팩트하게 */
+  margin: 0 auto;
+  background: var(--accent);
+  border-radius: 999px;            /* stadium / pill */
+  padding: 28px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 12px 36px rgba(28,40,133,0.18);
+}
+.concept-pill .cp-circle {
+  flex: 1 1 0;
+  aspect-ratio: 1 / 1;
+  background: var(--paper-2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  padding: 10px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+  word-break: keep-all;
+}
+.concept-pill .cp-op {
+  flex: 0 0 auto;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--paper);
+  opacity: 0.9;
+  line-height: 1;
+}
+.concept-pill-row {
+  display: flex;
+  width: 58%;
+  margin: 18px auto 0;
+  gap: 16px;
+  padding: 0 36px;       /* match pill horizontal padding so labels align under circles */
+  box-sizing: border-box;
+}
+.concept-pill-row .cp-desc {
+  flex: 1 1 0;
+  text-align: center;
+  font-size: 22px;        /* 서브 텍스트 키움 */
+  color: var(--muted-2);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.concept-pill-row .cp-spacer {
+  flex: 0 0 auto;
+  width: 30px;            /* matches operator width */
+}
+
+/* 2요소: 가장 작게 */
+.concept-pill.cols-2 { width: 46%; }
+.concept-pill.cols-2 .cp-circle { font-size: 32px; }
+.concept-pill.cols-2 + .concept-pill-row { width: 46%; }
+
+/* 4요소: 가로폭 더 필요 (현재 적정) */
+.concept-pill.cols-4 { width: 72%; padding: 26px 34px; }
+.concept-pill.cols-4 .cp-circle { font-size: 30px; }
+.concept-pill.cols-4 + .concept-pill-row { width: 72%; padding: 0 34px; }
+.concept-pill.cols-4 + .concept-pill-row .cp-desc { font-size: 22px; }
+
+/* ===== priority_matrix — 기호(◎/○/△) 매트릭스 + 행 강조 + 결론 배너 ===== */
+.priority-matrix-wrap { width: 100%; }
+.priority-legend {
+  display: flex; gap: 22px; justify-content: flex-end;
+  font-size: 16px; color: var(--muted-2); margin-bottom: 8px;
+}
+.priority-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.priority-legend b { color: var(--ink); font-weight: 700; }
+.priority-matrix {
+  display: grid;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.priority-matrix > div {
+  padding: 18px 8px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--ink);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+}
+.priority-matrix > div:last-child,
+.priority-matrix > div.row-end { border-right: none; }
+.priority-matrix .pm-head {
+  background: var(--accent); color: var(--paper);
+  font-weight: 700; letter-spacing: -0.01em;
+  padding: 16px 8px; font-size: 20px;
+}
+.priority-matrix .pm-row-label {
+  background: var(--paper-2);
+  font-weight: 600; color: var(--ink);
+  font-size: 19px; text-align: center;
+}
+.priority-matrix .pm-symbol {
+  font-size: 26px; color: var(--ink);
+  font-weight: 600;
+}
+.priority-matrix .pm-symbol.muted { color: var(--muted); font-weight: 400; }
+.priority-matrix .pm-row.is-highlight > div {
+  background: rgba(28,40,133,0.06);
+  outline: 2px dashed var(--accent);
+  outline-offset: -3px;
+}
+.priority-conclusion {
+  margin-top: 22px;
+  padding: 18px 28px;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.priority-conclusion b { font-weight: 800; }
+
+/* ===== step_compare — 두 카드 + 숫자 뱃지 단계 비교 ===== */
+.step-compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+  width: 100%;
+}
+.step-compare .sc-card {
+  background: var(--ink); color: var(--paper);
+  border-radius: 18px;
+  padding: 32px 36px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.step-compare .sc-card.accent { background: var(--accent); }
+.step-compare .sc-head {
+  display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.step-compare .sc-label {
+  font-size: 20px; font-weight: 800; letter-spacing: -0.01em;
+}
+.step-compare .sc-sub {
+  font-size: 15px; opacity: 0.8;
+}
+.step-compare .sc-list { display: flex; flex-direction: column; gap: 12px; }
+.step-compare .sc-item {
+  display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: start;
+}
+.step-compare .sc-num {
+  background: rgba(255,255,255,0.16);
+  color: var(--paper);
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+}
+.step-compare .sc-card.accent .sc-num { background: rgba(255,255,255,0.22); }
+.step-compare .sc-text .sc-title { font-size: 19px; font-weight: 700; line-height: 1.35; }
+.step-compare .sc-text .sc-desc  { font-size: 15px; opacity: 0.78; margin-top: 4px; line-height: 1.4; }
+.step-compare-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 20px;
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+.step-compare-footer b { font-style: normal; font-weight: 800; }
+
+/* ===== before_after — 두 인용 박스 + 가운데 화살표 ===== */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 50px 1fr;
+  gap: 0;
+  align-items: stretch;
+  width: 100%;
+}
+.before-after .ba-box {
+  border: 2px solid var(--fail);
+  border-radius: 14px;
+  padding: 28px 30px;
+  background: var(--paper);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.before-after .ba-box.after { border-color: var(--accent); }
+.before-after .ba-label {
+  font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+  color: var(--fail);
+}
+.before-after .ba-box.after .ba-label { color: var(--accent); }
+.before-after .ba-quote {
+  font-size: 18px; line-height: 1.6; color: var(--ink);
+  font-style: italic;
+}
+.before-after .ba-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; color: var(--accent); font-weight: 300;
+}
+.before-after-note {
+  margin-top: 22px;
+  font-size: 17px; color: var(--muted-2);
+  text-align: center; line-height: 1.5;
+}
+.before-after-source {
+  margin-top: 8px;
+  font-size: 13px; color: var(--muted);
+  text-align: right; font-style: italic;
+}
+
+/* ===== tagged_rows — 좌측 컬러 라벨 + 가로 행 비교 ===== */
+.tagged-rows { width: 100%; }
+.tagged-row {
+  display: grid;
+  grid-template-columns: 220px 1fr 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tagged-row:last-of-type { border-bottom: none; }
+.tagged-row .tr-tag {
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 14px 18px;
+  border-radius: 8px;
+  font-size: 19px; font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.tagged-row .tr-mid {
+  font-size: 19px; color: var(--ink); line-height: 1.5;
+}
+.tagged-row .tr-end {
+  font-size: 19px; color: var(--muted-2); line-height: 1.5;
+}
+.tagged-conclusion {
+  margin-top: 22px;
+  padding: 16px 28px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 19px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.tagged-conclusion b { font-weight: 800; }
+
+/* ===== case_profile — 좌 PROFILE 키-값 + 우 번호 findings + Key Insight ===== */
+.case-profile {
+  display: grid;
+  grid-template-columns: 460px 1fr;   /* profile 더 크게, findings 살짝 좁게 */
+  gap: 28px;
+  width: 100%;
+}
+.case-profile .cp-profile {
+  background: var(--paper-2);
+  padding: 32px 36px;
+  border-radius: 14px;
+  display: flex; flex-direction: column; gap: 18px;
+}
+.case-profile .cp-profile-head {
+  font-size: 19px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+.case-profile .cp-kv {
+  display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: baseline;
+}
+.case-profile .cp-key {
+  font-size: 17px; color: var(--muted); font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.case-profile .cp-val {
+  font-size: 22px; color: var(--ink); font-weight: 700; line-height: 1.4;
+}
+.case-profile .cp-findings {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 32px 36px;            /* PROFILE 카드와 동일한 padding */
+  display: flex; flex-direction: column; gap: 18px;
+}
+.case-profile .cp-findings-head {
+  font-size: 19px; font-weight: 800; color: var(--accent);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.case-profile .cp-finding {
+  display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start;
+}
+.case-profile .cp-num {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--accent); color: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+}
+.case-profile .cp-finding-title {
+  font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1.35;
+}
+.case-profile .cp-finding-sub {
+  font-size: 16px; color: var(--muted-2); margin-top: 6px; line-height: 1.5;
+}
+.case-insight {
+  margin-top: 44px;        /* Key Insight 더 내림 */
+  padding: 20px 32px;
+  background: var(--highlight);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 21px; color: var(--ink); font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.case-insight b { font-weight: 800; }
+
+
+/* ----- Edit mode styling ----- */
+body.edit-mode [data-edit] {
+  outline: 1px dashed transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.12s ease;
+  cursor: text;
+}
+body.edit-mode [data-edit]:hover { outline-color: rgba(28,40,133,0.45); }
+body.edit-mode [data-edit]:focus {
+  outline: 2px solid #1c2885;
+  background: rgba(234,241,251,0.45);
+}
+body.edit-mode .nav-zone { display: none !important; }
+
+#edit-bar {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 14;
+  display: none; gap: 8px; padding: 8px;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(28,40,133,0.18);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  font-size: 13px;
+}
+#edit-bar.show { display: flex; }
+#edit-bar button {
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px; border: 1px solid rgba(28,40,133,0.2);
+  background: #fff; color: #0e1430; cursor: pointer;
+  letter-spacing: -0.005em;
+}
+#edit-bar button:hover { background: #f2f3f8; }
+#edit-bar button.primary { background: #1c2885; color: #fff; border-color: #1c2885; }
+#edit-bar button.primary:hover { background: #0e1430; }
+#edit-bar .hint { font-size: 11px; color: #737991; padding: 0 8px; align-self: center; }
+
+#edit-toggle {
+  position: fixed; top: 16px; left: 16px; z-index: 13;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.94); color: #0e1430;
+  border: 1px solid rgba(28,40,133,0.18); border-radius: 4px;
+  cursor: pointer; letter-spacing: -0.005em;
+}
+#edit-toggle:hover { background: #fff; }
+
+#toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: #0e8a4f; color: #fff;
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  border-radius: 4px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 15; letter-spacing: -0.005em;
+}
+#toast.show { opacity: 1; }
+
+/* ===== Print mode (Cmd+P → PDF로 저장) ===== */
+@media print {
+  html, body { background: #fff !important; height: auto !important; overflow: visible !important; }
+  .viewer { position: static !important; display: block !important; }
+  .stage { box-shadow: none !important; width: 1920px !important; height: auto !important; }
+  .slide-wrap {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important; visibility: visible !important;
+    width: 1920px !important; height: 1080px !important;
+    page-break-after: always; break-after: page;
+    display: block !important;
+  }
+  .slide-wrap:last-child { page-break-after: auto; }
+  .slide {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    transform: none !important;
+  }
+  .nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast { display: none !important; }
+  @page { size: 1920px 1080px; margin: 0; }
+}
+</style>
+<style id="figma-export">
+/* ===== Figma export mode (all slides visible vertically, no JS) ===== */
+html, body {
+  background: #fff !important;
+  height: auto !important;
+  width: 1920px !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.viewer {
+  position: static !important;
+  display: block !important;
+  padding: 0 !important;
+  inset: auto !important;
+  width: 1920px !important;
+  height: auto !important;
+}
+.stage {
+  box-shadow: none !important;
+  width: 1920px !important;
+  height: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  position: static !important;
+}
+.slide-wrap, .slide-wrap.is-active {
+  position: relative !important;
+  inset: auto !important;
+  top: auto !important; left: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  width: 1920px !important;
+  height: 1080px !important;
+  display: block !important;
+  margin: 0 0 40px 0 !important;
+  transition: none !important;
+}
+.slide {
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 1920px !important;
+  height: 1080px !important;
+  transform: none !important;
+}
+/* hide UI chrome */
+.nav-zone, .hud, #help, #edit-toggle, #edit-bar, #toast,
+.viewer > .controls, .footer-bar { display: none !important; }
+</style>
+</head><body>
+<div class="viewer">
+  <div id="stage" class="stage">
+    <div class="slide-wrap is-active" data-idx="1">
+    <section class="slide cover">
+      <div class="cover-kicker" data-edit="meta.event_label">ZEROBASE 온라인 취업 박람회</div>
+      <div class="cover-title">
+        <span data-edit="meta.title">대기업 인사팀이 알려주는</span><br>
+        <em data-edit="meta.title_em">연차별 이력서·자소서·포트폴리오 작성법</em>
+      </div>
+      <div class="cover-sub" data-edit="meta.subtitle">어썸원 — 13년차 HRer가 전하는 합격 서류의 모든 것.</div>
+      <div class="cover-meta">
+        <div class="speaker">
+          <b data-edit="meta.speaker.name">어썸원</b>
+          <span data-edit="meta.speaker.title">IT 대기업 HR Senior Manager · 13년차</span>
+        </div>
+        <div><span data-edit="meta.date">2026.05.13</span> · <span data-edit="meta.session">어썸원 발표자료</span></div>
+      </div>
+    </section></div><div class="slide-wrap is-active" data-idx="2">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[1].chapter">강사 소개</div>
+      <h2 class="slide-title" data-edit="slides[1].title">어썸원 — <em>Connecting the Dots</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="speaker-card">
+        <div class="speaker-photo">어</div>
+        <div class="speaker-info">
+          <div class="speaker-name" data-edit="slides[1].speaker.name">어썸원</div>
+          <div class="speaker-title" data-edit="slides[1].speaker.title">IT 대기업 HR Senior Manager · 13년차 HRer</div>
+          <div class="speaker-tags"><span class="speaker-tag" data-edit="slides[1].speaker.tags[0]">#대기업/스타트업 13년차 HRer</span><span class="speaker-tag" data-edit="slides[1].speaker.tags[1]">#ENFJ</span><span class="speaker-tag" data-edit="slides[1].speaker.tags[2]">#완료주의자</span><span class="speaker-tag" data-edit="slides[1].speaker.tags[3]">@up_someone</span></div>
+          <ul class="speaker-bio"><li data-edit="slides[1].speaker.bio[0]">1번의 창업, 2번의 이직, 3가지 Side Job, 4가지 직무 경험</li><li data-edit="slides[1].speaker.bio[1]">현) IT 대기업 HR Senior Manager — 채용·조직문화·평가보상·Global HR·HRBP</li><li data-edit="slides[1].speaker.bio[2]">사람인 HR 연구소 직무 E-learning 강의 3편 · 국토부 스타트업 엑셀러레이팅 강의</li><li data-edit="slides[1].speaker.bio[3]">제로베이스 HR 취업 스쿨 전담 멘토 · 캠퍼스픽 Edu 강의 · 넷플연가 운영</li><li data-edit="slides[1].speaker.bio[4]">100명 이상 커리어 상담 및 이직 컨설팅 진행</li></ul>
+        </div>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">02 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="3">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[2].chapter">Contents</div>
+      <h2 class="slide-title" data-edit="slides[2].title" data-edit-html="1">오늘 다루는 <em>3가지</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="toc-grid">
+        <div class="toc-item">
+          <span class="toc-num">01</span>
+          <span class="toc-text" data-edit="slides[2].items[0]">HR이 알려주는 합격의 첫 관문, 서류전형의 의미</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">02</span>
+          <span class="toc-text" data-edit="slides[2].items[1]">바로 쓸 수 있는 서류 작성 공식</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">03</span>
+          <span class="toc-text" data-edit="slides[2].items[2]">백전백승 연차별·상황별 서류 합격 전략</span>
+        </div>
+        <div class="toc-item">
+          <span class="toc-num">04</span>
+          <span class="toc-text" data-edit="slides[2].items[3]">Q&A</span>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">03 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="4">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[3].ch">PART 01</div>
+      <h1 class="divider-title" data-edit="slides[3].title" data-edit-html="1">서류전형의 의미</h1>
+      <p class="divider-sub" data-edit="slides[3].sub">HR이 알려주는 합격의 첫 관문.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">04 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="5">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[4].chapter">PART 01 · 5~6월 채용 시즌</div>
+      <h2 class="slide-title" data-edit="slides[4].title" data-edit-html="1">HR 담당자가 전하는 <em>5~6월 채용 시즌 특징</em></h2>
+      <p class="slide-lede" data-edit="slides[4].lede">공채 끝나고 시작된 수시채용 시즌. 준비된 사람에게 가장 유리한 타이밍입니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[4].cards[0].title">지원자 수가 줄어듭니다</div>
+          <ul><li data-edit="slides[4].cards[0].items[0]">공채 시즌 대비 풀 20~30% 감소</li><li data-edit="slides[4].cards[0].items[1]">같은 실력이면 지금 내는 서류가 유리</li><li data-edit="slides[4].cards[0].items[2]">(원하는 공고가 마감되거나 안 뜰 수도 있음)</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[4].cards[1].title">이력서를 더 꼼꼼히 봅니다</div>
+          <ul><li data-edit="slides[4].cards[1].items[0]">공채는 30초 컷이 많지만</li><li data-edit="slides[4].cards[1].items[1]">수시엔 한 장에 <b>2~3분</b>씩 검토 가능</li><li data-edit="slides[4].cards[1].items[2]">잘 쓴 서류가 빛을 발하는 시기</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[4].cards[2].title">스펙 컷이 느슨해집니다</div>
+          <ul><li data-edit="slides[4].cards[2].items[0]">지원자가 적으면 학점·어학으로 필터링 불가</li><li data-edit="slides[4].cards[2].items[1]"><b>서류 내용 + 직무 적합성</b> 위주</li><li data-edit="slides[4].cards[2].items[2]">집중 검토되는 시기</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[4].cards[3].title">프로세스가 빠릅니다</div>
+          <ul><li data-edit="slides[4].cards[3].items[0]">수시 = 당장 함께 일할 사람이 필요한 자리</li><li data-edit="slides[4].cards[3].items[1]">서류 통과 시 <b>한 달 내</b> 최종 결과</li><li data-edit="slides[4].cards[3].items[2]">빠른 결정 가능</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[4].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[4].cards[4].title">경쟁자가 방심합니다</div>
+          <ul><li data-edit="slides[4].cards[4].items[0]">‘하반기 준비해야지’ 흘려보냄</li><li data-edit="slides[4].cards[4].items[1]">제대로 준비된 서류를 내는 사람이 <b>적음</b></li><li data-edit="slides[4].cards[4].items[2]">지금이 기회</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">05 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="6">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[5].chapter">PART 01 · 질문</div>
+      <h2 class="slide-title" data-edit="slides[5].title" data-edit-html="1"><em>어느 서류</em>가 가장 중요할까요?</h2>
+      <p class="slide-lede" data-edit="slides[5].lede">이력서·경력기술서 / 자소서 / 포트폴리오 — 인사담당자가 가장 먼저 보는 건?</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[5].alert" data-edit-html="1"><b>관점에 따라 답이 달라집니다.</b>
+HR의 시선과 협업부서의 시선은 같지 않아요.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">06 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="7">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[6].chapter">PART 01 · 서류의 우선순위</div>
+      <h2 class="slide-title" data-edit="slides[6].title" data-edit-html="1">관점이 다르면 <em>중요도 순서</em>가 바뀐다</h2>
+      <p class="slide-lede" data-edit="slides[6].lede">같은 서류여도 보는 사람이 누구냐에 따라 평가 가중치가 달라집니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[6].cols[0].num">HR 담당자</div>
+          <div class="col-title" data-edit="slides[6].cols[0].title">인사담당자 관점</div>
+          
+          <ul><li data-edit="slides[6].cols[0].items[0]"><b>이력서 · 경력기술서</b>가 1순위</li><li data-edit="slides[6].cols[0].items[1]">포트폴리오는 보조 검증 자료</li><li data-edit="slides[6].cols[0].items[2]">자소서는 마지막에 톤·태도 확인</li><li data-edit="slides[6].cols[0].items[3]">정량 데이터·직무 적합성 우선</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[6].cols[1].num">협업부서</div>
+          <div class="col-title" data-edit="slides[6].cols[1].title">현업 부서 관점</div>
+          <div class="col-lede" data-edit="slides[6].cols[1].lede">함께 일할 사람을 가리는 시선.</div>
+          <ul><li data-edit="slides[6].cols[1].items[0]"><b>포트폴리오</b>가 1순위</li><li data-edit="slides[6].cols[1].items[1]">이력서·경력기술서로 깊이 검증</li><li data-edit="slides[6].cols[1].items[2]">자소서는 컬처핏 보조 자료</li><li data-edit="slides[6].cols[1].items[3]">실제 결과물·문제 해결 방식 우선</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">07 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="8">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[7].chapter">PART 01 · 질문</div>
+      <h2 class="slide-title" data-edit="slides[7].title" data-edit-html="1">연차별로는 <em>어떤 서류</em>가 가장 중요할까요?</h2>
+      <p class="slide-lede" data-edit="slides[7].lede">주니어 / 중니어 / 시니어 — 연차에 따라 검증 포인트가 완전히 달라집니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[7].alert" data-edit-html="1"><b>연차별 전략을 모르면, 잘 쓴 서류도 탈락합니다.</b></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">08 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="9">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[8].chapter">PART 01 · 연차별 중요도</div>
+      <h2 class="slide-title" data-edit="slides[8].title" data-edit-html="1">연차별로 다른 <em>서류 전형의 중요성</em></h2>
+      <p class="slide-lede" data-edit="slides[8].lede">연차에 맞는 서류 전략을 세워야 합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[8].cards[0].num">주니어<br>0~3년차</div>
+          <div class="card-title" data-edit="slides[8].cards[0].title">포트폴리오가 핵심</div>
+          <ul><li data-edit="slides[8].cards[0].items[0]">경험 자체가 적어 <b>‘어떻게 생각·판단하는가’</b>를 보여줘야 함</li><li data-edit="slides[8].cards[0].items[1]">이력서 — 프로젝트 경험 엔드가 중요</li><li data-edit="slides[8].cards[0].items[2]">자소서 — 기본 보조 자료</li><li data-edit="slides[8].cards[0].items[3]">포트폴리오 — 경험의 유사성 어필·증명</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[8].cards[1].num">중니어<br>4~7년차</div>
+          <div class="card-title" data-edit="slides[8].cards[1].title">경력기술서가 핵심</div>
+          <ul><li data-edit="slides[8].cards[1].items[0]"><b>책임 범위와 의사결정 근거</b>를 증명</li><li data-edit="slides[8].cards[1].items[1]">이력서·경력기술서 — 가장 중요한 지원 서류</li><li data-edit="slides[8].cards[1].items[2]">포트폴리오 — 보조적 증거 자료</li><li data-edit="slides[8].cards[1].items[3]">스토리텔링보다 임팩트</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[8].cards[2].num">시니어<br>8년차+</div>
+          <div class="card-title" data-edit="slides[8].cards[2].title">경력기술서 + 레퍼런스</div>
+          <ul><li data-edit="slides[8].cards[2].items[0]"><b>커리어 전문성과 조직 임팩트</b></li><li data-edit="slides[8].cards[2].items[1]">이력서 — 조직 임팩트 중심</li><li data-edit="slides[8].cards[2].items[2]">포트폴리오 — 선택적 제출</li><li data-edit="slides[8].cards[2].items[3]">레퍼런스가 강력한 무기</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">09 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="10">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[9].chapter">PART 01 · 본질</div>
+      <h2 class="slide-title" data-edit="slides[9].title" data-edit-html="1">이력서·자소서·포트폴리오의 <em>본질은 같다</em></h2>
+      <p class="slide-lede" data-edit="slides[9].lede">내가 보여주고 싶은 Tool < 보여줘야 하는 Tool.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[9].alert" data-edit-html="1"><b>내가 해왔던 경험들이 ‘이 회사 직무 수행에 적합하다’</b>는 것을
+증명해내는 것 — 이게 모든 서류의 공통 본질입니다.</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">10 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="11">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[10].chapter">PART 01 · 관점 전환</div>
+      <h2 class="slide-title" data-edit="slides[10].title" data-edit-html="1">관점을 <em>바꾸면</em> 서류가 달라진다</h2>
+      <p class="slide-lede" data-edit="slides[10].lede" data-edit-html="1">같은 경험을 어떻게 풀어내느냐가 합격과 탈락을 가릅니다.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="before-after">
+          <div class="ba-box before">
+            <div class="ba-label" data-edit="slides[10].before.label">BEFORE · 내가 보여주고 싶은 Tool</div>
+            <div class="ba-quote" data-edit="slides[10].before.quote" data-edit-html="1">“경험을 나열하는 문서, 스펙을 강조하는 자료. 내가 해온 것을 빠짐없이 적자.”</div>
+          </div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-box after">
+            <div class="ba-label" data-edit="slides[10].after.label">AFTER · 보여줘야 하는 Tool</div>
+            <div class="ba-quote" data-edit="slides[10].after.quote" data-edit-html="1">“역할과 판단을 증명하는 문서, 문제 해결 능력을 보여주는 자료. 직무 적합성을 증명하자.”</div>
+          </div>
+        </div>
+        
+        
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">11 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="12">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[11].chapter">PART 01 · HR이 보는 3가지</div>
+      <h2 class="slide-title" data-edit="slides[11].title" data-edit-html="1">HR 담당자가 서류에서 보는 <em>3가지 질문</em></h2>
+      <p class="slide-lede" data-edit="slides[11].lede">인사담당자가 이력서 한 장 보는 시간 = 30초. 이 셋에 모두 YES인 서류가 합격입니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[11].cards[0].title">이 직무를 할 수 있는가?</div>
+          <ul><li data-edit="slides[11].cards[0].items[0]">JD와 경험의 <b>일치 여부</b></li><li data-edit="slides[11].cards[0].items[1]">역할의 명확성</li><li data-edit="slides[11].cards[0].items[2]">수치화된 성과</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[11].cards[1].title">이 연차에 맞는 사람인가?</div>
+          <ul><li data-edit="slides[11].cards[1].items[0]">경력이 <b>과장되지 않았는가</b></li><li data-edit="slides[11].cards[1].items[1]">연차 대비 책임 범위가 납득되는가</li><li data-edit="slides[11].cards[1].items[2]">역할의 일관성</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[11].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[11].cards[2].title">우리 회사에 맞는 사람인가?</div>
+          <ul><li data-edit="slides[11].cards[2].items[0]">우리 문화와 맞을 것 같은가</li><li data-edit="slides[11].cards[2].items[1]"><b>지원 동기가 진짜인가</b></li><li data-edit="slides[11].cards[2].items[2]">장기적 적합도</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">12 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="13">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[12].ch">PART 02</div>
+      <h1 class="divider-title" data-edit="slides[12].title" data-edit-html="1">서류 작성 공식</h1>
+      <p class="divider-sub" data-edit="slides[12].sub">바로 쓸 수 있는 STAR 기법과 JD 키워드 전략.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">13 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="14">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[13].chapter">PART 02 · STAR 기법</div>
+      <h2 class="slide-title" data-edit="slides[13].title" data-edit-html="1"><em>STAR 기법</em>으로 서류 전형 공략하기</h2>
+      <p class="slide-lede" data-edit="slides[13].lede" data-edit-html="1">Situation, Task, Action, Result — 구조화된 서술이 핵심.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-4"><div class="cp-circle" data-edit="slides[13].items[0].circle" data-edit-html="1">S</div><div class="cp-circle" data-edit="slides[13].items[1].circle" data-edit-html="1">T</div><div class="cp-circle" data-edit="slides[13].items[2].circle" data-edit-html="1">A</div><div class="cp-circle" data-edit="slides[13].items[3].circle" data-edit-html="1">R</div></div>
+        <div class="concept-pill-row"><div class="cp-desc" data-edit="slides[13].items[0].desc" data-edit-html="1">상황
+(Situation)</div><div class="cp-desc" data-edit="slides[13].items[1].desc" data-edit-html="1">과제
+(Task)</div><div class="cp-desc" data-edit="slides[13].items[2].desc" data-edit-html="1">행동
+(Action)</div><div class="cp-desc" data-edit="slides[13].items[3].desc" data-edit-html="1">결과
+(Result)</div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">14 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="15">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[14].chapter">PART 02 · JD 키워드 최적화</div>
+      <h2 class="slide-title" data-edit="slides[14].title" data-edit-html="1"><em>JD 키워드</em>로 핵심역량 최적화하기</h2>
+      <p class="slide-lede" data-edit="slides[14].lede">ATS는 채용 공고부터 지원자 관리·평가까지 통합하는 채용관리 솔루션. JD 단어가 이력서에 없으면 탈락.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[14].steps[0].num">STEP 01</div>
+            <div class="step-name" data-edit="slides[14].steps[0].name">JD 분해</div>
+            <div class="step-desc" data-edit="slides[14].steps[0].desc">직무 키워드<br>기술 스택<br>역할·경험 일치</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[14].steps[1].num">STEP 02</div>
+            <div class="step-name" data-edit="slides[14].steps[1].name">키워드 추출</div>
+            <div class="step-desc" data-edit="slides[14].steps[1].desc">예: API<br>성능 개선<br>협업</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[14].steps[2].num">STEP 03</div>
+            <div class="step-name" data-edit="slides[14].steps[2].name">이력서 반영</div>
+            <div class="step-desc" data-edit="slides[14].steps[2].desc">JD 키워드를<br>그대로 활용<br>핵심역량에 배치</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">15 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="16">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[15].chapter">PART 02 · 이력서 예시</div>
+      <h2 class="slide-title" data-edit="slides[15].title" data-edit-html="1">이력서·경력기술서 <em>작성 예시</em></h2>
+      <p class="slide-lede" data-edit="slides[15].lede">JD 키워드를 핵심역량에 그대로 매칭한 ATS 친화 작성법.</p>
+      <div class="head-gap"></div>
+      <div class="body body-top"><ul class='bullets'><li data-edit="slides[15].bullets[0]">JD에 있는 핵심 키워드를 <b>경력기술서 상단</b>에 명시적으로 배치</li><li data-edit="slides[15].bullets[1]">각 키워드 → 실제 프로젝트와 1:1로 연결</li><li data-edit="slides[15].bullets[2]">정량 성과(숫자·% 단위)를 키워드 옆에 함께 표기</li><li data-edit="slides[15].bullets[3]">수행 역할은 <b>‘무엇을 했다’</b>가 아니라 <b>‘왜 그렇게 판단했다’</b>까지</li><li data-edit="slides[15].bullets[4]">(실제 화면은 별도 PPT 예시 페이지 참조)</li></ul></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">16 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="17">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[16].chapter">PART 02 · 자소서 구성</div>
+      <h2 class="slide-title" data-edit="slides[16].title" data-edit-html="1">자기소개서를 구성하는 <em>3가지 핵심 요소</em></h2>
+      <p class="slide-lede" data-edit="slides[16].lede" data-edit-html="1">지원동기 + 강점 + 포부. 세 축이 균형 잡혀야 합격합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center">
+        <div class="concept-pill cols-3"><div class="cp-circle" data-edit="slides[16].items[0].circle" data-edit-html="1">지원동기</div><div class="cp-op" data-edit="slides[16].op">+</div><div class="cp-circle" data-edit="slides[16].items[1].circle" data-edit-html="1">직무상 강점
+경험 서술</div><div class="cp-op" data-edit="slides[16].op">+</div><div class="cp-circle" data-edit="slides[16].items[2].circle" data-edit-html="1">입사 후 포부</div></div>
+        <div class="concept-pill-row"><div class="cp-desc" data-edit="slides[16].items[0].desc" data-edit-html="1">회사 및 직무에 대한
+이해도 · 적합도</div><div class="cp-spacer"></div><div class="cp-desc" data-edit="slides[16].items[1].desc" data-edit-html="1">구체적인 연관 경험과
+성취 사례 기술</div><div class="cp-spacer"></div><div class="cp-desc" data-edit="slides[16].items[2].desc" data-edit-html="1">회사의 비전과
+커리어 성장 가능성</div></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">17 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="18">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[17].chapter">PART 02 · 자소서 꿀팁</div>
+      <h2 class="slide-title" data-edit="slides[17].title" data-edit-html="1">자소서 작성 시 <em>반드시 챙길 것</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="checklist-frame">
+        <div class="ck-title" data-edit="slides[17].box_title" data-edit-html="1">이력서·경력기술서가 약하면 <em>자소서가 마지막 무기</em></div>
+        <p class="ck-sub" data-edit="slides[17].subtitle">: HR이 끝까지 읽고 면접까지 부르게 하는 자소서의 조건</p>
+        <ol><li data-edit="slides[17].items[0]" data-edit-html="1"><b>지원 동기</b>에 회사 IR·뉴스·서비스 기반 구체 사실 1개 이상</li><li data-edit="slides[17].items[1]" data-edit-html="1"><b>강점 경험</b>은 STAR 구조로 짧게 명확하게</li><li data-edit="slides[17].items[2]" data-edit-html="1"><b>수치</b>를 단 한 줄이라도 반드시 포함</li><li class="emphasis" data-edit="slides[17].items[3].text" data-edit-html="1">마지막 문단에 ‘입사 후 첫 3개월 계획’을 1~2문장 명시</li><li data-edit="slides[17].items[4]" data-edit-html="1">동일 자소서 복붙 X — 회사명·직무명·서비스명 교체 필수</li></ol>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">18 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="19">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[18].chapter">PART 02 · AI 서류 식별</div>
+      <h2 class="slide-title" data-edit="slides[18].title" data-edit-html="1">AI가 쓴 서류, <em>HR은 어떻게 알아볼까?</em></h2>
+      <p class="slide-lede" data-edit="slides[18].lede">HR이 실제로 느끼는 AI 서류의 4가지 특징.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[18].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[18].cards[0].title">문장이 너무 매끄럽다</div>
+          <ul><li data-edit="slides[18].cards[0].items[0]">실제 경험을 쓴 글은 거칠어도 진정성이 있음</li><li data-edit="slides[18].cards[0].items[1]">AI 서류는 완벽하지만 <b>아무 감이 없음</b></li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[18].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[18].cards[1].title">구체적 수치가 없다</div>
+          <ul><li data-edit="slides[18].cards[1].items[0]">‘유의미한 성과를 달성했습니다’</li><li data-edit="slides[18].cards[1].items[1]">AI는 수치를 모름. <b>내 경험의 수치는 내가</b> 넣어야</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[18].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[18].cards[2].title">회사·직무명이 붕 떠 있다</div>
+          <ul><li data-edit="slides[18].cards[2].items[0]">지원 회사의 특성이 전혀 반영되지 않은</li><li data-edit="slides[18].cards[2].items[1]">공통 서류 — 복붙 티 남</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[18].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[18].cards[3].title">면접에서 재현 불가</div>
+          <ul><li data-edit="slides[18].cards[3].items[0]">‘이 부분 더 설명해주실 수 있나요?’에 버벅</li><li data-edit="slides[18].cards[3].items[1]">본인 경험이 아니라 일반론</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">19 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="20">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[19].chapter">PART 02 · AI 올바른 사용법</div>
+      <h2 class="slide-title" data-edit="slides[19].title" data-edit-html="1">AI는 <em>도구</em>로 써야지, 대신 쓰면 안 됩니다</h2>
+      <p class="slide-lede" data-edit="slides[19].lede">AI가 써준 서류 ≠ 내가 AI 도움받아 쓴 서류. 이 차이가 합격과 탈락을 가릅니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[19].steps[0].num">STEP 01</div>
+            <div class="step-name" data-edit="slides[19].steps[0].name">내 경험을 정리</div>
+            <div class="step-desc" data-edit="slides[19].steps[0].desc">프로젝트명·역할<br>한 일·수치·성과를<br>날것으로 먼저</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[19].steps[1].num">STEP 02</div>
+            <div class="step-name" data-edit="slides[19].steps[1].name">AI에게 구조화</div>
+            <div class="step-desc" data-edit="slides[19].steps[1].desc">‘이 경험을 STAR로’<br>‘이 문장을 명확하게’<br>AI는 다듬기 도구</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[19].steps[2].num">STEP 03</div>
+            <div class="step-name" data-edit="slides[19].steps[2].name">내 언어로 수정</div>
+            <div class="step-desc" data-edit="slides[19].steps[2].desc">어투·표현 교정<br>면접 재현 가능?<br>수치·맥락 정확?</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">20 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="21">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[20].chapter">PART 02 · 포트폴리오 본질</div>
+      <h2 class="slide-title" data-edit="slides[20].title" data-edit-html="1">포트폴리오는 <em>무엇을 만들었는지</em>가 아니라 <em>어떻게 해결하는지</em></h2>
+      <p class="slide-lede" data-edit="slides[20].lede">포트폴리오의 본질 3가지.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[20].cards[0].title">어떤 문제를 다뤘는가</div>
+          <ul><li data-edit="slides[20].cards[0].items[0]">단순 작업 경험인지</li><li data-edit="slides[20].cards[0].items[1]"><b>실제 문제 해결 경험</b>인지</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[20].cards[1].title">어떻게 해결했는가</div>
+          <ul><li data-edit="slides[20].cards[1].items[0]">데이터 기반 판단</li><li data-edit="slides[20].cards[1].items[1]">사용자 관점</li><li data-edit="slides[20].cards[1].items[2]">기술적 접근 방식</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[20].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[20].cards[2].title">결과를 어떻게 만들었는가</div>
+          <ul><li data-edit="slides[20].cards[2].items[0]">성과 지표</li><li data-edit="slides[20].cards[2].items[1]">서비스 개선 효과</li><li data-edit="slides[20].cards[2].items[2]">조직 영향</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">21 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="22">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[21].chapter">PART 02 · 포트폴리오 포맷</div>
+      <h2 class="slide-title" data-edit="slides[21].title" data-edit-html="1">포트폴리오 <em>형태 선택 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[21].lede" data-edit-html="1">직군과 목적에 따라 적합한 포맷이 다릅니다.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="tagged-rows"><div class="tagged-row"><div class="tr-tag" data-edit="slides[21].rows[0].tag" data-edit-html="1">PPT (추천)</div><div class="tr-mid" data-edit="slides[21].rows[0].mid" data-edit-html="1">스토리 전달이 강하고, 면접에서 설명하기 좋음</div><div class="tr-end" data-edit="slides[21].rows[0].end" data-edit-html="1">인사담당자 검토에 가장 적합 · 안정적인 포맷</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[21].rows[1].tag" data-edit-html="1">Notion</div><div class="tr-mid" data-edit="slides[21].rows[1].mid" data-edit-html="1">사고 과정 강조, 기획·스타트업 적합</div><div class="tr-end" data-edit="slides[21].rows[1].end" data-edit-html="1">단 가독성 중요 — 정돈된 구조 필수</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[21].rows[2].tag" data-edit-html="1">GitHub</div><div class="tr-mid" data-edit="slides[21].rows[2].mid" data-edit-html="1">개발자 필수, 코드 중심 + README 중요</div><div class="tr-end" data-edit="slides[21].rows[2].end" data-edit-html="1">어떤 문제·구조·기술 선택을 했는지 명시</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[21].rows[3].tag" data-edit-html="1">개인 Website</div><div class="tr-mid" data-edit="slides[21].rows[3].mid" data-edit-html="1">개인 브랜딩 어필, 디자인 직군에 적합</div><div class="tr-end" data-edit="slides[21].rows[3].end" data-edit-html="1">디자인 요소 중요 · 모 아니면 도</div></div><div class="tagged-row"><div class="tr-tag" data-edit="slides[21].rows[4].tag" data-edit-html="1">PDF·보고서</div><div class="tr-mid" data-edit="slides[21].rows[4].mid" data-edit-html="1">이공계·제조·품질 직군 추천</div><div class="tr-end" data-edit="slides[21].rows[4].end" data-edit-html="1">디자인보다 정확성 · 수치 중심 구조</div></div></div>
+        <div class="tagged-conclusion" data-edit="slides[21].conclusion" data-edit-html="1"><b>지원 직군과 본인 강점</b>에 맞춰 포맷을 선택하세요.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">22 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="23">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[22].chapter">PART 02 · 포트폴리오 핵심</div>
+      <h2 class="slide-title" data-edit="slides[22].title" data-edit-html="1">지원자가 보여주고 싶은 것 vs <em>HR이 검증하고 싶은 것</em></h2>
+      <p class="slide-lede" data-edit="slides[22].lede">관점 차이를 이해해야 합격하는 포트폴리오를 만들 수 있습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body body-center"><div class="alert-note" data-edit="slides[22].alert" data-edit-html="1"><b>지원자</b> = 내가 기여한 ‘상품·서비스’
+<b>HR</b> = ‘나’의 경력·능력 and Fit</div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">23 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="24">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[23].chapter">PART 02 · 포트폴리오 PPT 예시</div>
+      <h2 class="slide-title" data-edit="slides[23].title" data-edit-html="1">PPT 포트폴리오에 <em>반드시 들어갈 4가지</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="checklist-frame">
+        <div class="ck-title" data-edit="slides[23].box_title" data-edit-html="1">한 프로젝트당 <em>4요소</em> 필수</div>
+        <p class="ck-sub" data-edit="slides[23].subtitle">: 인사담당자가 30초 안에 검증할 수 있는 구조</p>
+        <ol><li data-edit="slides[23].items[0]" data-edit-html="1"><b>프로젝트 개요</b> — 기간, 규모, 목적</li><li data-edit="slides[23].items[1]" data-edit-html="1"><b>수행 업무</b> — 내 역할의 구체적 명세</li><li data-edit="slides[23].items[2]" data-edit-html="1"><b>구체적 성과</b> — 정량 수치 + 정성적 임팩트</li><li data-edit="slides[23].items[3]" data-edit-html="1"><b>의사결정 근거</b> — 왜 그 방법을 선택했는지</li></ol>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">24 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="25">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[24].chapter">PART 02 · 포트폴리오 노션 예시</div>
+      <h2 class="slide-title" data-edit="slides[24].title" data-edit-html="1">노션 포트폴리오의 <em>필수 구성</em></h2>
+      <div class="head-gap"></div>
+      <div class="body"><div class="checklist-frame">
+        <div class="ck-title" data-edit="slides[24].box_title" data-edit-html="1">PPT와 다른 <em>노션만의 강점</em>을 살릴 것</div>
+        <p class="ck-sub" data-edit="slides[24].subtitle">: 사고 과정과 의사결정을 깊이 있게 보여주는 포맷</p>
+        <ol><li data-edit="slides[24].items[0]" data-edit-html="1">프로젝트 개요 (기간·규모 등)</li><li data-edit="slides[24].items[1]" data-edit-html="1"><b>수행 역할</b> — 단순 작업이 아닌 본인의 책임 범위</li><li data-edit="slides[24].items[2]" data-edit-html="1"><b>기여도와 구체적 성과</b> — 수치로 증명</li><li data-edit="slides[24].items[3]" data-edit-html="1">(상세 면접 답변용은 별도로 준비, 노션엔 핵심만)</li></ol>
+      </div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">25 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="26">
+    <section class="slide chapter-divider">
+      <div class="divider-num" data-edit="slides[25].ch">PART 03</div>
+      <h1 class="divider-title" data-edit="slides[25].title" data-edit-html="1">연차별·상황별 합격 전략</h1>
+      <p class="divider-sub" data-edit="slides[25].sub">백전백승의 5가지 케이스.</p>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">26 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="27">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[26].chapter">PART 03 · 연차별 정의</div>
+      <h2 class="slide-title" data-edit="slides[26].title" data-edit-html="1">연차가 아니라 <em>역할</em>로 자신을 정의하라</h2>
+      <p class="slide-lede" data-edit="slides[26].lede" data-edit-html="1">연차는 숫자일 뿐. 채용은 ‘해온 업무 + 조직에서의 영향력 = 역할’을 검증합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="step-compare"><div class="sc-card"><div class="sc-head"><div class="sc-label" data-edit="slides[26].cols[0].label">주니어 (0~3년)</div><div class="sc-sub" data-edit="slides[26].cols[0].sub">이해도와 학습력 중심</div></div><div class="sc-list"><div class="sc-item"><div class="sc-num" data-edit="slides[26].cols[0].items[0].num">01</div><div class="sc-text"><div class="sc-title" data-edit="slides[26].cols[0].items[0].title" data-edit-html="1">경험의 크기 < 이해의 깊이</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[26].cols[0].items[1].num">02</div><div class="sc-text"><div class="sc-title" data-edit="slides[26].cols[0].items[1].title" data-edit-html="1">‘어떻게 판단했는가’를 증명</div></div></div></div></div><div class="sc-card accent"><div class="sc-head"><div class="sc-label" data-edit="slides[26].cols[1].label">중니어·시니어</div><div class="sc-sub" data-edit="slides[26].cols[1].sub">책임 범위 · 의사결정 · 조직 임팩트</div></div><div class="sc-list"><div class="sc-item"><div class="sc-num" data-edit="slides[26].cols[1].items[0].num">01</div><div class="sc-text"><div class="sc-title" data-edit="slides[26].cols[1].items[0].title" data-edit-html="1">경험의 빈도 < 책임진 근거</div><div class="sc-desc" data-edit="slides[26].cols[1].items[0].desc" data-edit-html="1">중니어 (4~7년)</div></div></div><div class="sc-item"><div class="sc-num" data-edit="slides[26].cols[1].items[1].num">02</div><div class="sc-text"><div class="sc-title" data-edit="slides[26].cols[1].items[1].title" data-edit-html="1">경험의 화려함 < 조직에 남긴 기준</div><div class="sc-desc" data-edit="slides[26].cols[1].items[1].desc" data-edit-html="1">시니어 (8년+)</div></div></div></div></div></div>
+        <div class="step-compare-footer" data-edit="slides[26].footer" data-edit-html="1">HR이 가장 의심하는 질문 — <b>이 연차에 맞는 적합한 경험인가?</b></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">27 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="28">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[27].chapter">PART 03 · 주니어 전략</div>
+      <h2 class="slide-title" data-edit="slides[27].title" data-edit-html="1">주니어(1~3년차) <em>필승 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[27].lede" data-edit-html="1">경험의 크기가 아니라 이해의 깊이를 보여주세요. 작은 업무라도 판단 지점을 꺼내는 것이 핵심.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="case-profile">
+          <div class="cp-profile">
+            <div class="cp-profile-head">PROFILE</div>
+            <div class="cp-kv"><div class="cp-key" data-edit="slides[27].profile.items[0].key">대상</div><div class="cp-val" data-edit="slides[27].profile.items[0].val" data-edit-html="1">1~3년차 (주니어)</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[27].profile.items[1].key">핵심</div><div class="cp-val" data-edit="slides[27].profile.items[1].val" data-edit-html="1">이해의 깊이</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[27].profile.items[2].key">관점</div><div class="cp-val" data-edit="slides[27].profile.items[2].val" data-edit-html="1">‘어떻게 이해했다’</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[27].profile.items[3].key">실패</div><div class="cp-val" data-edit="slides[27].profile.items[3].val" data-edit-html="1"><b>숨기지 말고 학습으로 전환</b></div></div>
+          </div>
+          <div class="cp-findings">
+            <div class="cp-findings-head">필승 포인트</div>
+            <div class="cp-finding"><div class="cp-num">1</div><div><div class="cp-finding-title" data-edit="slides[27].findings[0].title" data-edit-html="1">‘무엇을 했다’가 아닌 ‘어떻게 이해했다’를 말하라</div><div class="cp-finding-sub" data-edit="slides[27].findings[0].sub" data-edit-html="1">‘API 개발 단독 담당’ → ‘응답 속도 개선이 목적이라 구조보다 단순성을 우선했음’</div></div></div><div class="cp-finding"><div class="cp-num">2</div><div><div class="cp-finding-title" data-edit="slides[27].findings[1].title" data-edit-html="1">작은 업무라도 판단 지점을 반드시 꺼내라</div><div class="cp-finding-sub" data-edit="slides[27].findings[1].sub" data-edit-html="1">어떤 선택지가 있었는지, 왜 그걸 골랐는지, 결과가 어땠는지</div></div></div><div class="cp-finding"><div class="cp-num">3</div><div><div class="cp-finding-title" data-edit="slides[27].findings[2].title" data-edit-html="1">실패 경험은 숨기지 말고 학습 구조로</div><div class="cp-finding-sub" data-edit="slides[27].findings[2].sub" data-edit-html="1">남 탓하지 않는가 / 원인을 구조적으로 설명했는가 / 다음 행동이 달라졌는가</div></div></div>
+          </div>
+        </div>
+        <div class="case-insight" data-edit="slides[27].insight" data-edit-html="1">💡 가르칠 수는 있지만 — <b>왜 이렇게 하는지 이해하는 사람인가</b></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">28 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="29">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[28].chapter">PART 03 · 주니어 예시</div>
+      <h2 class="slide-title" data-edit="slides[28].title" data-edit-html="1">주니어 합격 이력서 <em>작성 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[28].lede">3년차 백엔드 개발자 예시 — 별도 PPT/이력서 페이지 참조.</p>
+      <div class="head-gap"></div>
+      <div class="body body-top"><ul class='bullets'><li data-edit="slides[28].bullets[0]"><b>핵심역량 최상단</b>: API 개발 · 성능 최적화 · 협업 (JD 키워드 매칭)</li><li data-edit="slides[28].bullets[1]">프로젝트 1 — 결제 API 응답시간 200ms → 80ms (60% 개선) — Redis 캐시 도입</li><li data-edit="slides[28].bullets[2]">프로젝트 2 — 신규 기능 단독 개발, 베타 사용자 만족도 85점</li><li data-edit="slides[28].bullets[3]">수치·역할·판단 근거 모두 포함된 STAR 구조</li></ul></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">29 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="30">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[29].chapter">PART 03 · 중니어 전략</div>
+      <h2 class="slide-title" data-edit="slides[29].title" data-edit-html="1">중니어(4~7년차) <em>필승 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[29].lede" data-edit-html="1">경험의 빈도가 아니라 책임진 근거를 보여주세요. ‘덜 개입해도 되는가’가 핵심 질문.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="case-profile">
+          <div class="cp-profile">
+            <div class="cp-profile-head">PROFILE</div>
+            <div class="cp-kv"><div class="cp-key" data-edit="slides[29].profile.items[0].key">대상</div><div class="cp-val" data-edit="slides[29].profile.items[0].val" data-edit-html="1">3~7년차 (중니어)</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[29].profile.items[1].key">핵심</div><div class="cp-val" data-edit="slides[29].profile.items[1].val" data-edit-html="1">책임진 근거</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[29].profile.items[2].key">정체성</div><div class="cp-val" data-edit="slides[29].profile.items[2].val" data-edit-html="1">핵심 실무자 또는 리더</div></div><div class="cp-kv"><div class="cp-key" data-edit="slides[29].profile.items[3].key">관점</div><div class="cp-val" data-edit="slides[29].profile.items[3].val" data-edit-html="1"><b>리더가 덜 개입해도 되는가</b></div></div>
+          </div>
+          <div class="cp-findings">
+            <div class="cp-findings-head">필승 포인트</div>
+            <div class="cp-finding"><div class="cp-num">1</div><div><div class="cp-finding-title" data-edit="slides[29].findings[0].title" data-edit-html="1">반드시 하나의 ‘정체성’을 선택하라</div><div class="cp-finding-sub" data-edit="slides[29].findings[0].sub" data-edit-html="1">팀의 핵심 실무자 vs 리딩하여 결과를 만드는 리더 — 둘 중 하나</div></div></div><div class="cp-finding"><div class="cp-num">2</div><div><div class="cp-finding-title" data-edit="slides[29].findings[1].title" data-edit-html="1">내가 책임진 문제를 명확히 꺼내라</div><div class="cp-finding-sub" data-edit="slides[29].findings[1].sub" data-edit-html="1">문제 상황 / 본인 책임 범위 / 선택한 방향과 근거 / 결과와 조치</div></div></div><div class="cp-finding"><div class="cp-num">3</div><div><div class="cp-finding-title" data-edit="slides[29].findings[2].title" data-edit-html="1">다음 단계 활용 가능 인재임을 증명</div><div class="cp-finding-sub" data-edit="slides[29].findings[2].sub" data-edit-html="1">현재 역할을 넘어 생각하는지 / 일의 앞뒤 맥락 이해 / 조직 전체 영향 인식</div></div></div>
+          </div>
+        </div>
+        <div class="case-insight" data-edit="slides[29].insight" data-edit-html="1">💡 이 사람에게 업무를 맡기면 — <b>리더가 덜 개입해도 되는가?</b></div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">30 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="31">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[30].chapter">PART 03 · 중니어 예시</div>
+      <h2 class="slide-title" data-edit="slides[30].title" data-edit-html="1">중니어 합격 이력서 <em>작성 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[30].lede">6년차 PM/PO 예시 — 별도 PPT/이력서 페이지 참조.</p>
+      <div class="head-gap"></div>
+      <div class="body body-top"><ul class='bullets'><li data-edit="slides[30].bullets[0]"><b>책임 범위</b>를 시각화 — 담당 채널 / KPI / 매출 임팩트</li><li data-edit="slides[30].bullets[1]">프로젝트 1 — B2B 신규 상품 PMF 검증 → 매출 12억 (목표 대비 130%)</li><li data-edit="slides[30].bullets[2]">의사결정 근거 + 대안 검토 과정 명시</li><li data-edit="slides[30].bullets[3]">팀 빌딩·온보딩 사례 1개 포함 (협업 능력 증명)</li></ul></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">31 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="32">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[31].chapter">PART 03 · 5가지 케이스</div>
+      <h2 class="slide-title" data-edit="slides[31].title" data-edit-html="1">나는 어떤 케이스인가요? <em>5가지 상황별 전략</em></h2>
+      <p class="slide-lede" data-edit="slides[31].lede">본인이 어떤 상황인지 정확히 진단하고 맞는 서류 전략을 세워야 합니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-5">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[31].cards[0].title">신입</div>
+          <ul><li data-edit="slides[31].cards[0].items[0]">경력 없이 처음 취업</li><li data-edit="slides[31].cards[0].items[1]">자소서 + 유사경험 포트폴리오 1개</li><li data-edit="slides[31].cards[0].items[2]">학과 프로젝트·공모전·인턴 경험</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[31].cards[1].title">중고신입</div>
+          <ul><li data-edit="slides[31].cards[1].items[0]">다른 직무·업종으로 전환</li><li data-edit="slides[31].cards[1].items[1]">자소서 + <b>전환형 포트폴리오</b></li><li data-edit="slides[31].cards[1].items[2]">이전 경력의 연결고리</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[31].cards[2].title">1~3년 → 신입</div>
+          <ul><li data-edit="slides[31].cards[2].items[0]">경력 있지만 신입 지원</li><li data-edit="slides[31].cards[2].items[1]">전략적 판단 필요</li><li data-edit="slides[31].cards[2].items[2]">경력을 강점으로</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[31].cards[3].title">상향 이직</div>
+          <ul><li data-edit="slides[31].cards[3].items[0]">더 큰 규모·연봉·포지션</li><li data-edit="slides[31].cards[3].items[1]"><b>임팩트 중심</b> 경력기술서</li><li data-edit="slides[31].cards[3].items[2]">책임 범위 명확화</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[31].cards[4].num">05</div>
+          <div class="card-title" data-edit="slides[31].cards[4].title">공백기 후</div>
+          <ul><li data-edit="slides[31].cards[4].items[0]">육아·건강·유학 등</li><li data-edit="slides[31].cards[4].items[1]"><b>공백을 서사로</b></li><li data-edit="slides[31].cards[4].items[2]">공백 중 한 일도 자산</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">32 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="33">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[32].chapter">PART 03 · Case 1 신입</div>
+      <h2 class="slide-title" data-edit="slides[32].title" data-edit-html="1">Case 1 — 신입은 <em>경험의 크기가 아닌 이해의 깊이</em></h2>
+      <p class="slide-lede" data-edit="slides[32].lede" data-edit-html="1">Tip 4가지로 정리된 신입 서류의 필수 조건.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="before-after">
+          <div class="ba-box before">
+            <div class="ba-label" data-edit="slides[32].before.label">이렇게 쓰지 마세요</div>
+            <div class="ba-quote" data-edit="slides[32].before.quote" data-edit-html="1">“자격증·수상 이력 나열. 팀에서 기획을 담당. 학과 프로젝트 결과물만 서술. 지원동기는 ‘귀사에서 성장하고 싶습니다’.”</div>
+          </div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-box after">
+            <div class="ba-label" data-edit="slides[32].after.label">이렇게 써야 합니다</div>
+            <div class="ba-quote" data-edit="slides[32].after.quote" data-edit-html="1">“규모보다 ‘왜 그 선택을 했나’ — 판단 지점을 꺼내라. 팀 내 내 역할을 구체적으로 (‘기획 담당’이 아니라 ‘화면 설계 + 사용자 리서치 보조’). 실패도 자산. 지원동기 = 회사 문제와 내 경험의 연결.”</div>
+          </div>
+        </div>
+        
+        
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">33 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="34">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[33].chapter">PART 03 · Case 2 중고신입</div>
+      <h2 class="slide-title" data-edit="slides[33].title" data-edit-html="1">Case 2 — 중고신입, <em>이전 경력을 무기로</em></h2>
+      <p class="slide-lede" data-edit="slides[33].lede">경력은 있지만 직무·업종을 바꿔 사실상 신입으로 지원하는 경우. 영업→마케터, 교사→HR, 비전공→개발 등.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="stage-row">
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[33].steps[0].num">STEP 01</div>
+            <div class="step-name" data-edit="slides[33].steps[0].name">전환의 이유</div>
+            <div class="step-desc" data-edit="slides[33].steps[0].desc">‘왜 이 직무로<br>오고 싶은가’가<br>없으면 HR은 의심</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step">
+            <div class="step-num" data-edit="slides[33].steps[1].num">STEP 02</div>
+            <div class="step-name" data-edit="slides[33].steps[1].name">공통 역량</div>
+            <div class="step-desc" data-edit="slides[33].steps[1].desc">이전 직무와의<br>연결 역량을<br>찾아라</div>
+          </div><div class="stage-arrow">→</div>
+          <div class="stage-step highlight">
+            <div class="step-num" data-edit="slides[33].steps[2].num">STEP 03</div>
+            <div class="step-name" data-edit="slides[33].steps[2].name">전환형 포폴</div>
+            <div class="step-desc" data-edit="slides[33].steps[2].desc">지원 직무로<br>실제로 뭔가<br>해본 증거 1개</div>
+          </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">34 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="35">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[34].chapter">PART 03 · Case 3 경력 → 신입</div>
+      <h2 class="slide-title" data-edit="slides[34].title" data-edit-html="1">Case 3 — 1~3년차인데 <em>신입 지원</em>해도 될까?</h2>
+      <p class="slide-lede" data-edit="slides[34].lede">현실적인 판단과 전략이 필요한 케이스. 경력을 어떻게 다룰지가 핵심.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="two-col">
+        <div class="col">
+          <div class="col-num" data-edit="slides[34].cols[0].num">❌</div>
+          <div class="col-title" data-edit="slides[34].cols[0].title">경력 숨기고 신입 지원</div>
+          
+          <ul><li data-edit="slides[34].cols[0].items[0]">서류에서 발견되면 <b>바로 탈락</b></li><li data-edit="slides[34].cols[0].items[1]">면접 발각 시 신뢰도 붕괴</li><li data-edit="slides[34].cols[0].items[2]">입사 후 드러나면 계약 해지 사례 (링크드인 등)</li></ul>
+        </div>
+        <div class="col accent">
+          <div class="col-num" data-edit="slides[34].cols[1].num">⭕</div>
+          <div class="col-title" data-edit="slides[34].cols[1].title">경력 밝히고 신입 지원</div>
+          <div class="col-lede" data-edit="slides[34].cols[1].lede">현실적인 3가지 전략</div>
+          <ul><li data-edit="slides[34].cols[1].items[0]"><b>전환 서사</b>를 명확히 — ‘직무 전환을 위해’</li><li data-edit="slides[34].cols[1].items[1]"><b>경력을 강점으로</b> — 현업 경험 있는 신입은 다름</li><li data-edit="slides[34].cols[1].items[2]"><b>연봉 기대치 현실적으로</b> — 솔직한 협의가 좋은 결과</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">35 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="36">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[35].chapter">PART 03 · Case 4 상향 이직</div>
+      <h2 class="slide-title" data-edit="slides[35].title" data-edit-html="1">Case 4 — 상향 이직, <em>임팩트 없는 경력기술서는 탈락</em></h2>
+      <p class="slide-lede" data-edit="slides[35].lede" data-edit-html="1">지원할 회사의 규모와 문화를 먼저 이해해야 합니다 — 대기업과 스타트업은 ‘상향’ 기준이 다릅니다.</p>
+      <div class="head-gap"></div>
+      <div class="body">
+        <div class="before-after">
+          <div class="ba-box before">
+            <div class="ba-label" data-edit="slides[35].before.label">이렇게 쓰지 마세요</div>
+            <div class="ba-quote" data-edit="slides[35].before.quote" data-edit-html="1">“팀원으로서 프로젝트에 기여했습니다. 매출 향상에 기여했습니다(수치 없음). 업무 일지처럼 나열.”</div>
+          </div>
+          <div class="ba-arrow">→</div>
+          <div class="ba-box after">
+            <div class="ba-label" data-edit="slides[35].after.label">AFTER · 3가지 원칙</div>
+            <div class="ba-quote" data-edit="slides[35].after.quote" data-edit-html="1">“① 책임 범위 명확 — ‘내 담당 채널 전환율 22%p 개선’. ② 의사결정 근거 — ‘어떤 대안을 검토했는지’. ③ 연차+역할 비율 맞추기 — 그 안에서 최대 임팩트.”</div>
+          </div>
+        </div>
+        
+        
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">36 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="37">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[36].chapter">PART 03 · Case 5 공백기</div>
+      <h2 class="slide-title" data-edit="slides[36].title" data-edit-html="1">Case 5 — 공백기, <em>숨기면 역효과, 서사로 만드세요</em></h2>
+      <p class="slide-lede" data-edit="slides[36].lede">공백 자체가 문제가 아닙니다. 어떻게 보냈는지, 지금 준비가 됐는지가 HR이 보는 포인트.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-3">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[36].cards[0].title">육아·가족 돌봄</div>
+          <ul><li data-edit="slides[36].cards[0].items[0]"><b>숨기지 말고 명시</b>: ‘육아로 인한 경력 단절 후 복귀’</li><li data-edit="slides[36].cards[0].items[1]">공백 중 한 일(강의·자격증·사이드 프로젝트) 언급</li><li data-edit="slides[36].cards[0].items[2]">‘이 기간 동안 ○○을 준비했습니다’</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[36].cards[1].title">건강·개인 사유</div>
+          <ul><li data-edit="slides[36].cards[1].items[0]">구체적 병명 기재 불필요</li><li data-edit="slides[36].cards[1].items[1]">‘건강 회복 후 복직 준비’ 수준</li><li data-edit="slides[36].cards[1].items[2]"><b>현재 완전히 회복, 즉시 업무 가능</b> 강조</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[36].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[36].cards[2].title">유학·어학연수</div>
+          <ul><li data-edit="slides[36].cards[2].items[0]">가장 설명하기 쉬운 케이스</li><li data-edit="slides[36].cards[2].items[1]">배운 것과 지원 직무의 <b>연결고리</b></li><li data-edit="slides[36].cards[2].items[2]">단순 ‘어학 연수’가 아닌 구체적 적용</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">37 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="38">
+    <section class="slide">
+      <div class="chapter-tag small" data-edit="slides[37].chapter">PART 03 · 마무리 조언</div>
+      <h2 class="slide-title" data-edit="slides[37].title" data-edit-html="1">HR 담당자로서 드리는 <em>마지막 조언 4가지</em></h2>
+      <p class="slide-lede" data-edit="slides[37].lede">오늘 강의의 핵심을 4개로 압축했습니다.</p>
+      <div class="head-gap"></div>
+      <div class="body"><div class="card-grid cols-4">
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[37].cards[0].num">01</div>
+          <div class="card-title" data-edit="slides[37].cards[0].title">완성본을 먼저 만들어두세요</div>
+          <ul><li data-edit="slides[37].cards[0].items[0]">공고 뜨고 시작하면 늦음</li><li data-edit="slides[37].cards[0].items[1]">기본 틀을 지금 만들고</li><li data-edit="slides[37].cards[0].items[2]">공고에 맞게 수정하는 방식</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[37].cards[1].num">02</div>
+          <div class="card-title" data-edit="slides[37].cards[1].title">솔직함이 가장 강력합니다</div>
+          <ul><li data-edit="slides[37].cards[1].items[0]">연차 부풀리기·숨기기 → 레퍼런스에서 드러남</li><li data-edit="slides[37].cards[1].items[1]">연차에 맞는 역할을 정확히</li><li data-edit="slides[37].cards[1].items[2]"><b>HR의 신뢰</b>를 얻는 방법</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[37].cards[2].num">03</div>
+          <div class="card-title" data-edit="slides[37].cards[2].title">정량과 정성을 같이</div>
+          <ul><li data-edit="slides[37].cards[2].items[0]">‘개선했습니다’는 증거 없음</li><li data-edit="slides[37].cards[2].items[1]">작은 경험도 <b>수치</b>로</li><li data-edit="slides[37].cards[2].items[2]">지금부터 연습 시작</li></ul>
+        </div>
+        <div class="card-pastel">
+          <div class="num" data-edit="slides[37].cards[3].num">04</div>
+          <div class="card-title" data-edit="slides[37].cards[3].title">지원 동기는 진짜여야</div>
+          <ul><li data-edit="slides[37].cards[3].items[0]">HR은 하루 수백 장 서류 검토</li><li data-edit="slides[37].cards[3].items[1]">복붙과 진심은 <b>30초 안에 구분</b></li><li data-edit="slides[37].cards[3].items[2]">본인의 언어로 직접</li></ul>
+        </div></div></div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">38 / 39</div>
+    </div>
+    </section></div><div class="slide-wrap is-active" data-idx="39">
+    <section class="slide" style="justify-content: center; align-items: center; text-align: center;">
+      <div style="margin: auto;">
+        <div class="qa-big">Q&amp;A</div>
+        <div class="qa-sub" data-edit="slides[38].sub">어썸원 — 대기업 인사팀이 알려주는 연차별 이력서·자소서·포트폴리오 작성법</div>
+        
+        <div class="qa-thanks" data-edit="slides[38].thanks">경청해 주셔서 감사합니다.</div>
+      </div>
+      
+    <div class="footer">
+      <div class="left"><span class="brand">ZEROBASE</span><span>·</span><span data-edit="meta.talk_title_in_footer">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span></div>
+      <div class="right">39 / 39</div>
+    </div>
+    </section></div>
+  </div>
+</div>
+
+<div id="nav-prev" class="nav-zone prev" title="이전"><div class="arrow">‹</div></div>
+<div id="nav-next" class="nav-zone next" title="다음"><div class="arrow">›</div></div>
+
+<button id="edit-toggle" type="button" onclick="document.getElementById('edit-btn').click()">✏️ 편집 (E)</button>
+
+<div id="edit-bar">
+  <button id="edit-btn" type="button">편집 끝내기 (E)</button>
+  <button id="save-btn" type="button" class="primary">💾 JSON 저장</button>
+  <button id="reset-btn" type="button">↺ 되돌리기</button>
+  <span class="hint">텍스트 클릭 → 수정 → JSON 저장</span>
+</div>
+
+<div class="hud">
+  <div class="bar"><div class="fill"></div></div>
+  <div class="bottom">
+    <span class="title">어썸원 — 연차별 이력서·자소서·포트폴리오 작성법</span>
+    <span class="pager">01 / 39</span>
+  </div>
+</div>
+
+<div id="help" class="help">
+  <kbd>←</kbd> <kbd>→</kbd> 이동 · <kbd>F</kbd> 풀스크린 · <kbd>E</kbd> 편집 모드 · <kbd>Esc</kbd> 종료
+</div>
+
+<div id="toast"></div>
+
+
+
+</body></html>
